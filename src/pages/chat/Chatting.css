@@ -4,7 +4,7 @@
   font-family: sans-serif;
 }
 
-/* ChatList */
+/* ------------------ChatList -------------------- */
 .chat-list {
   width: 250px;
   border-right: 1px solid #ddd;
@@ -220,4 +220,22 @@
 .friend-avatar.selected {
   border: 2px solid orange;
 }
+
+/* .schedule-alert 이미지 */
+.tabs button.active {
+  border-bottom: 2px solid orange;
+}
+
+.image-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.gallery-img {
+  width: 100%;
+  border-radius: 8px;
+}
+
 

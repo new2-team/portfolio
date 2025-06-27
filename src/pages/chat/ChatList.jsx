@@ -1,10 +1,11 @@
 
 const ChatList = () => {
   const chats = [
-    { id: 1, name: 'Soul', lastComment: 'last comment', avatar: '/dog1.jpg' },
-    { id: 2, name: 'Soul, Melody', lastComment: 'last comment', avatar: '/dog2.jpg' },
-    { id: 3, name: 'Melody', lastComment: 'last comment', avatar: '/dog3.jpg' },
-    { id: 4, name: 'Coco', lastComment: 'last comment', avatar: '/dog4.jpg' },
+    { id: 1, name: 'Soul', lastComment: 'last comment', avatar: "/assets/img/chat/soul.png", alt: "soul" },
+    { id: 2, name: 'Melody', lastComment: 'last comment', avatar: "/assets/img/chat/melody.png", alt: "melody" },
+    { id: 3, name: 'Coco', lastComment: 'last comment', avatar: "/assets/img/chat/coco.png", alt: "coco" },
+    { id: 4, name: 'Choco', lastComment: 'last comment', avatar: "/assets/img/chat/choco.png", alt: "choco" },
+    { id: 5, name: 'Jude', lastComment: 'last comment', avatar: "/assets/img/chat/jude.png", alt: "jude" },
   ];
 
   return (
