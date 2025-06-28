@@ -1,15 +1,82 @@
-.chatting-container {
-  display: flex;
-  height: 100vh;
-  font-family: sans-serif;
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* ✅ 전체 스크롤 제거 */
 }
 
-/* ------------------ChatList -------------------- */
-.chat-list {
-  width: 250px;
+
+
+.chatting-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ------------------ ChatList -------------------- */
+.chat-list-container {
+  flex: 0 0 20%;
+  min-width: 200px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid #ddd;
-  padding: 10px;
+  box-sizing: border-box;
   overflow-y: auto;
+  background-color: #fff; /* ✅ 추가하면 배경색으로 꽉 차 보임 */
+  margin: 0; /* ✅ 혹시 margin 이 있으면 제거 */
+  padding: 0; /* ✅ 필요 시 */
+  margin-left: 0;
+}
+
+
+/* 친구 리스트 (가로 스크롤) */
+.friend-flatlist-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -ms-overflow-style: none;  /* IE, Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.friend-flatlist-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.friend-flatlist {
+  display: flex;
+  min-width: max-content; /* ✅ 자식 요소 총합이 container width를 넘으면 스크롤 생성 */
+}
+
+.friend-item {
+  flex: 0 0 auto;
+  text-align: center;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.friend-item.selected {
+  border: 2px solid blue;
+  border-radius: 8px;
+}
+
+.friend-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 채팅방 리스트 (세로 스크롤) */
+.chat-list {
+  width: 100%;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.chat-list::-webkit-scrollbar {
+  display: none;
 }
 
 .chat-list-item {
@@ -32,12 +99,27 @@
   font-weight: bold;
 }
 
-/* ChatApp */
+/* ------------------ChatApp------------------- */
+.chat-app-container {
+  flex: 0 0 60%;
+  transition: flex 0.3s ease; /* ✅ 부드러운 확장 애니메이션 */
+  display: flex;
+  height: 100%;
+}
+
+.chat-app-container.full-width {
+  flex: 0 0 80%; /* ✅ ScheduleAlert 닫히면 ChatApp이 80% 차지 */
+}
+
 .chat-app {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  background-color: #fff;
+  height: 100%;
 }
+
 
 .chat-header {
   padding: 10px;
@@ -91,12 +173,104 @@
   border-radius: 4px;
 }
 
-/* ScheduleAlert */
-.schedule-alert {
-  width: 250px;
-  border-left: 1px solid #ddd;
-  padding: 10px;
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
+
+.chat-header-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.chat-header-actions button {
+  margin-left: 5px;
+}
+
+.image-preview {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.image-preview img {
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+.image-preview button {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.message-input img {
+  margin: 5px 0;
+}
+
+.chat-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.chat-header-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.message-input {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+  min-height: 40px;
+  flex: 1;
+  margin: 0 10px;
+  overflow-wrap: break-word;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.image-cancel-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* --------------ScheduleAlert--------------- */
+.schedule-alert {
+  flex: 0 0 20%;
+  min-width: 200px;
+  height: 100%;
+  border-left: 1px solid #ddd;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+
+
 
 .profile-section {
   text-align: center;

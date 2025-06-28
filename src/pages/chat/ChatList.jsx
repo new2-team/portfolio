@@ -1,25 +1,81 @@
+import { useState } from 'react';
 
-const ChatList = () => {
-  const chats = [
-    { id: 1, name: 'Soul', lastComment: 'last comment', avatar: "/assets/img/chat/soul.png", alt: "soul" },
-    { id: 2, name: 'Melody', lastComment: 'last comment', avatar: "/assets/img/chat/melody.png", alt: "melody" },
-    { id: 3, name: 'Coco', lastComment: 'last comment', avatar: "/assets/img/chat/coco.png", alt: "coco" },
-    { id: 4, name: 'Choco', lastComment: 'last comment', avatar: "/assets/img/chat/choco.png", alt: "choco" },
-    { id: 5, name: 'Jude', lastComment: 'last comment', avatar: "/assets/img/chat/jude.png", alt: "jude" },
-  ];
+const friends = [
+  { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
+  { id: 2, name: 'Melody', avatar: "/assets/img/chat/melody.png" },
+  { id: 3, name: 'Coco', avatar: "/assets/img/chat/coco.png" },
+  { id: 4, name: 'Choco', avatar: "/assets/img/chat/choco.png" },
+  { id: 5, name: 'Jude', avatar: "/assets/img/chat/jude.png" },
+  { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
+  { id: 2, name: 'Melody', avatar: "/assets/img/chat/melody.png" },
+  { id: 3, name: 'Coco', avatar: "/assets/img/chat/coco.png" },
+  { id: 4, name: 'Choco', avatar: "/assets/img/chat/choco.png" },
+  { id: 5, name: 'Jude', avatar: "/assets/img/chat/jude.png" },
+];
+
+const ChatList = ({ chats, onSelectChat, onAddChat }) => {
+  const [selectedFriends, setSelectedFriends] = useState([]);
+
+  const toggleSelectFriend = (friend) => {
+    if (selectedFriends.includes(friend)) {
+      setSelectedFriends(selectedFriends.filter(f => f !== friend));
+    } else {
+      setSelectedFriends([...selectedFriends, friend]);
+    }
+  };
+
+  const handleAddSelectedChats = () => {
+    if (selectedFriends.length === 0) return;
+
+    const newChat = {
+      id: Date.now(), // unique id
+      name: selectedFriends.map(f => f.name).join(', '),
+      avatar: selectedFriends[0].avatar,
+      members: selectedFriends.map(f => ({
+        id: f.id,
+        name: f.name,
+        avatar: f.avatar
+      })),
+      lastComment: '',
+    };
+
+    onAddChat(newChat);
+    setSelectedFriends([]);
+  };
 
   return (
-    <div className="chat-list">
+    <div className="chat-list-container">
       <h3>멍친구랑 채팅하기</h3>
-      {chats.map(chat => (
-        <div key={chat.id} className="chat-list-item">
-          <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
-          <div className="chat-info">
-            <div className="chat-name">{chat.name}</div>
-            <div className="chat-last">{chat.lastComment}</div>
+
+      <div className="friend-flatlist-container">
+        <div className="friend-flatlist">
+          <div className="friend-item" onClick={handleAddSelectedChats}>
+            ➕
           </div>
+          {friends.map(friend => (
+            <div
+              key={friend.id}
+              className={`friend-item ${selectedFriends.includes(friend) ? 'selected' : ''}`}
+              onClick={() => toggleSelectFriend(friend)}
+            >
+              <img src={friend.avatar} alt={friend.name} className="friend-avatar" />
+              <div>{friend.name}</div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+
+      <div className="chat-list">
+        {chats.map(chat => (
+          <div key={chat.id} className="chat-list-item" onClick={() => onSelectChat(chat)}>
+            <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
+            <div className="chat-info">
+              <div className="chat-name">{chat.name}</div>
+              <div className="chat-last">{chat.lastComment}</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
