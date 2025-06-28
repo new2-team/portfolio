@@ -1,7 +1,13 @@
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faEllipsisVertical, faPaperclip, faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import Icon from '../../components/icons/Icon.js';
+import Text from '../../components/text/size.js';
 import ScheduleModal from './ScheduleModal.jsx';
+
+
+
+
 
 const ChatApp = ({ chat, onToggleScheduleAlert }) => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -51,13 +57,20 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
   };
 
   return (
-    <div className="chat-app">
+    <div className="chat-app"> 
       <div className="chat-header">
-        <img src={activeChat.avatar} alt={activeChat.name} className="chat-header-avatar" />
-        <h3>{activeChat.name}</h3>
-        <div className="chat-header-actions">
-          <button onClick={onToggleScheduleAlert}>⋯</button>
+       <div className="chat-header-left">
+          <img src={activeChat.avatar} alt={activeChat.name} className="chat-header-avatar" />
+          <Text.Body2 fontWeight="700" color="#000" style={{ margin: 0 }}>
+            {activeChat.name}
+          </Text.Body2>
         </div>
+        <div className="chat-header-actions">
+          <button onClick={onToggleScheduleAlert}>
+            <FontAwesomeIcon icon={faEllipsisVertical} style={{ fontSize: '24px' }}/>
+          </button>
+        </div>
+
       </div>
 
       <div className="chat-messages">
@@ -69,7 +82,10 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
       </div>
 
       <div className="chat-input" style={{ display: 'flex', alignItems: 'center' }}>
-        <button onClick={() => setIsScheduleModalOpen(true)}>📅</button>
+        <button onClick={() => setIsScheduleModalOpen(true)}>
+          <FontAwesomeIcon icon={faClock} style={{ color: '#999999', fontSize: '25px' }} />
+        </button>
+
 
         <div
           ref={messageInputRef}
@@ -91,7 +107,10 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
           </button>
         )}
 
-        <button onClick={() => fileInputRef.current.click()}>📷</button>
+        <button onClick={() => fileInputRef.current.click()}>
+          <FontAwesomeIcon icon={faPaperclip} style={{ color: '#999999', fontSize: '25px' }}/>
+        </button>
+
         <input
           type="file"
           accept="image/*"
@@ -100,7 +119,24 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
           onChange={handleImageSelect}
         />
 
-        <button onClick={handleSendMessage}>전송</button>
+        <button
+          onClick={handleSendMessage}
+          style={{
+            backgroundColor: '#F74C26',
+            border: 'none',
+            borderRadius: '50%',
+            width: '40px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            marginLeft: '7px',
+          }}
+        >
+          <FontAwesomeIcon icon={faPaperPlane} style={{ color: '#ffffff', fontSize: '20px', marginLeft: '-3px'  }} />
+        </button>
+
       </div>
 
       {isScheduleModalOpen && (

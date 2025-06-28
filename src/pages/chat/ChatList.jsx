@@ -1,11 +1,8 @@
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 const friends = [
-  { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
-  { id: 2, name: 'Melody', avatar: "/assets/img/chat/melody.png" },
-  { id: 3, name: 'Coco', avatar: "/assets/img/chat/coco.png" },
-  { id: 4, name: 'Choco', avatar: "/assets/img/chat/choco.png" },
-  { id: 5, name: 'Jude', avatar: "/assets/img/chat/jude.png" },
   { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
   { id: 2, name: 'Melody', avatar: "/assets/img/chat/melody.png" },
   { id: 3, name: 'Coco', avatar: "/assets/img/chat/coco.png" },
@@ -37,6 +34,7 @@ const ChatList = ({ chats, onSelectChat, onAddChat }) => {
         avatar: f.avatar
       })),
       lastComment: '',
+      unreadCount: 0, // 기본값 추가
     };
 
     onAddChat(newChat);
@@ -49,8 +47,11 @@ const ChatList = ({ chats, onSelectChat, onAddChat }) => {
 
       <div className="friend-flatlist-container">
         <div className="friend-flatlist">
-          <div className="friend-item" onClick={handleAddSelectedChats}>
-            ➕
+          <div
+            className="friend-item add-button"
+            onClick={handleAddSelectedChats}
+          >
+            <FontAwesomeIcon icon={faUserPlus} size="lg"/>
           </div>
           {friends.map(friend => (
             <div
@@ -59,7 +60,7 @@ const ChatList = ({ chats, onSelectChat, onAddChat }) => {
               onClick={() => toggleSelectFriend(friend)}
             >
               <img src={friend.avatar} alt={friend.name} className="friend-avatar" />
-              <div>{friend.name}</div>
+              <div style={{ fontSize: '12px' }}>{friend.name}</div>
             </div>
           ))}
         </div>
@@ -69,10 +70,15 @@ const ChatList = ({ chats, onSelectChat, onAddChat }) => {
         {chats.map(chat => (
           <div key={chat.id} className="chat-list-item" onClick={() => onSelectChat(chat)}>
             <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
+            
             <div className="chat-info">
               <div className="chat-name">{chat.name}</div>
               <div className="chat-last">{chat.lastComment}</div>
             </div>
+
+            {/* {(chat.unreadCount && chat.unreadCount > 0) && ( */}
+              <span className="unread-badge">2</span>
+            {/* // )} */}
           </div>
         ))}
       </div>

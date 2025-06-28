@@ -7,27 +7,28 @@ html, body, #root {
 }
 
 
-
 .chatting-container {
   display: flex;
   width: 100vw;
   height: 100vh;
+  background-color: #000000;
+  margin: 0;
+  padding: 0;
 }
 
 /* ------------------ ChatList -------------------- */
 .chat-list-container {
   flex: 0 0 20%;
   min-width: 200px;
-  height: 100%;
   display: flex;
   flex-direction: column;
   border-right: 1px solid #ddd;
   box-sizing: border-box;
   overflow-y: auto;
-  background-color: #fff; /* ✅ 추가하면 배경색으로 꽉 차 보임 */
-  margin: 0; /* ✅ 혹시 margin 이 있으면 제거 */
-  padding: 0; /* ✅ 필요 시 */
-  margin-left: 0;
+  background-color: #DFE1E5;
+  margin: 20px;
+  border-radius: 20px;
+  padding: 20px;
 }
 
 
@@ -37,6 +38,7 @@ html, body, #root {
   overflow-y: hidden;
   -ms-overflow-style: none;  /* IE, Edge */
   scrollbar-width: none;  /* Firefox */
+  margin: 10px 0 10px 0;
 }
 
 .friend-flatlist-container::-webkit-scrollbar {
@@ -48,6 +50,27 @@ html, body, #root {
   min-width: max-content; /* ✅ 자식 요소 총합이 container width를 넘으면 스크롤 생성 */
 }
 
+.add-button {
+  width: 50px;   /* 원하는 크기로 조정 가능 */
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  /* 그림자 효과를 주고 싶다면 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+  /* 아이콘 색상 변경 예시 */
+  color: #333; 
+}
+
+.add-button:hover {
+  background-color: #f0f0f0; /* hover 시 색상 변경 */
+}
+
 .friend-item {
   flex: 0 0 auto;
   text-align: center;
@@ -56,7 +79,7 @@ html, body, #root {
 }
 
 .friend-item.selected {
-  border: 2px solid blue;
+  background-color: #f0f0f0; /* hover 시 색상 변경 */
   border-radius: 8px;
 }
 
@@ -80,9 +103,39 @@ html, body, #root {
 }
 
 .chat-list-item {
+  position: relative;
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  background-color: #FFFCFE;
+  border-radius: 20px;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.unread-badge {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background-color: #F74C26;
+  color: white;
+  border-radius: 50px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 18px;
+  text-align: center;
+  z-index: 10; 
+}
+
+.chat-list-item:hover {
+  background-color: #e6e6e6; 
+}
+
+.chat-list-item.selected {
+  background-color: #e6e6e6; /* 선택된 상태 색상 */
 }
 
 .chat-avatar {
@@ -99,16 +152,21 @@ html, body, #root {
   font-weight: bold;
 }
 
+
 /* ------------------ChatApp------------------- */
 .chat-app-container {
   flex: 0 0 60%;
-  transition: flex 0.3s ease; /* ✅ 부드러운 확장 애니메이션 */
+  transition: flex 0.3s ease; 
   display: flex;
-  height: 100%;
+  background-color: #ffffff;
+  margin: 20px 0;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  overflow: hidden;
 }
 
 .chat-app-container.full-width {
-  flex: 0 0 80%; /* ✅ ScheduleAlert 닫히면 ChatApp이 80% 차지 */
+  flex: 0 0 80%; 
 }
 
 .chat-app {
@@ -120,10 +178,36 @@ html, body, #root {
   height: 100%;
 }
 
-
 .chat-header {
-  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
   border-bottom: 1px solid #ddd;
+}
+
+.chat-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.chat-header-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  margin-right: 20px;
+}
+
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+}
+
+.chat-header-actions button {
+  margin-left: 5px;
+  background-color: #fff;
 }
 
 .chat-messages {
@@ -155,6 +239,7 @@ html, body, #root {
 
 .chat-input {
   display: flex;
+  align-items: center;
   padding: 10px;
   border-top: 1px solid #ddd;
 }
@@ -165,34 +250,8 @@ html, body, #root {
 }
 
 .chat-input button {
-  margin-left: 5px;
-  padding: 8px 12px;
-  background: orange;
-  border: none;
-  color: white;
-  border-radius: 4px;
-}
-
-.chat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.chat-header-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.chat-header-actions {
-  display: flex;
-  align-items: center;
-}
-
-.chat-header-actions button {
-  margin-left: 5px;
+  padding: 8px 8px;
+  background-color: #fff;
 }
 
 .image-preview {
@@ -214,22 +273,6 @@ html, body, #root {
   border-radius: 5px;
 }
 
-.message-input img {
-  margin: 5px 0;
-}
-
-.chat-header-left {
-  display: flex;
-  align-items: center;
-}
-
-.chat-header-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
 .message-input {
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -240,11 +283,8 @@ html, body, #root {
   overflow-wrap: break-word;
 }
 
-.chat-input {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border-top: 1px solid #ddd;
+.message-input img {
+  margin: 5px 0;
 }
 
 .image-cancel-btn {
@@ -258,18 +298,21 @@ html, body, #root {
   align-items: center;
   justify-content: center;
 }
+
 /* --------------ScheduleAlert--------------- */
 .schedule-alert {
   flex: 0 0 20%;
   min-width: 200px;
-  height: 100%;
   border-left: 1px solid #ddd;
   box-sizing: border-box;
   overflow-y: auto;
   background-color: #fff;
+
+  margin: 20px 20px 20px 0;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  overflow: hidden;
 }
-
-
 
 
 .profile-section {
@@ -314,6 +357,8 @@ html, body, #root {
   margin-bottom: 5px;
 }
 
+/* 일정 modal 창*/
+
 .modal {
   position: fixed;
   top: 0;
@@ -357,8 +402,8 @@ html, body, #root {
 
 .modal-content button {
   margin-top: 10px;
-  background: #652f11;
-  color: white;
+  background: #fff;
+  color: #000;
   border: none;
   padding: 8px 12px;
   border-radius: 4px;
@@ -371,8 +416,8 @@ html, body, #root {
 }
 
 .modal-content.fixed-size {
-  width: 350px; /* 원하는 고정 width */
-  height: 500px; /* 원하는 고정 height */
+  width: 380px; /* 원하는 고정 width */
+  height: 415px; /* 원하는 고정 height */
   overflow-y: auto;
   background: white;
   padding: 20px;

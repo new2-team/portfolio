@@ -11,11 +11,11 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
   const [selectedFriends, setSelectedFriends] = useState([]);
 
   const friends = [
-    { id: 1, name: 'Soul', avatar: '/dog1.jpg' },
-    { id: 2, name: 'Melody', avatar: '/dog2.jpg' },
-    { id: 3, name: 'Coco', avatar: '/dog3.jpg' },
-    { id: 4, name: 'Jude', avatar: '/dog4.jpg' },
-    { id: 5, name: 'Choco', avatar: '/dog5.jpg' },
+    { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
+    { id: 2, name: 'Melody', avatar: "/assets/img/chat/melody.png" },
+    { id: 3, name: 'Coco', avatar: "/assets/img/chat/coco.png" },
+    { id: 4, name: 'Choco', avatar: "/assets/img/chat/choco.png" },
+    { id: 5, name: 'Jude', avatar: "/assets/img/chat/jude.png" },
   ];
 
   const toggleFriend = (friend) => {
@@ -47,7 +47,6 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
       <div className="modal-content fixed-size">
         {step === 1 ? (
           <>
-            <h3>날짜를 선택하세요</h3>
             <Calendar
               onChange={setSelectedDate}
               value={selectedDate}
