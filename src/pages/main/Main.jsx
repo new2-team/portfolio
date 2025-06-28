@@ -26,11 +26,6 @@ import PopupCard from "../../components/popUp/PopupCard";
 
 const Main = () => {
 
-/*    const handleConfirm = () => {
-        console.log("추천하기 버튼 눌림");
-        // 여기에 실제 로직 작성
-    };*/
-
 
     return (
         <section>
@@ -146,12 +141,6 @@ const Main = () => {
             </div>
 
 
-    {/*        <PopupCard
-                title="친구가 추천을 보냈어요!"
-                actions={[
-                    { label: "추천하기", onClick: handleConfirm, type: "primary" },
-                ]}
-            />*/}
 
 
         </section>
