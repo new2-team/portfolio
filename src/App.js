@@ -6,6 +6,7 @@ import theme from "./styles/theme";
 import Main from "./pages/main/Main";
 import {RouterProvider} from "react-router-dom";
 import Router from "./routes/router";
+import Header from "./components/layout/Header";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <GlobalStyle />
             <RouterProvider router={Router}/>
+            <Header />
         </ThemeProvider>
     </>
   );

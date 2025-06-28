@@ -14,6 +14,7 @@ export const flexColumn = css`
 export const flexRow = css`
     display: flex;
     flex-direction: row;
+    align-items: center;
 `
 
 export const container = css`
@@ -23,3 +24,7 @@ export const container = css`
     padding: 0 240px;
     box-sizing: border-box;
 `
+
+
+
+
