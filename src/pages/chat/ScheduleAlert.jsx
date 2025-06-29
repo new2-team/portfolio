@@ -1,4 +1,7 @@
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
+
 
 const ScheduleAlert = () => {
   const [activeTab, setActiveTab] = useState('schedule');
@@ -6,9 +9,18 @@ const ScheduleAlert = () => {
   const schedules = [
     { id: 1, title: 'Taking a walk by the Han River' },
     { id: 2, title: "Soul's birthday party" },
-  ];
+  ]; 
 
   const images = [
+    { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
+    { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
+    { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
+    { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
+    { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
+    { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
+    { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
+    { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
+    { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
     { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
     { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
     { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
@@ -34,13 +46,18 @@ const ScheduleAlert = () => {
         >
           이미지
         </button>
-      </div>
+      </div> 
 
       {activeTab === 'schedule' ? (
         <div className="schedule-list">
           {schedules.map(s => (
             <div key={s.id} className="schedule-item">
-              <span>✅</span> {s.title}
+              <FontAwesomeIcon icon={faCircleCheck} className="schedule-icon" />
+              <div className="schedule-text">
+                <div className="schedule-label">예정된 일정</div>
+                <div className="schedule-title">{s.title}</div>
+              </div>
+              <div className="schedule-divider"></div>
             </div>
           ))}
         </div>

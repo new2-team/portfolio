@@ -1,9 +1,10 @@
 html, body, #root {
   margin: 0;
   padding: 0;
-  height: 100%;
-  width: 100%;
+  width: 100vw;
+  height: 100vh; 
   overflow: hidden; /* ✅ 전체 스크롤 제거 */
+  background-color: #D3D3D3;
 }
 
 
@@ -11,21 +12,22 @@ html, body, #root {
   display: flex;
   width: 100%;
   height: 100vh; 
-  background-color: #000000;
+  background-color: #D3D3D3;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 /* ------------------ ChatList -------------------- */
 .chat-list-container {
   flex: 0 0 20%;
-  min-width: 200px;
+  min-width: 290px;
   display: flex;
   flex-direction: column;
   border-right: 1px solid #ddd;
   box-sizing: border-box;
   overflow-y: auto;
-  background-color: #DFE1E5;
+  background-color: #F5F5F5;
   margin: 20px;
   border-radius: 20px;
   padding: 20px;
@@ -154,8 +156,6 @@ html, body, #root {
   display: flex;
   background-color: #ffffff;
   margin: 20px 0;
-  /* border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px; */
   border-radius: 30px;
   overflow: hidden;
 }
@@ -270,29 +270,52 @@ html, body, #root {
 
 .message-input {
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 20px;
   padding: 8px;
   min-height: 40px;
   flex: 1;
   margin: 0 10px;
+  outline: none;
   overflow-wrap: break-word;
+  min-height: 40px;
+}
+
+.message-input:empty:before {
+  content: '메시지 입력';
+  color: #999;
+  position: absolute;
+  pointer-events: none;
 }
 
 .message-input img {
   margin: 5px 0;
 }
 
-.image-cancel-btn {
-  background: #ff6b6b;
-  color: white;
+.message-input:hover,
+.message-input:focus {
+  border-color: #ccc; /* 기존 border 색상 유지 */
+  box-shadow: none;
+}
+
+.send-button {
+  background-color: #F74C26 !important;
   border: none;
-  border-radius: 5px;
-  width: 30px;
-  height: 30px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  margin-left: 7px;
 }
+
+.send-icon {
+  color: #fff;
+  font-size: 20px;
+  margin-left: -3px;
+}
+
 
 /* --------------ScheduleAlert--------------- */
 .schedule-alert {
@@ -329,20 +352,58 @@ html, body, #root {
 
 .tabs button {
   flex: 1;
-  padding: 5px;
+  padding: 10px;
   border: none;
   background: #fff;
   cursor: pointer;
 }
 
 .schedule-list {
-  margin-top: 10px;
+  /* margin-top: 10px; */
 }
 
 .schedule-item {
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
+  gap: 10px; 
+  padding: 20px 10px 20px 10px;
+  position: relative;
+}
+
+.schedule-icon {
+  background-color: #fff;
+  color: #FFBA2C;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.schedule-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-label {
+  font-size: 12px;
+  color: gray;
+}
+
+.schedule-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.schedule-divider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #ddd;
 }
 
 .tabs button.active {
@@ -352,11 +413,24 @@ html, body, #root {
 .image-gallery {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  overflow-y: auto; 
+  max-height: 530px;
+}
+
+.image-gallery::-webkit-scrollbar {
+  display: none;
+}
+
+.image-gallery {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
 }
 
 .gallery-img {
   width: 100%;
-  height: auto;
+  aspect-ratio: 1 / 1; 
+  object-fit: cover;   
+  border-radius: 0;    
 }
 
 /* ---------일정 modal 창----------- */
@@ -411,12 +485,12 @@ html, body, #root {
   border-radius: 15px; 
   border: none; 
   font-weight: bold;
-   margin-top: auto; 
+  margin-top: auto; 
 }
 
 .react-calendar {
   width: 100%;
-  border: none;
+  border: none !important;
   font-family: sans-serif;
 }
 
@@ -500,12 +574,16 @@ html, body, #root {
   margin-right: 10px;
   cursor: pointer;
   object-fit: cover;
-  border: 2px solid transparent;
+  border: 5px solid transparent;
   transition: border 0.2s;
 }
 
 .friend-avatar.selected {
-  border: 2px solid #5C2000; /* ✅ 선택된 친구 테두리 강조 */
+  border: 4px solid #FFBA2C;
+}
+
+.friend-avatar:hover {
+  filter: brightness(0.85);
 }
 
 

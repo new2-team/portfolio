@@ -15,6 +15,7 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
   const [location, setLocation] = useState('');
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [title, setTitle] = useState('');
+  const [error, setError] = useState(''); // ✅ 에러 메시지 state 추가
 
   const friends = [
     { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
@@ -25,8 +26,8 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
   ];
 
   const toggleFriend = (friend) => {
-    if (selectedFriends.includes(friend)) {
-      setSelectedFriends(selectedFriends.filter(f => f !== friend));
+    if (selectedFriends.find(f => f.id === friend.id)) {
+      setSelectedFriends(selectedFriends.filter(f => f.id !== friend.id));
     } else {
       setSelectedFriends([...selectedFriends, friend]);
     }
@@ -36,6 +37,11 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
     if (step === 1 && selectedDate) {
       setStep(2);
     } else if (step === 2) {
+      if (!title.trim()) {
+        setError('일정을 작성해주세요');
+        return; // ✅ 입력 없으면 진행 불가
+      }
+
       const newSchedule = {
         title,
         date: selectedDate.toISOString().split('T')[0],
@@ -43,14 +49,19 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
         location,
         friends: selectedFriends,
       };
+
       onAddSchedule(newSchedule);
-      onClose();
+      onClose(); // ✅ 입력 후 모달창 닫힘
     }
   };
 
-  // ✅ 장소 변경 함수 (지도 기능 제거)
   const handleLocationChange = (e) => {
     setLocation(e.target.value);
+  };
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+    if (error) setError(''); // ✅ 입력 시 에러 초기화
   };
 
   return (
@@ -82,10 +93,13 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
                 type="text"
                 placeholder="새로운 일정을 추가해주세요"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={handleTitleChange}
                 className="modal-title-input"
               />
             </div>
+
+            {/* ✅ 에러 메시지 표시 */}
+            {error && <div style={{ color: 'red', marginLeft: '35px', marginTop: '-10px', marginBottom: '10px', fontSize: '13px' }}>{error}</div>}
 
             <div className="input-group-container">
               <FontAwesomeIcon icon={faCalendarDays} style={{ color: '#616161', marginRight: '15px' }} />
@@ -126,7 +140,7 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
                   key={friend.id}
                   src={friend.avatar}
                   alt={friend.name}
-                  className={`friend-avatar ${selectedFriends.includes(friend) ? 'selected' : ''}`}
+                  className={`friend-avatar ${selectedFriends.find(f => f.id === friend.id) ? 'selected' : ''}`}
                   onClick={() => toggleFriend(friend)}
                 />
               ))}
