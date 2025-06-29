@@ -1,14 +1,20 @@
+import { faArrowLeft, faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import 'react-clock/dist/Clock.css';
+import TimePicker from 'react-time-picker';
+import 'react-time-picker/dist/TimePicker.css';
+import './Chatting.css';
 
 const ScheduleModal = ({ onClose, onAddSchedule }) => {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
   const [location, setLocation] = useState('');
   const [selectedFriends, setSelectedFriends] = useState([]);
+  const [title, setTitle] = useState('');
 
   const friends = [
     { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
@@ -31,9 +37,9 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
       setStep(2);
     } else if (step === 2) {
       const newSchedule = {
-        date: selectedDate.toDateString(),
+        title,
+        date: selectedDate.toISOString().split('T')[0],
         startTime,
-        endTime,
         location,
         friends: selectedFriends,
       };
@@ -42,53 +48,78 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
     }
   };
 
+  // ✅ 장소 변경 함수 (지도 기능 제거)
+  const handleLocationChange = (e) => {
+    setLocation(e.target.value);
+  };
+
   return (
-    <div className="modal">
-      <div className="modal-content fixed-size">
+    <div className="modal" onClick={onClose}>
+      <div className="modal-content fixed-size" onClick={(e) => e.stopPropagation()}>
         {step === 1 ? (
           <>
-            <Calendar
-              onChange={setSelectedDate}
-              value={selectedDate}
-              prevLabel={null}
-              nextLabel={null}
-              navigationLabel={() => null}
-            />
-            <button onClick={handleAdd}>Add</button>
+            <div className="calendar-container">
+              <Calendar
+                onChange={setSelectedDate}
+                value={selectedDate}
+                formatDay={(locale, date) => date.getDate()}
+              />
+            </div>
+
+            <button className="full-width-button" onClick={handleAdd}>
+              추가하기
+            </button>
           </>
         ) : (
           <>
             <div className="modal-header">
-              <h3>새로운 일정을 추가하세요</h3>
-              <button onClick={onClose}>✖️</button>
-            </div>
-            <div>
-              <label>날짜: {selectedDate.toDateString()}</label>
-            </div>
-            <div>
-              <label>시작 시간:</label>
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
+              <FontAwesomeIcon
+                icon={faArrowLeft}
+                style={{ color: '#616161', marginLeft: '-10px', marginRight: '20px', cursor: 'pointer' }}
+                onClick={() => setStep(1)}
               />
-            </div>
-            <div>
-              <label>종료 시간:</label>
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>위치:</label>
               <input
                 type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                placeholder="새로운 일정을 추가해주세요"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="modal-title-input"
               />
             </div>
+
+            <div className="input-group-container">
+              <FontAwesomeIcon icon={faCalendarDays} style={{ color: '#616161', marginRight: '15px' }} />
+              <div className="input-group">
+                <span>{selectedDate.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric', weekday: 'short' })}</span>
+              </div>
+            </div>
+            
+            <div className="input-group-container">
+              <FontAwesomeIcon icon={faClock} style={{ color: '#616161', marginRight: '15px' }} />
+              <div className="input-group">
+                <TimePicker
+                  onChange={setStartTime}
+                  value={startTime}
+                  disableClock={true}
+                  clearIcon={null}
+                  clockIcon={null}
+                  format="HH:mm"
+                />
+              </div>
+            </div>
+
+            <div className="input-group-container">
+              <FontAwesomeIcon icon={faLocationDot} style={{ color: '#616161', marginRight: '15px' }} />
+              <div className="input-group">
+                <input
+                  type="text"
+                  value={location}
+                  placeholder="장소를 입력하세요"
+                  onChange={handleLocationChange}
+                />
+              </div>
+            </div>
+
             <div className="friends-select">
               {friends.map(friend => (
                 <img
@@ -97,11 +128,11 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
                   alt={friend.name}
                   className={`friend-avatar ${selectedFriends.includes(friend) ? 'selected' : ''}`}
                   onClick={() => toggleFriend(friend)}
-                  style={{ width: '40px', borderRadius: '50%', margin: '5px', cursor: 'pointer' }}
                 />
               ))}
             </div>
-            <button onClick={handleAdd}>Add</button>
+
+            <button onClick={handleAdd} className="full-width-button">일정추가</button>
           </>
         )}
       </div>
