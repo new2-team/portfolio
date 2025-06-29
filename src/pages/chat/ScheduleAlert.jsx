@@ -26,13 +26,13 @@ const ScheduleAlert = () => {
           className={activeTab === 'schedule' ? 'active' : ''}
           onClick={() => setActiveTab('schedule')}
         >
-          schedule
+          일정
         </button>
         <button
           className={activeTab === 'images' ? 'active' : ''}
           onClick={() => setActiveTab('images')}
         >
-          images
+          이미지
         </button>
       </div>
 
@@ -52,7 +52,6 @@ const ScheduleAlert = () => {
               src={img.src}
               alt={img.alt}
               className="gallery-img"
-              style={{ width: '100%', borderRadius: '8px', marginBottom: '5px' }}
             />
           ))}
         </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ChatApp from './ChatApp';
 import ChatList from './ChatList';
 import './Chatting.css';
-import ScheduleAlert from './ScheduleAlert';
+import ScheduleAlert from './ScheduleAlert.jsx';
 
 const Chatting = () => {
   const [selectedChat, setSelectedChat] = useState(null);
@@ -39,9 +39,9 @@ const Chatting = () => {
           chat={selectedChat}
           onClose={() => setSelectedChat(null)}
           onToggleScheduleAlert={toggleScheduleAlert}
-        />
+          />
+          {showScheduleAlert && <ScheduleAlert />}
       </div>
-      {showScheduleAlert && <ScheduleAlert />}
     </div>
   );
 };
