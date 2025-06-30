@@ -18,8 +18,32 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
   };
 
   const messages = [
-    { id: 1, sender: activeChat.name, text: chat ? '안녕하세요!' : '' },
-  ];
+  {
+    id: 1,
+    sender: 'me',
+    text: '안녕!',
+    time: '오전 10:15',
+    read: true,
+    date: '2025-06-30',
+  },
+  {
+    id: 2,
+    sender: 'other',
+    text: '사진 보낼게',
+    image: '/assets/img/cat.jpg',
+    time: '오전 10:16',
+    date: '2025-06-30',
+  },
+  {
+    id: 3,
+    sender: 'me',
+    text: '귀엽다!',
+    time: '오전 10:17',
+    read: false,
+    date: '2025-07-01',
+  },
+];
+
 
   const handleAddSchedule = (newSchedule) => {
     console.log('새 일정 추가:', newSchedule);
@@ -85,12 +109,37 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
       </div>
 
       <div className="chat-messages">
-        {messages.map(msg => (
-          <div key={msg.id} className={`chat-message ${msg.sender === 'me' ? 'me' : 'other'}`}>
-            {msg.text}
-          </div>
-        ))}
+        {messages.reduce((acc, msg, idx, arr) => {
+          const prevMsg = arr[idx - 1];
+          const showDateDivider = !prevMsg || prevMsg.date !== msg.date;
+
+          if (showDateDivider) {
+            acc.push(
+              <div key={`date-${msg.date}`} className="date-divider">
+                {msg.date}
+              </div>
+            );
+          }
+
+          acc.push(
+            <div key={msg.id} className={`chat-message ${msg.sender === 'me' ? 'me' : 'other'}`}>
+              <div className="message-bubble">
+                {msg.text && <div className="message-text">{msg.text}</div>}
+                {msg.image && <img src={msg.image} alt="message" className="message-image" />}
+                <div className="message-info">
+                  <span className="message-time">{msg.time}</span>
+                  {msg.sender === 'me' && (
+                    <span className="message-read">{msg.read ? '읽음' : '전송됨'}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+          return acc;
+        }, [])}
       </div>
+
 
       <div className="chat-input" style={{ display: 'flex', alignItems: 'center' }}>
         <button onClick={() => setIsScheduleModalOpen(true)}>
