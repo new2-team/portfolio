@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import {container} from "../../styles/common";
+import {wrapper} from "../../styles/common";
 
-const Wrapper = styled.section`
-    ${container}
+const Wrapper = styled.div`
+    ${wrapper}
 `
 
 export default Wrapper;
