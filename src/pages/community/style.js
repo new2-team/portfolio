@@ -9,6 +9,7 @@ S.Background = styled.div`
   /* background-color: ${({theme}) => theme.PALLETE.primary["light"]}; */
   display: flex;
   justify-content: center;
+  background-color: #FFF5EC;
 `
 
 S.Wrapper = styled.div`

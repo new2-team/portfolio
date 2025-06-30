@@ -4,6 +4,7 @@ import CommunityInputContainer from './CommunityInputContainer';
 import CommunitySelect from './CommunitySelect';
 import CommunityNoText from './CommunityNoText';
 import Accordion from '../../components/accordion/Accordion';
+import ButtonWithInput from '../../components/input/ButtonWithInput';
 
 const Community = () => {
   return (
@@ -17,7 +18,6 @@ const Community = () => {
             <S.MoreTextBox>더보기</S.MoreTextBox>
           </S.MoreTextBoxWrapper>
         </S.Wrapper>
-        <Accordion question="자주 하는 질문1" answer="자주 하는 질문1 답변" />
       </S.Background>
     </>
   );
