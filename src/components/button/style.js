@@ -32,28 +32,28 @@ const basicButtonCSS = {
     superSmall: css`
         padding: ${({ theme }) => `${theme.SPACING["18"]} ${theme.SPACING["36"]}`};
         border-radius: 10px;
-        font-size: ${({theme}) => theme.FONT_SIZE["caption2"] };
+        font-size: ${({theme}) => theme.FONT_SIZE["body4"] };
         font-weight: ${({theme}) => theme.FONT_WEIGHT["semiBold"] };
         line-height: 1;
     `,
     small: css`
         padding: ${({ theme }) => `${theme.SPACING["18"]} ${theme.SPACING["78"]}`};
         border-radius: 10px;
-        font-size: ${({theme}) => theme.FONT_SIZE["caption2"] };
+        font-size: ${({theme}) => theme.FONT_SIZE["body3"] };
         font-weight: ${({theme}) => theme.FONT_WEIGHT["semiBold"] };
         line-height: 1;
     `,
     medium: css`
         padding: ${({ theme }) => `${theme.SPACING["18"]} ${theme.SPACING["148"]}`};
         border-radius: 10px;
-        font-size: ${({theme}) => theme.FONT_SIZE["caption2"] };
+        font-size: ${({theme}) => theme.FONT_SIZE["body2"] };
         font-weight: ${({theme}) => theme.FONT_WEIGHT["semiBold"] };
         line-height: 1;
     `,
     large: css`
         padding: ${({ theme }) => `${theme.SPACING["18"]} ${theme.SPACING["278"]}`};
         border-radius: 10px;
-        font-size: ${({theme}) => theme.FONT_SIZE["caption2"] };
+        font-size: ${({theme}) => theme.FONT_SIZE["body2"] };
         font-weight: ${({theme}) => theme.FONT_WEIGHT["semiBold"] };
         line-height: 1;
     `,
@@ -96,6 +96,7 @@ const Button = styled.button`
   ${({roundButton}) => roundButtonCSS[roundButton]}
   ${({basicButton}) => basicButtonCSS[basicButton]}
   ${({variant}) => variantCSS[variant]}
+  gap: 0 8px;
   ${spacingProps}
   ${flexCenter};
 `
