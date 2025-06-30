@@ -3,7 +3,7 @@ import {flexCenter} from "../../../styles/common";
 
 const S = {};
 
-S.FooterWrapper = styled.div`
+S.FooterWrapper = styled.footer`
     width: 100%;
     background-color: #CF4B05;
     padding: 50px 240px 70px 240px;
