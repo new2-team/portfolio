@@ -13,13 +13,14 @@ Text.H1 = styled.h1`
     color: ${({color}) => {return color}};
 `;
 
-Text.H2 = styled.h2`
+Text.H2 = styled.h1`
   font-size: ${({ theme }) => theme.FONT_SIZE.h2};
   line-height: ${({ theme }) => theme.LINE_HEIGHT.h2};
   ${spacingProps}
   ${({ fontWeight = 'regular', ...props }) => fontWeightCSS[fontWeight]?.(props)}
     color: ${({color}) => {return color}};
 `;
+
 
 Text.H3 = styled.h3`
   font-size: ${({ theme }) => theme.FONT_SIZE.h3};
@@ -64,6 +65,7 @@ Text.Body1 = styled.p`
 Text.Body2 = styled.p`
   font-size: ${({ theme }) => theme.FONT_SIZE.body2};
   line-height: ${({ theme }) => theme.LINE_HEIGHT.body2};
+  ${({ fontWeight = 'regular', ...props }) => fontWeightCSS[fontWeight]?.(props)}
   ${spacingProps}
   color: ${({color}) => {return color}};
 `;
