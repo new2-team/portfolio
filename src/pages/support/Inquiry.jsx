@@ -6,7 +6,7 @@ import PasswordInput from '../../components/input/PasswordInput';
 
 const Inquiry = () => {
     return (
-        <div>
+        <S.InquiryWrapper>
             <SupportMenuComponent activeMenu="inquiry" />
 
             <div>
@@ -19,7 +19,7 @@ const Inquiry = () => {
                 </div>
             </div>
 
-        </div>
+        </S.InquiryWrapper>
     );
 };
 
