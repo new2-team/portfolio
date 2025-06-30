@@ -6,6 +6,9 @@ import theme from "./styles/theme";
 import Main from "./pages/main/Main";
 import {RouterProvider} from "react-router-dom";
 import Router from "./routes/router";
+import Header from "./components/layout/header/Header";
+import PopUpTest from "./components/popUp/PopUpTest";
+import HeaderTest from "./components/layout/header/HeaderTest";
 
 function App() {
   return (
