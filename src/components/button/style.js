@@ -4,7 +4,7 @@ import {flexCenter} from "../../styles/common";
 
 //케이스에 따른 분류
 const variantCSS = {
-    default : css`
+    default : css` 
         background-color: ${({theme}) => theme.PALLETE.white};
         color: ${({theme}) => theme.PALLETE.primary["main"]};
         border: 1px solid ${({theme}) => theme.PALLETE.primary["main"]};
