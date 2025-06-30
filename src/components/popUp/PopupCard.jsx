@@ -1,30 +1,38 @@
 import React from 'react';
 import S from './style';
+import Text from "../text/size";
+import BasicButton from "../button/BasicButton";
 
-const PopupCard = ({ title, description, actions = [] }) => {
+const PopupCard = ({ title, description, actions = [], onClose }) => {
     return (
-        <S.Wrapper>
-            <S.Title>{title}</S.Title>
+        <S.Dimmed onClick={onClose}>
+            <S.Wrapper onClick={(e) => e.stopPropagation()}>
+                <Text.Body1 color={"#CF4B05"}  fontWeight={700}>{title}</Text.Body1>
 
-            {description && (
-                <S.Description>
-                    {description.split('\n').map((line, i) => (
-                        <span key={i}>
-              {line}
-                            <br />
-            </span>
+                {description && (
+                    <Text.Caption3
+                        color="#707070"
+                        mt="24"
+                        style={{ whiteSpace: 'pre-line', maxWidth: '220px' }}
+                    >
+                        {description}
+                    </Text.Caption3>
+                )}
+
+                <S.ButtonGroup $count={actions.length} mt="30">
+                    {actions.map(({ label, onClick, type = 'primary' }, idx) => (
+                        <BasicButton
+                            roundButton="superSmall"
+                            variant={type}
+                            key={idx}
+                            onClick={onClick}
+                        >
+                            {label}
+                        </BasicButton>
                     ))}
-                </S.Description>
-            )}
-
-            <S.ButtonGroup $count={actions.length}>
-                {actions.map(({ label, onClick, type = 'primary' }, idx) => (
-                    <S.Button key={idx} $type={type} onClick={onClick}>
-                        {label}
-                    </S.Button>
-                ))}
-            </S.ButtonGroup>
-        </S.Wrapper>
+                </S.ButtonGroup>
+            </S.Wrapper>
+        </S.Dimmed>
     );
 };
 

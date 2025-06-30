@@ -5,8 +5,6 @@ import { ReactComponent as EyeOnIcon } from '../icons/eye-on.svg';
 import { ReactComponent as EyeOffIcon } from '../icons/eye-off.svg';
 
 
-
-
 const S = {}
 
 S.Input = styled.input`
