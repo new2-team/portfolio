@@ -54,7 +54,7 @@ const router = createBrowserRouter([
             { path: "chatting", element: <Chatting /> }, // 채팅
             { path: "calendar", element: <Calendar /> }, // 캘린더 메인
             { path: "calendar-month", element: <CalendarMonth /> }, // 캘린더 월별
-            { path: "calendar-day", element: <CalendarDay /> }, // 캘린더 일별
+            { path: "calendar-day/:eventId", element: <CalendarDay /> }, // 캘린더 일별
 
             // 지우
             { path: "faq", element: <Faq /> }, // Faq

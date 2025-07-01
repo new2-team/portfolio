@@ -1,3 +1,5 @@
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './style';
 
 const CompletedSchedule = () => {
@@ -7,13 +9,20 @@ const CompletedSchedule = () => {
   ];
 
   return (
-    <div style={styles.completedSchedule}>
-      <h3>완료된 일정</h3>
-      {completed.map((item) => (
-        <div key={item.id} style={styles.scheduleItem}>
-          {item.title}
+    <div style={styles.comingSchedule}>  
+      <h3>완료된 일정, 일기를 남겨주세요!</h3>
+      <div style={styles.scheduleContainer}>
+          {completed.map((completed) => (
+            <div key={completed.id} style={styles.scheduleItem}>
+              <FontAwesomeIcon icon={faCircleCheck} style={styles.scheduleIcon} />
+              <div style={styles.scheduleText}>
+                <div style={styles.scheduleLabel}>예정된 일정</div>
+                <div style={styles.scheduleTitle}>{completed.title}</div>
+              </div>
+              <div style={styles.scheduleLine}></div>
+            </div>
+          ))}
         </div>
-      ))}
     </div>
   );
 };

@@ -1,21 +1,29 @@
 import { faArrowLeft, faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ko } from 'date-fns/locale'; // ✅ 한국어 locale import
 import { useState } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import './Chatting.css';
 
-const ScheduleModal = ({ onClose, onAddSchedule }) => {
-  const [step, setStep] = useState(1);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+const ScheduleModal = ({
+  onClose,
+  onAddSchedule = () => {},
+  step: initialStep = 1,
+  date: initialDate = new Date(),
+}) => {
+  const [step, setStep] = useState(initialStep);
+  const [selectedDate, setSelectedDate] = useState(
+    typeof initialDate === 'string' ? new Date(initialDate) : initialDate
+  );
   const [startTime, setStartTime] = useState('');
   const [location, setLocation] = useState('');
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [title, setTitle] = useState('');
-  const [error, setError] = useState(''); // ✅ 에러 메시지 state 추가
+  const [error, setError] = useState('');
 
   const friends = [
     { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
@@ -39,7 +47,7 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
     } else if (step === 2) {
       if (!title.trim()) {
         setError('일정을 작성해주세요');
-        return; // ✅ 입력 없으면 진행 불가
+        return;
       }
 
       const newSchedule = {
@@ -51,7 +59,7 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
       };
 
       onAddSchedule(newSchedule);
-      onClose(); // ✅ 입력 후 모달창 닫힘
+      onClose();
     }
   };
 
@@ -61,7 +69,7 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
-    if (error) setError(''); // ✅ 입력 시 에러 초기화
+    if (error) setError('');
   };
 
   return (
@@ -70,10 +78,11 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
         {step === 1 ? (
           <>
             <div className="calendar-container">
-              <Calendar
-                onChange={setSelectedDate}
-                value={selectedDate}
-                formatDay={(locale, date) => date.getDate()}
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                inline
+                locale={ko}
               />
             </div>
 
@@ -87,7 +96,14 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
               <FontAwesomeIcon
                 icon={faArrowLeft}
                 style={{ color: '#616161', marginLeft: '-10px', marginRight: '20px', cursor: 'pointer' }}
-                onClick={() => setStep(1)}
+                onClick={() => {
+                  setStep(1);
+                  setTitle('');
+                  setStartTime('');
+                  setLocation('');
+                  setSelectedFriends([]);
+                  setError('');
+                }}
               />
               <input
                 type="text"
@@ -98,8 +114,11 @@ const ScheduleModal = ({ onClose, onAddSchedule }) => {
               />
             </div>
 
-            {/* ✅ 에러 메시지 표시 */}
-            {error && <div style={{ color: 'red', marginLeft: '35px', marginTop: '-10px', marginBottom: '10px', fontSize: '13px' }}>{error}</div>}
+            {error && (
+              <div style={{ color: 'red', marginLeft: '35px', marginTop: '-10px', marginBottom: '10px', fontSize: '13px' }}>
+                {error}
+              </div>
+            )}
 
             <div className="input-group-container">
               <FontAwesomeIcon icon={faCalendarDays} style={{ color: '#616161', marginRight: '15px' }} />

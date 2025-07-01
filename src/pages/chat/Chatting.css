@@ -542,17 +542,59 @@
   margin-top: auto; 
 }
 
-.react-calendar {
-  width: 100%;
+/* 전체 캘린더 배경과 너비 */
+/* 전체 달력 컨테이너 */
+/* ✅ DatePicker 전체 컨테이너를 모달 너비에 맞춤 */
+.react-datepicker {
+  width: 100% !important;   /* 모달에 꽉 차게 */
+  background-color: white !important;
   border: none !important;
-  font-family: sans-serif;
+  font-family: var(--global-font, 'Pretendard', sans-serif) !important;
+  box-sizing: border-box;
 }
 
-.react-calendar__tile--active {
-  background: orange !important;
-  color: white !important;
-  border-radius: 8px;
+/* ✅ 헤더도 100%로 */
+.react-datepicker__header {
+  background-color: white !important;
+  border-bottom: none !important;
+  width: 100% !important;
 }
+
+/* ✅ 달력 월 전체를 모달에 맞춤 */
+.react-datepicker__month {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: space-between !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  width: 100% !important;
+
+}
+
+/* ✅ 요일 이름들 */
+.react-datepicker__day-names {
+  display: flex !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  margin-top: 20px;
+}
+
+/* ✅ 각 날짜 셀 */
+.react-datepicker__day {
+  flex: 1 0 100% !important; 
+  text-align: center !important;
+  box-sizing: border-box !important;
+  padding: 8px 0 
+}
+
+/* ✅ 선택된 날짜 스타일 */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: orange !important;
+  color: white !important;
+  border-radius: 8px !important;
+}
+
+
 
 /*  모달창 일정 설정하는거 */
 .modal-header {
