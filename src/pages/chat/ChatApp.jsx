@@ -159,7 +159,6 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
                 {msg.text && <div className="message-text">{msg.text}</div>}
                 {msg.image && <img src={msg.image} alt="message" className="message-image" />}
               </div>
-
               <div className="message-info-outside">
                 <span className="message-time">{msg.time}</span>
                 {msg.sender === 'me' && (

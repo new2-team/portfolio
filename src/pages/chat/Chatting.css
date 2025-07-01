@@ -209,6 +209,9 @@
 
 .chat-messages::-webkit-scrollbar {
   display: none;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
 }
 
 .date-divider {
@@ -257,7 +260,6 @@
   display: flex;
 }
 
-
 .message-text {
   margin-bottom: 4px;
 }
@@ -273,6 +275,7 @@
   justify-content: flex-end;
   font-size: 10px;
   color: #000;
+
 }
 
 .message-time {
