@@ -17,19 +17,13 @@
     "@testing-library/user-event": "^13.2.1",
     "react": "^19.1.0",
     "react-calendar": "^6.0.0",
-<<<<<<< HEAD
     "react-clock": "^6.0.0",
-=======
->>>>>>> chat
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.4",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.1",
     "react-scripts": "^5.0.1",
-<<<<<<< HEAD
-=======
     "react-time-picker": "^7.0.0",
->>>>>>> calendar
     "redux": "^5.0.1",
     "redux-actions": "^3.0.3",
     "styled-components": "^6.1.18",
