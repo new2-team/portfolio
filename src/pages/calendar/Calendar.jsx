@@ -28,7 +28,7 @@ const Calendar = () => {
     setSelectedDate(eventDate);
   };
 
-  const handleBackToMonth = () => {
+  const handleBackToMonth = () => { 
     setSelectedEventId(null);
   };
 

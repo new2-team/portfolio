@@ -20,7 +20,7 @@ const MiniCalendar = ({ onDateClick }) => {
           selected={selected}
           onChange={handleDateChange}
           inline
-          calendarStartDay={0} // ✅ 일요일 시작 (react-datepicker는 locale 설정 기반)
+          calendarStartDay={0}
         />
       </div>
     </div>

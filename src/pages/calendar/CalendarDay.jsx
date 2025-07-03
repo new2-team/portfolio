@@ -12,6 +12,9 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
 
   const weekStart = startOfWeek(new Date(selectedDate), { weekStartsOn: 0 });
 
+  // ✅ selectedDate 기준으로 영문 월 + 연도 표시
+  const selectedMonthYear = format(new Date(selectedDate), 'MMMM yyyy');
+
   const weekDates = Array.from({ length: 7 }).map((_, idx) => {
     const dateObj = addDays(weekStart, idx);
     return {
@@ -31,6 +34,15 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
         <button onClick={onBack} style={{ marginRight: '10px' }}>← Back</button>
         <h2>선택된 일정 상세: {selectedDate}</h2>
       </div>
+
+      <h3 style={{
+        marginTop: '10px',
+        marginBottom: '10px',
+        fontSize: '24px',
+        fontWeight: '400',
+      }}>
+        {selectedMonthYear}
+      </h3>
 
       <div
         style={{

@@ -1,6 +1,6 @@
 import { faArrowLeft, faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ko } from 'date-fns/locale'; // ✅ 한국어 locale import
+import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 import 'react-clock/dist/Clock.css';
 import DatePicker from 'react-datepicker';
