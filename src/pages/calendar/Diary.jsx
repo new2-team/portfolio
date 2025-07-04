@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from './style';
 
 const Diary = ({ eventId }) => {
   const [text, setText] = useState('');
@@ -14,16 +15,18 @@ const Diary = ({ eventId }) => {
   };
 
   return (
-    <div className="diary-card">
-      <h3>일정에 대한 일기를 써보세요!</h3>
+    <div style={styles.diaryCard}>
+      <h3 style={styles.diaryTitle}>일정에 대한 일기를 써보세요!</h3>
+
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="일기를 입력하세요..."
-        style={{ width: '100%', height: '200px', resize: 'none', marginBottom: '10px' }}
+        style={styles.textarea}
       />
-      <div className="diary-buttons">
-        <label htmlFor="image-upload" className="image-upload-button">
+
+      <div style={styles.diaryButtons}>
+        <label htmlFor="image-upload" style={styles.imageUploadButton}>
           📷
         </label>
         <input
@@ -33,9 +36,12 @@ const Diary = ({ eventId }) => {
           onChange={handleImageChange}
           style={{ display: 'none' }}
         />
-        <button onClick={handleSave} className="save-button">Add</button>
+        <button onClick={handleSave} style={styles.saveButton}>
+          Add
+        </button>
       </div>
     </div>
+
   );
 };
 

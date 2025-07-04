@@ -2,6 +2,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import { useRef } from 'react';
+import './Calendar.css';
 import styles from './style';
 
 const CalendarMonth = ({ onDateClick, onEventClick }) => {
@@ -40,7 +41,7 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
   };
 
   return (
-    <div style={styles.calendarMonth}>
+    <div className={styles.calendarContainer}>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
@@ -49,8 +50,16 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
         dateClick={handleDateClick}
         eventClick={handleEventClick}
         height="auto"
+        eventColor="#FFDECD"
+        eventTextColor="#000000"
+        headerToolbar={{
+          left: 'title',
+          center: '',
+          right: 'prev,next'
+        }}
       />
     </div>
+
   );
 };
 

@@ -2,6 +2,7 @@ import { addDays, format, startOfWeek } from 'date-fns';
 import { useEffect, useState } from 'react';
 import Diary from './Diary';
 import Schedule from './Schedule';
+import styles from './style';
 
 const CalendarDay = ({ eventId, onBack, initialDate }) => {
   const [selectedDate, setSelectedDate] = useState(initialDate);
@@ -29,44 +30,24 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div>
-        <button onClick={onBack} style={{ marginRight: '10px' }}>← Back</button>
-        <h2>선택된 일정 상세: {selectedDate}</h2>
-      </div>
-
-      <h3 style={{
-        marginTop: '10px',
-        marginBottom: '10px',
-        fontSize: '24px',
-        fontWeight: '400',
-      }}>
+    <div style={styles.calendarDay}>
+      <h3 style={styles.calendarDayTitle}>
         {selectedMonthYear}
       </h3>
 
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'nowrap',
-          overflowX: 'auto',
-          gap: '10px',
-          marginBottom: '20px',
-        }}
-      >
+      <div style={styles.calendarDayHeaderContainer}>
         {weekDates.map((d) => (
           <div
             key={d.date}
             onClick={() => handleDateChange(d.date)}
             style={{
-              flex: '0 0 auto',
+              flex: '1 1 0',
               padding: '8px 10px',
-              borderRadius: '8px',
+              borderRadius: '15px',
               backgroundColor: selectedDate === d.date ? '#000' : '#f0f0f0',
               color: selectedDate === d.date ? '#fff' : '#000',
               cursor: 'pointer',
               textAlign: 'center',
-              minWidth: '65px',
-              maxWidth: '80px',
               height: '60px',
               display: 'flex',
               flexDirection: 'column',
@@ -74,15 +55,18 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
               alignItems: 'center',
               fontSize: '13px',
               lineHeight: '16px',
+              minWidth: '0',
+              maxWidth: 'none',
             }}
           >
-            <div>{d.day}</div>
-            <div>{d.dayNum}</div>
+            <div style={styles.headerEng}>{d.day}</div>
+            <div style={styles.headerDay}>{d.dayNum}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: '20px', padding: '10px' }}>
+
+      <div style={styles.calendarDayContainer}>
         <Schedule eventId={eventId} selectedDate={selectedDate} />
         <Diary eventId={eventId} selectedDate={selectedDate} />
       </div>

@@ -1,6 +1,7 @@
 import { faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
+import styles from './style';
 
 const Schedule = ({ eventId }) => {
   const [schedule, setSchedule] = useState(null);
@@ -25,32 +26,36 @@ const Schedule = ({ eventId }) => {
   if (!schedule) return <div>Loading...</div>;
 
   return (
-    <div className="schedule-card">
-      <h3>{schedule.title}</h3>
-      <div className="input-group-container">
-        <FontAwesomeIcon icon={faCalendarDays} style={{ marginRight: '10px' }} />
+    <div style={styles.scheduleCard}>
+      <h3 style={styles.scheduleTitle}>{schedule.title}</h3>
+
+      <div style={styles.inputGroupContainer}>
+        <FontAwesomeIcon icon={faCalendarDays} style={styles.icon} />
         <span>{schedule.date}</span>
       </div>
-      <div className="input-group-container">
-        <FontAwesomeIcon icon={faClock} style={{ marginRight: '10px' }} />
+
+      <div style={styles.inputGroupContainer}>
+        <FontAwesomeIcon icon={faClock} style={styles.icon} />
         <span>{schedule.startTime} ~ {schedule.endTime}</span>
       </div>
-      <div className="input-group-container">
-        <FontAwesomeIcon icon={faLocationDot} style={{ marginRight: '10px' }} />
+
+      <div style={styles.inputGroupContainer}>
+        <FontAwesomeIcon icon={faLocationDot} style={styles.icon} />
         <span>{schedule.location}</span>
       </div>
 
-      <div className="friends-select">
+      <div style={styles.friendsSelect}>
         {schedule.friends.map((f, idx) => (
-          <img key={idx} src={f} alt="friend" className="friend-avatar" />
+          <img key={idx} src={f} alt="friend" style={styles.friendAvatar} />
         ))}
       </div>
 
-      <div className="schedule-buttons">
-        <button className="edit-button">Edit</button>
-        <button className="delete-button">Delete</button>
+      <div style={styles.scheduleButtons}>
+        <button style={styles.editButton}>수정하기</button>
+        <button style={styles.deleteButton}>삭제하기</button>
       </div>
     </div>
+
   );
 };
 
