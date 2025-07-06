@@ -19,7 +19,7 @@ const CompletedSchedule = () => {
                 ...styles.scheduleItem,
                 borderTop: '1px solid #ddd',
                 paddingTop: '15px',
-                paddingBottom: '15px',
+                // paddingBottom: '15px',
               }}
             >
               <FontAwesomeIcon icon={faCircleCheck} style={styles.completedIcon} />

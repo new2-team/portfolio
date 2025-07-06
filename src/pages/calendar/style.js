@@ -18,12 +18,21 @@ const styles = {
   main: {
     flex: 1,
     width: '100%',
-    // padding: '20px',
     margin: '20px',
     boxSizing: 'border-box',
     overflowY: 'auto',
     backgroundColor: "#fff",
     borderRadius: '20px',
+  },
+  calendarContainer: {
+    padding: '20px',
+    overflow: 'auto',
+    scrollbarWidth: 'none', 
+    msOverflowStyle: 'none',
+  },
+  // ✅ Webkit 기반 (Chrome, Safari)
+  '&::-webkit-scrollbar': {
+    display: 'none',
   },
   // 미니 캘린더 위젯
   miniCalendar: {
@@ -56,11 +65,11 @@ const styles = {
     paddingTop: '10px',
   },
   scheduleItem: {
+    display: 'flex',
     backgroundColor: "#fff",
-    position: 'relative',
     display: 'flex',
     alignItems: 'center',
-    gap: '15px',
+    gap: '10px',
   },
   scheduleIcon: {
     width: '28px',
@@ -69,6 +78,7 @@ const styles = {
     color: '#ffba2c',
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   completedIcon: {
     width: '28px',
@@ -77,6 +87,7 @@ const styles = {
     color: '#f74c26',
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   scheduleText: {
     display: 'flex',
@@ -87,7 +98,7 @@ const styles = {
     color: 'gray',
   },
   scheduleTitle: {
-    fontSize: '16px',
+    fontSize: '12px',
     fontWeight: 'bold',
   },
   // 월별 캘린더
@@ -99,7 +110,6 @@ const styles = {
   calendarDay: {
     boxSizing: 'border-box',
     width: '100%',
-    height: '100%',
     backgroundColor: '#fff',
   },
   calendarDayTitle: {
@@ -132,7 +142,7 @@ const styles = {
     flexWrap: 'nowrap',
     overflowX: 'auto',
     width: '100%',
-    // height: '100%',
+    height: '100%',
     backgroundColor: '#F6F6F6',
     borderRadius: '20px',
     boxSizing: 'border-box',
@@ -144,7 +154,7 @@ const styles = {
   scheduleCard: {
     backgroundColor: '#fff',
     borderRadius: '12px',
-    padding: '15px',
+    padding: '30px',
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     marginBottom: '20px',
     width: '100%',
@@ -152,53 +162,67 @@ const styles = {
     margin: '0 50px 0 50px',
   },
   scheduleTitle: {
-    fontSize: '18px',
+    fontSize: '22px',
     fontWeight: 'bold',
-    marginBottom: '12px',
+    margin: '10px',
+    marginBottom: '40px',
   },
   inputGroupContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '8px',
+    margin: '10px',
+    marginTop: '25px',
     color: '#333',
-    fontSize: '14px',
+    fontSize: '20px',
   },
   icon: {
-    marginRight: '10px',
-    color: '#555',
+    size: '20px',
+    marginRight: '15px',
+    color: '#616161',
+  }, 
+  inputGroup: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    borderRadius: '10px',
+    padding: '10px',
+    display: 'flex',
+    alignItems: 'center',
   },
   friendsSelect: {
     display: 'flex',
-    marginTop: '12px',
-    marginBottom: '12px',
+    flexWrap: 'nowrap',
+    overflowX: 'auto',
+    WebkitOverflowScrolling: 'touch',
+    padding: '20px 0',
+    scrollbarWidth: 'none',
+    maxWidth: `${(80 + 10) * 5}px`,
+    margin: '30px 0 30px 0',
   },
   friendAvatar: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
+    flex: '0 0 auto',
+    width: '80px',
+    height: '80px',
+    borderRadius: '50px',
+    marginRight: '10px',
+    cursor: 'pointer',
     objectFit: 'cover',
-    marginRight: '6px',
+    border: '5px solid transparent',
+    transition: 'border 0.2s',
   },
   scheduleButtons: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     gap: '10px',
+    margin: '10px',
+  },
+  selectedFriendAvatar: {
+    border: '4px solid #FFBA2C',
   },
   editButton: {
-    backgroundColor: '#4CAF50',
-    color: '#fff',
-    border: 'none',
-    padding: '8px 12px',
-    borderRadius: '6px',
-    cursor: 'pointer',
+    width: '100%',
   },
   deleteButton: {
-    backgroundColor: '#F44336',
-    color: '#fff',
-    border: 'none',
-    padding: '8px 12px',
-    borderRadius: '6px',
-    cursor: 'pointer',
+    width: '100%',
   },
 
   // Diary

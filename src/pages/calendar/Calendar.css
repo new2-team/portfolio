@@ -113,3 +113,9 @@
   border: none !important;
 }
 
+/* 일별 캘린더 친구 스크롤바 없애기 */
+.friends-select::-webkit-scrollbar {
+  display: none;
+}
+
+

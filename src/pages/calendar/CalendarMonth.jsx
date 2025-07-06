@@ -41,7 +41,7 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
   };
 
   return (
-    <div className={styles.calendarContainer}>
+    <div style={styles.calendarContainer}>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
