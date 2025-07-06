@@ -3,6 +3,7 @@ import { spacingProps } from "../../styles/spacingProps";
 import { flexCenter, flexColumn } from "../../styles/common";
 import { faHandPointDown } from "@fortawesome/free-solid-svg-icons/faHandPointDown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import BasicButton from "../../components/button/BasicButton";
 const S = {}
 
 S.Background = styled.div`
@@ -314,12 +315,7 @@ S.TBButton = styled.div`
     
   }
 
-  .imgUpload {
-    height: 42px;
-    width: 42px;
-    display: flex;
-    ${flexCenter};
-  }
+ 
   
 `
 S.TBBWrapper = styled.div`
@@ -396,6 +392,11 @@ S.HCTBWrapper = styled.div`
   gap: 15px;
 `
 
+S.ArrowButton = styled.button`
+  background: none;
+  /* background-color: transparent; */
+`
+
 S.ProfileNameWrapper = styled.div`
   display: flex;
   gap: 27px;
@@ -436,6 +437,12 @@ S.HeartComment = styled.div`
     height: 25px;
   }
 `
+
+S.DeleteButton = styled.button`
+  background: none;
+
+`
+
 S.HeartLine = styled.div`
   display: flex;
   align-items: center;
@@ -477,10 +484,20 @@ S.CommentProfilWrapper = styled.div`
   .TRName {
     font-size : ${({theme}) => theme.FONT_SIZE.caption2};
   }
-
+  
   .TRTime {
     font-size : ${({theme}) => theme.FONT_SIZE.caption2};
+    color: ${({theme}) => theme.PALLETE.background.gray300};
   }
+  `
+
+S.ProfileName = styled.span`
+  font-size : ${({theme}) => theme.FONT_SIZE.body2};
+  `
+S.ProfileTime = styled.span`
+  font-size : ${({theme}) => theme.FONT_SIZE.body3};
+  color: ${({theme}) => theme.PALLETE.background.gray300};
+
 `
 
 S.CommentNameWrapper = styled.div`
@@ -500,11 +517,43 @@ S.CommentLine = styled.div`
   align-items: center;
 `
 
-S.PlusComment = styled.div`
+S.PlusComment = styled.button`
   text-decoration: underline;
-  margin-right: 4px;
+  background: none;
   font-size : ${({theme}) => theme.FONT_SIZE.caption2};
   color: ${({theme}) => theme.PALLETE.text.disabled["strong"]};
+  margin-right: 7px;
+  `
+
+S.PlusCommentResultWrapper = styled.div`
+  display: flex;
+
+  img {
+    height: 42px;
+    width: 42px;
+    margin-right: 22px;
+    gap: 10px;
+  }
+`
+
+S.PlusCommentWrapper = styled.div`
+  display: flex;
+  img {
+    height: 42px;
+    width: 42px;
+    margin-right: 22px;
+    gap: 10px;
+  }
+`
+
+S.DeleteCommentButton = styled.button`
+  /* margin-bottom: 4px; */
+  background: none;
+  color: ${({theme}) => theme.PALLETE.primary["main"]};
+  text-decoration: underline;
+  font-size : ${({theme}) => theme.FONT_SIZE.caption2};
+
+
 `
 
 S.CommentWrapper = styled.div`
@@ -517,6 +566,8 @@ S.CommentWrapper = styled.div`
     margin-top: 2px;
   }
 `
+
+
 
 S.CommentInput = styled.input`
   width: 787px;
@@ -559,11 +610,17 @@ S.CommentInput = styled.input`
 `
 
 
+
 S.MoreTextBoxWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 24px;
   
+`
+S.MoreTextButton = styled(BasicButton)`
+  border-radius: 52px;
+  margin-bottom: 40px;
+  margin-top: 43px;
 `
 
 S.MoreTextBox = styled.button`
@@ -657,6 +714,80 @@ S.ConfirmButtonWrapper = styled.div`
   /* justify-content: space-around; */
   gap: 20px;
   
+`
+
+//댓글 프로필 사진
+S.ProfileImage = styled.img`
+    height: 42px;
+    width: 42px;
+    margin-right: 22px;
+    margin-left: 5%;
+    gap: 10px;
+`
+
+// 대댓글
+S.PlusCommentResultWrapper =styled.div`
+
+  `
+S.PCRTop = styled.div`
+  display: flex;
+  align-items: center;
+
+  .TRName {
+    font-size : ${({theme}) => theme.FONT_SIZE.caption2};
+  }
+  
+  .TRTime {
+    margin-left: 24px;
+    font-size : ${({theme}) => theme.FONT_SIZE.caption2};
+    color: ${({theme}) => theme.PALLETE.background.gray300};
+  }
+
+`
+S.PCRBottom = styled.div`
+  margin-left: 9%;
+  margin-top: 10px;
+  margin-bottom: 15px;
+`
+
+S.PlusCommentInput = styled.input`
+  width: 700px;
+  height: 64px;
+  border-radius: 26px;
+  background-color: ${({ theme }) => theme.PALLETE.background.white};
+  border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
+  font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
+  line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
+  padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
+  ${spacingProps}
+
+      //아무스 호버 상태
+      &:hover {
+          border-color: ${({ theme }) => theme.PALLETE.primary.main};
+      }
+      //placeholder 텍스트 색상
+      &::placeholder {
+          color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
+      }
+
+      //입력중일때
+      &:focus {
+          outline: none;
+          border-color: ${({ theme }) => theme.PALLETE.primary.main};
+          box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+      }
+
+      //disabled 상태일때
+      &:disabled {
+          outline: none;
+          background-color: ${({ theme }) => theme.PALLETE.background.gray100};
+          border: none;
+      }
+
+      //입력 다 한 상태
+      &:not(:focus):not(:placeholder-shown) {
+          border-color: ${({ theme }) => theme.PALLETE.primary.main};
+      }
 `
 
 

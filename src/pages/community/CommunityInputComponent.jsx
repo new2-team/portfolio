@@ -13,7 +13,8 @@ const CommunityInputComponent = ({post, setPost}) => {
                     ...newPost,
                     id: Date.now(),
                     likeCount:0,
-                    commentList: []
+                    commentList: [],
+                    createdAt : new Date().toISOString()
                 }];
                 setPost(updatePost)
                 setNewPost({title: "", content: ""});
@@ -38,7 +39,7 @@ const CommunityInputComponent = ({post, setPost}) => {
               }} maxLength={500} />
               <S.TBBWrapper>
                 <button className='imgUpload' type='submit'>
-                  <img src="logo192.png" alt="pictureUpload" />
+                  사진
                 </button>
                 <button onClick={() => {
                   if(newPost.title && newPost.content){

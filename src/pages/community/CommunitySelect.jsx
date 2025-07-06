@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import S from './style';
+import searchImg from "../../components/icons/search.svg";
 const CommunitySelect = () => {
 
 
@@ -14,7 +15,7 @@ const CommunitySelect = () => {
         </S.SearchSelect>
         <S.SearchInput type="text" placeholder='검색어를 입력하세요'/>
           <S.SearchInputButton type='submit'>
-            <img src="logo192.png" alt="searchInputButton" />
+            <img src={searchImg} alt="searchInputButton" />
           </S.SearchInputButton>
         </S.Search>
         <S.Filter>

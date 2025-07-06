@@ -14,14 +14,72 @@ const CommunityInputContainer = () => {
 
   const handleComment = (postId, newComment) => {
     if(newComment.trim() === "") return;
+
+    const commentObject = {
+      id : Date.now(),
+      text: newComment,
+      createdAt : new Date().toISOString(),
+      replies : []
+    }
+
     setPost(prev => prev.map(post => post.id === postId ?
-      {...post, commentList: [...post.commentList, newComment]}
+      {...post, commentList: [...post.commentList, commentObject]}
       : post
     ))
   }
   const [commentInput, setCommentInput] = useState({})
 
   const [countComment,setCountComment] = useState('')
+
+  // 게시글 삭제
+  const deletePost = (postId) => {
+    setPost(prev => prev.filter(post => post.id !== postId))
+  }
+
+  const deleteComment = (postId, commentId) => {
+    setPost(prev => prev.map(post => post.id === postId ? 
+      {
+        ...post,
+        commentList: post.commentList.filter(comment => comment.id !== commentId)
+      } : post
+    ))
+  }
+
+  // 대댓글
+  const [replyInput, setReplyInput] = useState({})
+  const [openReplyInput, setOpenReplyInput] = useState({});
+  const toggleReplyInput = (commentId) => {
+    setOpenReplyInput(prev => ({
+      ...prev,
+      [commentId] : !prev[commentId]
+    }))
+  }
+
+  const addReply = (postId, commentId, replyText) => {
+    if(replyText.trim() === "") return;
+
+    const replyObject = {
+      id : Date.now(),
+      text : replyText,
+      createdAt : new Date().toISOString()
+    }
+
+    setPost(prev => prev.map(post => {
+      if(post.id !== postId) return post;
+      return{
+        ...post,
+        commentList : post.commentList.map(comment => {
+          if (comment.id === commentId){
+            return {
+              ...comment,
+              replies: [...(comment.replies || []), replyObject]
+            }
+          }
+          return comment;
+        })
+      }
+    }))
+  }
   
 
   return (
@@ -32,7 +90,10 @@ const CommunityInputContainer = () => {
       {post.length > 0 ? 
       <CommunityInputResultComponent post={post} openPost={openPost} togglePost={togglePost} handleLike={handleLike}
       handleComment={handleComment} setCommentInput={setCommentInput} commentInput={commentInput}
-      countComment={countComment} setCountComment={setCountComment}  /> : null}
+      countComment={countComment} setCountComment={setCountComment} deletePost={deletePost} 
+      deleteComment={deleteComment} openReplyInput={openReplyInput} toggleReplyInput={toggleReplyInput}
+      replyInput={replyInput} setReplyInput={setReplyInput} addReply={addReply} setOpenReplyInput={setOpenReplyInput}
+      /> : null}
     </div>
   );
 };
