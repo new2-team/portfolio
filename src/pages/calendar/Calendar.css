@@ -118,4 +118,9 @@
   display: none;
 }
 
+/* 일별 캘린더 diary textArea 스크롤바 없애기 */
+textarea::-webkit-scrollbar {
+  display: none;
+}
+
 

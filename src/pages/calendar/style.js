@@ -98,7 +98,7 @@ const styles = {
     color: 'gray',
   },
   scheduleTitle: {
-    fontSize: '12px',
+    fontSize: '16px',
     fontWeight: 'bold',
   },
   // 월별 캘린더
@@ -161,11 +161,15 @@ const styles = {
     boxSizing: 'border-box',
     margin: '0 50px 0 50px',
   },
-  scheduleTitle: {
+  scheduleTitle2: {
     fontSize: '22px',
     fontWeight: 'bold',
     margin: '10px',
-    marginBottom: '40px',
+    marginBottom: '20px',
+    border: 'none', 
+    outline: 'none', 
+    boxShadow: 'none', 
+    background: 'transparent',
   },
   inputGroupContainer: {
     display: 'flex',
@@ -187,6 +191,22 @@ const styles = {
     padding: '10px',
     display: 'flex',
     alignItems: 'center',
+  },
+  datePicker: {
+    border: 'none', 
+    outline: 'none', 
+    boxShadow: 'none', 
+    background: 'transparent',
+    fontSize: '18px',
+    width: '100%',
+  },
+  location: {
+    border: 'none',
+    outline: 'none', 
+    background: 'transparent',
+    flex: 1,
+    fontSize: '18px',
+    width: '100%',
   },
   friendsSelect: {
     display: 'flex',
@@ -232,28 +252,41 @@ const styles = {
     padding: '16px',
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     width: '100%',
-    height: '100%',
     boxSizing: 'border-box',
     margin: '0 50px 0 50px',
+    overflowY: 'auto',
   },
   diaryTitle: {
-    fontSize: '18px',
+    fontSize: '22px',
     fontWeight: 'bold',
     marginBottom: '12px',
-    padding: '10px',
+    padding: '20px',
   },
   textarea: {
     width: '100%',
-    height: '400px',
+    height: '70%',
     resize: 'none',
     marginBottom: '10px',
-    padding: '10px',
+    padding: '20px',
     fontSize: '14px',
     borderRadius: '10px',
     backgroundColor: '#F6F6F6',
     boxSizing: 'border-box',
     border: 'none',
     outline: 'none',   
+  },
+  textField: {
+    width: '100%',
+    minHeight: '180px',
+    maxHeight: '400px',
+    height: 'auto',
+    padding: '20px',
+    marginBottom: '10px',
+    fontSize: '14px',
+    borderRadius: '10px',
+    backgroundColor: '#F6F6F6',
+    overflowY: 'auto',
+    resize: 'none',
   },
   diaryButtons: {
     display: 'flex',
@@ -270,6 +303,15 @@ const styles = {
     marginRight: '10px',
     width: '100%',
   },
+  editButton2: {
+    width: '100%',
+    margin: '10px',
+  },
+  deleteButton2: {
+    width: '100%',
+    margin: '10px',
+  },
+
 
 };
 

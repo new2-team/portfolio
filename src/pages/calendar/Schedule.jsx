@@ -7,46 +7,31 @@ import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import styles from './style';
 
-
 const Schedule = ({ eventId, selectedDate }) => {
   const [schedule, setSchedule] = useState({});
   const [title, setTitle] = useState('');
-  const [showError, setShowError] = useState(false); // input창 유효성
+  const [showError, setShowError] = useState(false);
 
-  const [startTime, setStartTime] = useState(null); // startTime 입력
-
-
+  const [startTime, setStartTime] = useState(null);
   const [location, setLocation] = useState('');
 
   const [selectedFriends, setSelectedFriends] = useState([]);
-  const [hoveredFriend, setHoveredFriend] = useState(null); // ✅ hover 상태
+  const [hoveredFriend, setHoveredFriend] = useState(null);
+
+  const [friends, setFriends] = useState([
+    '/assets/img/chat/soul.png',
+    '/assets/img/chat/melody.png',
+    '/assets/img/chat/coco.png',
+    '/assets/img/chat/soul.png',
+    '/assets/img/chat/melody.png',
+    '/assets/img/chat/coco.png',
+  ]);
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleLocationChange = (e) => setLocation(e.target.value);
 
   useEffect(() => {
     const dummy = {};
-    // const dummy = {
-    //   title: 'Meeting with Melody',
-    //   date: '2023-12-17',
-    //   startTime: '6:00',
-    //   endTime: '7:00',
-    //   location: '멍멍 애견카페',
-    //   friends: [
-    //     '/assets/img/chat/soul.png',
-    //     '/assets/img/chat/melody.png',
-    //     '/assets/img/chat/coco.png',
-    //     '/assets/img/chat/soul.png',
-    //     '/assets/img/chat/melody.png',
-    //     '/assets/img/chat/coco.png',
-    //     '/assets/img/chat/soul.png',
-    //     '/assets/img/chat/melody.png',
-    //     '/assets/img/chat/coco.png',
-    //     '/assets/img/chat/soul.png',
-    //     '/assets/img/chat/melody.png',
-    //     '/assets/img/chat/coco.png',
-    //   ],
-    // };
     setSchedule(dummy);
   }, [eventId]);
 
@@ -54,7 +39,12 @@ const Schedule = ({ eventId, selectedDate }) => {
     if (schedule.title) {
       setSelectedFriends([friend]);
     } else {
-      setSelectedFriends(schedule.friends);
+      // toggle 방식
+      setSelectedFriends((prev) =>
+        prev.includes(friend)
+          ? prev.filter((f) => f !== friend)
+          : [...prev, friend]
+      );
     }
   };
 
@@ -70,7 +60,6 @@ const Schedule = ({ eventId, selectedDate }) => {
     }
   }
 
-  // 저장버튼
   const handleSave = () => {
     if (!title.trim()) {
       setShowError(true);
@@ -83,14 +72,14 @@ const Schedule = ({ eventId, selectedDate }) => {
   return (
     <div style={styles.scheduleCard}>
       {schedule.title ? (
-        <h3 style={styles.scheduleTitle}>{schedule.title}</h3>
+        <h3 style={styles.scheduleTitle2}>{schedule.title}</h3>
       ) : (
         <input
           type="text"
           placeholder="새로운 일정을 추가해주세요"
           value={title}
           onChange={handleTitleChange}
-          style={styles.scheduleTitle}
+          style={styles.scheduleTitle2}
         />
       )}
 
@@ -118,10 +107,13 @@ const Schedule = ({ eventId, selectedDate }) => {
               showTimeSelect
               showTimeSelectOnly
               timeIntervals={30}
-              // timeCaption="시작 시간"
               dateFormat="h:mm aa"
               placeholderText="시작 시간을 선택하세요"
-              style={styles.datePicker}
+              customInput={
+                <input
+                  style={styles.datePicker}
+                />
+              }
             />
           </span>
         </div>
@@ -138,43 +130,35 @@ const Schedule = ({ eventId, selectedDate }) => {
               placeholder="장소를 입력하세요"
               value={location}
               onChange={handleLocationChange}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                flex: 1,
-                fontSize: '14px',
-                outline: 'none',
-              }}
+              style={styles.location}
             />
           )}
         </span>
       </div>
 
-      {schedule.friends && schedule.friends.length > 0 && (
-        <div
-          className="friends-select"
-          style={{
-            ...styles.friendsSelect,
-            maxWidth: `${(80 + 10) * 5}px`, // ✅ 80px(avatar) + 10px(margin) * 5
-          }}
-        >
-          {schedule.friends.map((f, idx) => (
-            <img
-              key={idx}
-              src={f}
-              alt="friend"
-              onClick={() => handleSelectFriend(f)}
-              onMouseEnter={() => setHoveredFriend(f)}
-              onMouseLeave={() => setHoveredFriend(null)}
-              style={{
-                ...styles.friendAvatar,
-                ...(selectedFriends.includes(f) ? styles.selectedFriendAvatar : {}),
-                filter: hoveredFriend === f ? 'brightness(0.85)' : 'none',
-              }}
-            />
-          ))}
-        </div>
-      )}
+      <div
+        className="friends-select"
+        style={{
+          ...styles.friendsSelect,
+          maxWidth: `${(80 + 10) * 5}px`,
+        }}
+      >
+        {(schedule.friends && schedule.friends.length > 0 ? schedule.friends : friends).map((f, idx) => (
+          <img
+            key={idx}
+            src={f}
+            alt="friend"
+            onClick={() => handleSelectFriend(f)}
+            onMouseEnter={() => setHoveredFriend(f)}
+            onMouseLeave={() => setHoveredFriend(null)}
+            style={{
+              ...styles.friendAvatar,
+              ...(selectedFriends.includes(f) ? styles.selectedFriendAvatar : {}),
+              filter: hoveredFriend === f ? 'brightness(0.85)' : 'none',
+            }}
+          />
+        ))}
+      </div>
 
       <div style={styles.scheduleButtons}>
         {schedule.title ? (
