@@ -17,48 +17,51 @@ import CalendarDay from "../pages/calendar/CalendarDay";
 import Faq from "../pages/support/Faq";
 import Inquiry from "../pages/support/Inquiry";
 import Layout from "../pages/layout/Layout";
-
-
+import FindId from "../pages/auth/FindId";
+import FindPassword from "../pages/auth/FindPassword";
 
 const router = createBrowserRouter([
-    {
-        path : "/",
-        element : <Layout />,
-        children: [
-            // 지우
-            { path: "main", element: <Main /> }, // 메인
-            { path: "matching", element: <Matching /> }, // 강아지 매칭화면
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      // 지우
+      { path: "main", element: <Main /> }, // 메인
+      { path: "matching", element: <Matching /> }, // 강아지 매칭화면
 
-            // 선희
-            { path: "sign-in", element: <SignIn /> }, // 로그인
-            { path: "sign-up", element: <SignUp /> }, // 회원가입
-            { path: "accept-terms", element: <AcceptTerms /> }, // 회원가입 약관동의
-            { path: "sign-up-complete", element: <SignUpComplete /> }, // 회원가입 완료
+      // 선희
+      { path: "sign-in", element: <SignIn /> }, // 로그인
+      { path: "sign-up", element: <SignUp /> }, // 회원가입
+      { path: "accept-terms", element: <AcceptTerms /> }, // 회원가입 약관동의
+      { path: "sign-up-complete", element: <SignUpComplete /> }, // 회원가입 완료
 
-            // 희진
-            { path: "add-profile", element: <AddProfile /> }, // 강아지 프로필 등록
-            { path: "add-health-profile", element: <AddHealthProfile /> }, // 강아지 건강정보
+      // 희진
+      { path: "add-profile", element: <AddProfile /> }, // 강아지 프로필 등록
+      { path: "add-health-profile", element: <AddHealthProfile /> }, // 강아지 건강정보
 
-            // 승보
-            { path: "dbti-question", element: <DbtiQuestion /> }, // DBTI퀴즈
-            { path: "dbti-result", element: <DbtiResult /> }, // DBTI 결과
+      // 승보
+      { path: "dbti-question", element: <DbtiQuestion /> }, // DBTI퀴즈
+      { path: "dbti-result", element: <DbtiResult /> }, // DBTI 결과
 
-            // 준재
-            { path: "my-page", element: <MyPage /> }, // 마이페이지
+      // 준재
+      { path: "my-page", element: <MyPage /> }, // 마이페이지
 
-            // 유진
-            { path: "community", element: <Community /> }, // 커뮤니티
+      // 유진
+      { path: "community", element: <Community /> }, // 커뮤니티
 
-            // 민주
-            { path: "chatting", element: <Chatting /> }, // 채팅
-            { path: "calendar-month", element: <CalendarMonth /> }, // 캘린더 월별
-            { path: "calendar-day", element: <CalendarDay /> }, // 캘린더 일별
+      // 민주
+      { path: "chatting", element: <Chatting /> }, // 채팅
+      { path: "calendar-month", element: <CalendarMonth /> }, // 캘린더 월별
+      { path: "calendar-day", element: <CalendarDay /> }, // 캘린더 일별
 
-            // 지우
-            { path: "faq", element: <Faq /> }, // Faq
-            { path: "customer-inquiry", element: <Inquiry /> }, // 1:1 문의
-        ]
-    }
-])
+      // 지우
+      { path: "faq", element: <Faq /> }, // Faq
+      { path: "customer-inquiry", element: <Inquiry /> }, // 1:1 문의
+
+      { path: "find-id", element: <FindId /> }, // 아이디 찾기
+      { path: "find-password", element: <FindPassword /> }, // 비밀번호 찾기
+    ],
+  },
+]);
 
 export default router;
