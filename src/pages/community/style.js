@@ -4,6 +4,7 @@ import { flexCenter, flexColumn } from "../../styles/common";
 import { faHandPointDown } from "@fortawesome/free-solid-svg-icons/faHandPointDown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BasicButton from "../../components/button/BasicButton";
+import SelectBox from "../../components/selectBox/SelectBox";
 const S = {}
 
 S.Background = styled.div`
@@ -23,98 +24,165 @@ S.Search = styled.div`
   position: relative;
   margin-bottom: 38px;
   margin-top: 118px;
+  
+  input {
+    border-radius: 26px;
+    width: 194px;
+    height: 64px;
+    border-color: ${({ theme }) => theme.PALLETE.background.gray300};
+  }
+  
+  ul {
+    border-radius: 26px;
+    border-color: ${({ theme }) => theme.PALLETE.background.gray300};
+
+  }
+
+
 `
 
-S.SearchSelect = styled.select`
-  border-radius: 26px;
-  width: 194px;
+S.SearchSelect = styled.div `
+  border-color: ${({ theme }) => theme.PALLETE.background.gray100};
+  input {
+    border-radius: 26px;
+    width: 194px;
+    height: 64px;
+  }
+  /* width: 194px;
   height: 64px;
   margin-right: 25px;
   padding-right: 24px;
   padding-left: 24px;
-  font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
-  border: 1px solid ${({ theme }) => theme.PALLETE.background.gray100};
-  line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
-  padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
-  color: ${({ theme }) => theme.PALLETE.text.main};
-  &:hover {
-        border-color: ${({ theme }) => theme.PALLETE.primary.main};
-  };
-  &:focus {
-        outline: none;
-        border-color: ${({ theme }) => theme.PALLETE.primary.main};
-        box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
-  };
-
+  border: none; */
 `
 
-
-
-S.SearchInput = styled.input`
-  width: 539px;
-  height: 64px;
-  background-color: ${({ theme }) => theme.PALLETE.background.white};
-  border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
-  border-radius: 26px;
-  border-color: ${({ theme }) => theme.PALLETE.background.gray100};
-  font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
-  line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
-  padding: 10px 40px 10px 24px;
+S.SearchInput = styled.div`
+  position: relative;
   ${spacingProps}
-
-    //아무스 호버 상태
-    &:hover {
-        border-color: ${({ theme }) => theme.PALLETE.primary.main};
-    }
-    //placeholder 텍스트 색상
-    &::placeholder {
-        color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
-    }
-
-    //입력중일때
-    &:focus {
-        outline: none;
-        border-color: ${({ theme }) => theme.PALLETE.primary.main};
-        box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
-    }
-
-    //disabled 상태일때
-    &:disabled {
-        outline: none;
-        background-color: ${({ theme }) => theme.PALLETE.background.gray100};
-        border: none;
-    }
-
-    //입력 다 한 상태
-    &:not(:focus):not(:placeholder-shown) {
-        border-color: ${({ theme }) => theme.PALLETE.primary.main};
-    }
-`
-
-S.SearchInputButton = styled.button`
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-
-  img {
-    width: 31px;
-    height: 31px;
+  input {
+    width: 539px;
+    height: 64px;
+    border-radius: 26px;
+    border-color: ${({ theme }) => theme.PALLETE.background.gray300};
+    margin-left: 25px;
+  }
+  
+  button {
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+  }
+  
+  p {
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+  }
+  
+  svg {
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
   }
 `
 
+
+// S.SearchSelect = styled.select`
+//   border-radius: 26px;
+//   width: 194px;
+//   height: 64px;
+//   margin-right: 25px;
+//   padding-right: 24px;
+//   padding-left: 24px;
+//   font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
+//   border: 1px solid ${({ theme }) => theme.PALLETE.background.gray100};
+//   line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
+//   padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
+//   color: ${({ theme }) => theme.PALLETE.text.main};
+//   &:hover {
+//         border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//   };
+//   &:focus {
+//         outline: none;
+//         border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//         box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+//   };
+
+// `
+
+
+
+// S.SearchInput = styled.input`
+//   width: 539px;
+//   height: 64px;
+//   background-color: ${({ theme }) => theme.PALLETE.background.white};
+//   border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
+//   border-radius: 26px;
+//   border-color: ${({ theme }) => theme.PALLETE.background.gray100};
+//   font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
+//   line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
+//   padding: 10px 40px 10px 24px;
+//   ${spacingProps}
+
+//     //아무스 호버 상태
+//     &:hover {
+//         border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//     }
+//     //placeholder 텍스트 색상
+//     &::placeholder {
+//         color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
+//     }
+
+//     //입력중일때
+//     &:focus {
+//         outline: none;
+//         border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//         box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+//     }
+
+//     //disabled 상태일때
+//     &:disabled {
+//         outline: none;
+//         background-color: ${({ theme }) => theme.PALLETE.background.gray100};
+//         border: none;
+//     }
+
+//     //입력 다 한 상태
+//     &:not(:focus):not(:placeholder-shown) {
+//         border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//     }
+// `
+
+// S.SearchInputButton = styled.button`
+//   position: absolute;
+//   right: 20px;
+//   top: 50%;
+//   transform: translateY(-50%);
+//   background: none;
+//   border: none;
+//   cursor: pointer;
+
+//   img {
+//     width: 31px;
+//     height: 31px;
+//   }
+// `
+
 S.Filter = styled.div`
   margin-top: 16px;
-  margin-bottom: 30px;
+  margin-bottom: 37px;
 `
 
 S.FilterNew = styled.button`
   border: 1px;
   border-style: solid;
-  border-color: #EEEEEE;
+  border-color:${({ theme }) => theme.PALLETE.background.gray200};
   margin-right: 15px;
   height: 54px;
   width: 125px;
@@ -128,7 +196,7 @@ S.FilterNew = styled.button`
 S.FilterHot = styled.button`
   border: 1px;
   border-style: solid;
-  border-color: #EEEEEE;
+  border-color: ${({ theme }) => theme.PALLETE.background.gray200};
   margin-right: 15px;
   height: 54px;
   width: 125px;
@@ -141,7 +209,7 @@ S.FilterHot = styled.button`
 S.FilterMy = styled.button`
   border: 1px;
   border-style: solid;
-  border-color: #EEEEEE;
+  border-color:${({ theme }) => theme.PALLETE.background.gray200};
   margin-right: 15px;
   height: 54px;
   width: 196px;
@@ -154,7 +222,7 @@ S.FilterMy = styled.button`
 S.FilterFriend = styled.button`
   border: 1px;
   border-style: solid;
-  border-color: #EEEEEE;
+  border-color: ${({ theme }) => theme.PALLETE.background.gray200};
   margin-right: 15px;
   height: 54px;
   width: 221px;
@@ -314,15 +382,17 @@ S.TBButton = styled.div`
     ${flexCenter};
     
   }
+  
 
  
   
 `
 S.TBBWrapper = styled.div`
-  margin-left: 60px;
+  margin-left: 40px;
   margin-top: 70px;
   display: flex;
-  align-items: flex-end;
+  
+  /* margin-right: 38px; */
   gap: 12px;
   
   button {
@@ -333,7 +403,11 @@ S.TBBWrapper = styled.div`
     width: 42px;
     height: 42px;
   }
+
+  
 `
+
+
 
 S.TextResultWrapper= styled.div`
   margin-top: 24px;
@@ -379,17 +453,40 @@ S.TRPWBottom = styled.div`
 S.HeartCommentTop = styled.div`
   display: flex;
   align-items: center;
-  /* gap: 30px; */
+  gap: 4px;
 
-  img {
-    width: 25px;
-    height: 25px;
-  }
 `
 S.HCTBWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 15px;
+
+
+`
+
+S.HeartButton = styled.button`
+  background: none;  
+
+  img {
+    width: 25px;
+    height: 25px;
+    display: block;
+  }
+  /* margin-right: 3px; */
+
+  `
+
+S.CommentButton = styled.button`
+  background: none;
+  width: 23px;
+  height: 23px;
+  margin-right: 6px;
+  margin-bottom: 7px;
+`
+
+S.HeartCommentCount = styled.span`
+  font-size : ${({theme}) => theme.FONT_SIZE.body2};
+  
 `
 
 S.ArrowButton = styled.button`
@@ -428,14 +525,12 @@ S.TextResultMiddleWrapper = styled.div`
 
 S.HeartComment = styled.div`
   flex: 1;
+  display: flex;
   
   margin-top: 32px;
   margin-bottom: 15px;
 
-  img {
-    width: 25px;
-    height: 25px;
-  }
+  gap: 4px;
 `
 
 S.DeleteButton = styled.button`
@@ -537,6 +632,7 @@ S.PlusCommentResultWrapper = styled.div`
 `
 
 S.PlusCommentWrapper = styled.div`
+  margin-top: 20px;
   display: flex;
   img {
     height: 42px;
@@ -727,7 +823,7 @@ S.ProfileImage = styled.img`
 
 // 대댓글
 S.PlusCommentResultWrapper =styled.div`
-
+  margin-top: 15px;
   `
 S.PCRTop = styled.div`
   display: flex;
@@ -748,6 +844,12 @@ S.PCRBottom = styled.div`
   margin-left: 9%;
   margin-top: 10px;
   margin-bottom: 15px;
+  display: flex;
+
+
+`
+S.Reply = styled.div`
+  flex: 1;
 `
 
 S.PlusCommentInput = styled.input`

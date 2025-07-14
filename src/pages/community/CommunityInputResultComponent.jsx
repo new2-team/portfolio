@@ -4,6 +4,10 @@ import arrowDown from "../../components/icons/arrow-down.svg";
 import arrowUp from "../../components/icons/arrow-up.svg";
 import BasicInput from '../../components/input/BasicInput';
 import arrowDownRed from "../../components/icons/arrow-down-red.svg";
+import PopupCardLarge from '../../components/popUp/PopupCardLarge';
+import { ReactComponent as ChatIcon } from "../../components/icons/chat.svg";
+import { ReactComponent as HeartIcon } from "../../components/icons/heart.svg";
+import { ReactComponent as HeartClickIcon } from "../../components/icons/heart-click.svg";
 
 const CommunityInputResultComponent = ({post, openPost, togglePost, 
   handleComment,handleLike,setCommentInput,commentInput,
@@ -26,6 +30,11 @@ const getTime = (time) => {
   const diffDays = Math.floor(diffHours / 24);
   return `${diffDays}일 전`
 }
+
+// 팝업
+const [isLargeOpenComment, setIsLargeOpenComment] = useState(false)
+const [isLargeOpenText, setIsLargeOpenText] = useState(false)
+const [showConfirm, setShowConfirm] = useState(() => () => {})
   
 
 return (  
@@ -49,14 +58,15 @@ return (
             <S.TRTitle>{postItem.title}</S.TRTitle>
             <S.HCTBWrapper>
               {!isOpen && (<S.HeartCommentTop>
-                  <button onClick={()=> handleLike(postItem.id)} type='button'>
-                    <img src="logo192.png" alt="heart" />
-                  </button>
-                  <span>{postItem.likeCount}</span>
-                  <button type='submit'>
-                    <img src="logo192.png" alt="comment" />
-                  </button>
-                  <span>{postItem.commentList.length}</span>
+                  <S.HeartButton onClick={()=> handleLike(postItem.id)} type='button'>
+                    <HeartIcon/>
+                    
+                  </S.HeartButton>
+                  <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
+                  <S.CommentButton type='submit'>
+                    <ChatIcon />
+                  </S.CommentButton>
+                  <S.HeartCommentCount>{postItem.commentList.length}</S.HeartCommentCount>
               </S.HeartCommentTop>)}
               <S.ArrowButton onClick={() => togglePost(postItem.id)}>{isOpen ? <img src={arrowUp}/>:<img src={arrowDown}/>}</S.ArrowButton>
             </S.HCTBWrapper>
@@ -71,16 +81,21 @@ return (
             </S.TextResult>
             <S.HeartLine>
               <S.HeartComment>
-                <button onClick={()=> handleLike(postItem.id)} type='submit'>
-                  <img src="logo192.png" alt="heart" />
-                </button>
-                <span>{postItem.likeCount}</span>
-                <button type='submit'>
-                  <img src="logo192.png" alt="comment" />
-                </button>
-                <span>{postItem.commentList.length}</span>
+                <S.HeartButton onClick={()=> handleLike(postItem.id)} type='submit'>
+                  <HeartIcon />
+                </S.HeartButton>
+                <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
+                <S.CommentButton type='submit'>
+                  <ChatIcon />
+                </S.CommentButton>
+                <S.HeartCommentCount>{postItem.commentList.length}</S.HeartCommentCount>
               </S.HeartComment>
-              <S.DeleteButton className='DeleteText' onClick={() => deletePost(postItem.id)} >삭제하기</S.DeleteButton>
+              <S.DeleteButton className='DeleteText' 
+              onClick={() => {
+                setIsLargeOpenText(true);
+                setShowConfirm(() => () => deletePost(postItem.id))
+              }
+                } >삭제하기</S.DeleteButton>
             </S.HeartLine>
             <S.Line/>
 
@@ -97,7 +112,10 @@ return (
                   <S.CommentLine>
                     <S.Comment>{comment.text}</S.Comment>
                     <S.PlusComment onClick={() => toggleReplyInput(comment.id)}>댓글 남기기</S.PlusComment>
-                    <S.DeleteCommentButton onClick={() => deleteComment(postItem.id, comment.id)}>삭제하기</S.DeleteCommentButton>
+                    <S.DeleteCommentButton onClick={() => {
+                      setIsLargeOpenComment(true);
+                      setShowConfirm(() => () => deleteComment(postItem.id,comment.id))
+                    }}>삭제하기</S.DeleteCommentButton>
                   </S.CommentLine>
                   <S.Line/>
 
@@ -116,7 +134,11 @@ return (
                           </div>
                         </S.PCRTop>
                         <S.PCRBottom>
-                          <div>{reply.text}</div>
+                          <S.Reply>{reply.text}</S.Reply>
+                          <S.DeleteCommentButton className='ReplyDelete' onClick={() => {
+                            setIsLargeOpenComment(true);
+                            setShowConfirm(() => () => deleteComment(postItem.id,comment.id))
+                          }}>삭제하기</S.DeleteCommentButton>
                         </S.PCRBottom>
                         <S.Line/>
                       </S.PlusCommentResultWrapper>
@@ -127,7 +149,7 @@ return (
                   {openReplyInput[comment.id] && (
                     <S.PlusCommentWrapper>
                       <S.ProfileImage src="/assets/img/profile3.jpg" alt="profile" />
-                      <S.PlusCommentInput type="text" placeholder='댓글을 입력하고 enter를 눌러주세요!' maxLength={50}
+                      <S.PlusCommentInput type="text" placeholder='→ 댓글을 입력하고 enter를 눌러주세요!' maxLength={50}
                       value={replyInput[comment.id] || ''} 
                       onChange={(e) => setReplyInput({...replyInput, [comment.id]: e.target.value})}
                       onKeyDown={(e) => {if(e.key === 'Enter') {
@@ -135,6 +157,7 @@ return (
                         setReplyInput({...replyInput, [comment.id] : ''});
                         setOpenReplyInput({...openReplyInput, [comment.id]:false})
                       }}} />
+                      
                     </S.PlusCommentWrapper>
                   )}
 
@@ -161,6 +184,47 @@ return (
     )})
     
     }
+
+    {isLargeOpenComment && (
+      <PopupCardLarge
+        title="댓글을 삭제할까요?"
+        onClose={() => setIsLargeOpenComment(false)}
+        actions={[
+          {
+            label:'예',
+            onClick: () => {
+              setIsLargeOpenComment(false);
+              showConfirm()},
+            type:'filled'
+          },
+          {
+            label:'아니요',
+            onClick: () => setIsLargeOpenComment(false),
+            type:'gray'
+          }
+        ]}
+      />
+    )}
+    {isLargeOpenText && (
+      <PopupCardLarge
+        title="글을 삭제할까요?"
+        onClose={() => setIsLargeOpenText(false)}
+        actions={[
+          {
+            label:'예',
+            onClick: () => {
+              setIsLargeOpenText(false);
+              showConfirm()},
+            type:'filled'
+          },
+          {
+            label:'아니요',
+            onClick: () => setIsLargeOpenText(false),
+            type:'gray'
+          }
+        ]}
+      />
+    )}
 
 
 

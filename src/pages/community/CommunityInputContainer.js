@@ -9,7 +9,11 @@ const CommunityInputContainer = () => {
     setOpenPost(p => p.includes(i) ? p.filter(postId => postId !== i) : [...p, i])
   }
   const handleLike = (postId) => {
-    setPost(prev => prev.map(post => post.id === postId ? {...post, likeCount: post.likeCount + 1} : post))
+    setPost(prev => prev.map(post => post.id === postId ? 
+      {...post, 
+        likeCount: post.liked? post.likeCount - 1 : post.likeCount + 1,
+        liked: !post.liked
+      } : post))
   }
 
   const handleComment = (postId, newComment) => {
