@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import S from './style';
 import BasicInput from '../../components/input/BasicInput';
 import BasicButton from '../../components/button/BasicButton';
+import PopupCardLarge from '../../components/popUp/PopupCardLarge';
+
+
 
 const CommunityInputComponent = ({post, setPost}) => {
   const [newPost, setNewPost] = useState({title:'', content:''})
@@ -13,7 +16,9 @@ const CommunityInputComponent = ({post, setPost}) => {
                     ...newPost,
                     id: Date.now(),
                     likeCount:0,
-                    commentList: []
+                    liked: false,
+                    commentList: [],
+                    createdAt : new Date().toISOString()
                 }];
                 setPost(updatePost)
                 setNewPost({title: "", content: ""});
@@ -38,7 +43,7 @@ const CommunityInputComponent = ({post, setPost}) => {
               }} maxLength={500} />
               <S.TBBWrapper>
                 <button className='imgUpload' type='submit'>
-                  <img src="logo192.png" alt="pictureUpload" />
+                  사진
                 </button>
                 <button onClick={() => {
                   if(newPost.title && newPost.content){
@@ -50,22 +55,25 @@ const CommunityInputComponent = ({post, setPost}) => {
           </S.TextBoxInputWrapper>
       </S.TextBoxWrapper>
 
-      {showConfirm && (
-        <S.ConfirmWrapper>
-          <S.ConfirmBox>
-            <p>작성한 내용을 등록할까요?</p>
-            <S.ConfirmButtonWrapper>
-              <button className='YesButton' onClick={handleConfirm}>
-                예
-              </button>
-              <button className='NoButton' onClick={()=> setShowConfirm(false)}>
-                아니요
-              </button>
-            </S.ConfirmButtonWrapper>
-          </S.ConfirmBox>
-        </S.ConfirmWrapper>
-      )}
       
+      {showConfirm && (
+        <PopupCardLarge
+          title="작성한 내용을 등록할까요?"
+          onClose={() => setShowConfirm(false)}
+          actions={[
+            {
+              label: '예',
+              onClick: handleConfirm,
+              type: 'filled'
+            },
+            {
+              label: "아니요",
+              onClick: () => setShowConfirm(false),
+              type: 'gray'
+            }
+          ]}
+        />
+      )}
     </>
   );
 };
