@@ -36,16 +36,13 @@ const S = {}
  `
 
  S.Friends = styled.div`
+  display: flex;
+  justify-content: center;
   width: 885px;
   height: 570px;
   border-radius: 24px;
   box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
-  background-color: #FFF5EC;
-
-  p{
-   font-size: 32px;
-   margin: 32px;
-  }
+  padding: 0 30px;
  `
 
 //  S.CalendarWrapper = styled.div`

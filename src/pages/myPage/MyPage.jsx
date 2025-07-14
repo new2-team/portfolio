@@ -3,6 +3,7 @@ import S from './style';
 import CalendarWidget from '../calendar/calendarWidget/CalendarWidget';
 import ChattingWidget from '../chat/ChattingWidget';
 import Profile from './mypageComponent/profile/Profile';
+import Friends from './mypageComponent/friends/Friends';
 
 // 프로필
 // 친구 목록
@@ -14,10 +15,10 @@ const MyPage = () => {
         <S.Wrapper>
             <S.FirstWrapper>
                 <S.Profile>
-                    <Profile/>
+                    
                 </S.Profile>
                 <S.Friends>
-                    {/* <p>내 친구</p> */}
+                    <Friends/>
                 </S.Friends>
             </S.FirstWrapper>
             <S.SecondWrapper>

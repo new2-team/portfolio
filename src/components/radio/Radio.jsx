@@ -3,7 +3,7 @@ import { ReactComponent as RadioOnIcon } from '../icons/radio-on.svg';
 import { ReactComponent as RadioOffIcon } from '../icons/radio-off.svg';
 import S from './style';
 
-const Radio = ({ checked, onChange, size = 'M'  , ...props}) => {
+const Radio = ({ checked, onChange, size = 'M'  , name, ...props}) => {
     const isControlled = typeof checked === 'boolean';
     const [internalChecked, setInternalChecked] = useState(false);
     const isChecked = isControlled ? checked : internalChecked;
