@@ -25,4 +25,7 @@ yarn-error.log*
 .idea/
 *.iml
 
-.vscode/
+.vscode/!/.history/
+
+# .history 폴더 무시
+.history/

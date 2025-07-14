@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import {container} from "../../styles/common";
+import { container } from "../../styles/common";
 
 const Container = styled.section`
-    ${container}
-`
+  ${container}
+`;
 
 export default Container;
