@@ -1,22 +1,23 @@
 import { createBrowserRouter } from "react-router-dom";
-import Main from "../pages/main/Main";
-import Matching from "../pages/matching/Matching";
+import AcceptTerms from "../pages/auth/AcceptTerms";
 import SignIn from "../pages/auth/SignIn";
 import SignUp from "../pages/auth/SignUp";
-import AcceptTerms from "../pages/auth/AcceptTerms";
 import SignUpComplete from "../pages/auth/SignUpComplete";
-import AddProfile from "../pages/profile/AddProfile";
-import AddHealthProfile from "../pages/profile/AddHealthProfile";
+import Calendar from "../pages/calendar/Calendar";
+import CalendarDay from "../pages/calendar/CalendarDay";
+import CalendarMonth from "../pages/calendar/CalendarMonth";
+import Chatting from "../pages/chat/Chatting";
+import Community from "../pages/community/Community";
 import DbtiQuestion from "../pages/dbti/DbtiQuestion";
 import DbtiResult from "../pages/dbti/DbtiResult";
+import Layout from "../pages/layout/Layout";
+import Main from "../pages/main/Main";
+import Matching from "../pages/matching/Matching";
 import MyPage from "../pages/myPage/MyPage";
-import Community from "../pages/community/Community";
-import Chatting from "../pages/chat/Chatting";
-import CalendarMonth from "../pages/calendar/CalendarMonth";
-import CalendarDay from "../pages/calendar/CalendarDay";
+import AddHealthProfile from "../pages/profile/AddHealthProfile";
+import AddProfile from "../pages/profile/AddProfile";
 import Faq from "../pages/support/Faq";
 import Inquiry from "../pages/support/Inquiry";
-import Layout from "../pages/layout/Layout";
 
 
 
@@ -51,8 +52,9 @@ const router = createBrowserRouter([
 
             // 민주
             { path: "chatting", element: <Chatting /> }, // 채팅
+            { path: "calendar", element: <Calendar /> }, // 캘린더 메인
             { path: "calendar-month", element: <CalendarMonth /> }, // 캘린더 월별
-            { path: "calendar-day", element: <CalendarDay /> }, // 캘린더 일별
+            { path: "calendar-day/:eventId", element: <CalendarDay /> }, // 캘린더 일별
 
             // 지우
             { path: "faq", element: <Faq /> }, // Faq

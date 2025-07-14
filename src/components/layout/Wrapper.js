@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import {wrapper} from "../../styles/common";
+import { wrapper } from "../../styles/common";
 
 const Wrapper = styled.div`
-    ${wrapper}
-`
+  ${wrapper}
+`;
 
 export default Wrapper;
