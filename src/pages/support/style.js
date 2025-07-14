@@ -2,21 +2,28 @@ import styled from "styled-components";
 
 const S = {}
 
-S.MenuLineWrapper = styled.div`
-  margin-top: 81px;
-
+S.FaqWrapper = styled.div`
+  width: 100%;
+  height: 100vh;
 `
 
-S.MenuLine = styled.hr`
-  color: #b5b5b5;
+S.InquiryWrapper = styled.div`
+  width: 100%;
+  height: 100vh;
 `
+
 
 S.MenuWrapper = styled.div`
-  display: flex;
+  border-top: 1px solid #B5B5B5;
+  border-bottom: 1px solid #B5B5B5;
+  display: inline-flex;
+  width: 100%;
+  margin-top: 80px;
   align-items: center;
   justify-content: center;
   padding: 20px 0;
 `
+
 
 S.FAQButton = styled.button`
   font-size: ${({ theme }) => theme.FONT_SIZE["body1"]};
@@ -53,18 +60,10 @@ S.FAQTitle = styled.div`
   padding : 80px 0;
   `
 
-S.QTopLine = styled.hr`
-  background-color: ${({ theme }) => theme.PALLETE.primary.main};
-  height: 5px;
-  width: 1440px;
-  display: flex;
-  justify-content: center;
-  border: none;
-
-`
 
 S.AccordionWrapper = styled.div`
   margin-bottom: 175px;
+  border-top: 3px solid #CF4B05;
 `
 
 
