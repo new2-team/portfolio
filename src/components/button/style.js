@@ -91,7 +91,6 @@ const roundButtonCSS = {
     `,
 }
 
-
 const Button = styled.button`
   ${({roundButton}) => roundButtonCSS[roundButton]}
   ${({basicButton}) => basicButtonCSS[basicButton]}
