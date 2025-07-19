@@ -174,6 +174,8 @@ S.SearchInput = styled.div`
 //   }
 // `
 
+
+//필터
 S.Filter = styled.div`
   margin-top: 16px;
   margin-bottom: 37px;
@@ -186,7 +188,7 @@ S.FilterNew = styled.button`
   margin-right: 15px;
   height: 54px;
   width: 125px;
-  background-color: white;
+  background-color: ${({$active}) => ($active ? "#CF4B05":"white")};
   padding: 3px 10px;
   border-radius: 52px ;
   margin-right: 30px;
@@ -200,7 +202,7 @@ S.FilterHot = styled.button`
   margin-right: 15px;
   height: 54px;
   width: 125px;
-  background-color: white;
+  background-color: ${({$active}) => ($active ? "#CF4B05":"white")};
   padding: 3px 10px;
   border-radius: 52px ;
   margin-right: 30px;
@@ -213,7 +215,7 @@ S.FilterMy = styled.button`
   margin-right: 15px;
   height: 54px;
   width: 196px;
-  background-color: white;
+  background-color: ${({$active}) => ($active ? "#CF4B05":"white")};
   padding: 3px 10px;
   border-radius: 52px ;
   margin-right: 30px;
@@ -226,11 +228,12 @@ S.FilterFriend = styled.button`
   margin-right: 15px;
   height: 54px;
   width: 221px;
-  background-color: white;
+  background-color: ${({$active}) => ($active ? "#CF4B05":"white")};
   padding: 3px 10px;
   border-radius: 52px ;
   font-size: ${({ theme }) => theme.FONT_SIZE["button2"]};
 `
+
 
 
 
