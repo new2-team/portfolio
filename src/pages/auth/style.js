@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { spacingProps } from "../../styles/spacingProps";
-import { flexColumn, flexSpaceBetween } from "../../styles/common";
+import { flexCenter, flexColumn, flexSpaceBetween } from "../../styles/common";
 
 const S = {};
 
@@ -55,5 +55,76 @@ S.PasswordText = styled.div`
     transform: translateY(-50%);
   }
 `;
+
+
+
+
+S.SocialLogin = styled.div`
+  margin-top: 80px;
+`;
+
+S.TitleArea = styled.div`
+  ${flexCenter};
+  gap: 20px;
+`;
+
+S.TitleLine = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: #acacac;
+  flex: 1;
+`;
+
+S.IConArea = styled.div`
+  ${flexCenter}
+  margin-top: 20px;
+  gap: 24px;
+`;
+
+S.Icon = styled.div`
+  width: 44px; 
+  height: 44px;
+
+  img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+`;
+
+
+
+S.SocialLoginTabWrapper = styled.div`
+  ${flexCenter};
+  gap: 24px;
+`;
+
+S.NaverIcon = styled.div`
+  width: 40px; 
+  height: 40px;
+
+  img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+`;
+
+S.KakaoIcon = styled.div`
+  width: 40px; 
+  height: 40px;
+
+  img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+`;
+
+
+
+
+
+
 
 export default S;

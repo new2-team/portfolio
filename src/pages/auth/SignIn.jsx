@@ -8,6 +8,7 @@ import PasswordInput from '../../components/input/PasswordInput';
 import CheckboxWithLabel from '../../components/checkbox/CheckboxWithLabel';
 import S from './style';
 import BasicButton from '../../components/button/BasicButton';
+import SocialLogin from './SocialLogin';
 
 const helperLinks = [
     { label: "아이디 찾기", to: "/find-id" },
@@ -80,9 +81,7 @@ const SignIn = () => {
             </BasicButton>
           </S.ButtonWrapper>
 
-          <div>
-            
-          </div>
+          <SocialLogin/> 
 
       </S.LoginWrapper>
     </Container>
