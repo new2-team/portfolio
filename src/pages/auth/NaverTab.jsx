@@ -4,12 +4,13 @@ import Text from "../../components/text/size";
 
 const NaverTab = () => {
   return (
-    <S.SocialLoginTabWrapper color="#03C75A">
+    <S.SocialLoginTabWrapper color="naver">
       <S.NaverIcon>
-          <img src="/assets/img/naver-L.png" alt="naver"/>
+        <img src="/assets/img/naver-L.png" alt="naver"/>
       </S.NaverIcon>
-
-      <Text.Body1>네이버 1초 로그인 / 회원가입</Text.Body1>
+      <S.TabText color="naver">
+        네이버 1초 로그인 / 회원가입
+      </S.TabText>
     </S.SocialLoginTabWrapper>
   )
 };
