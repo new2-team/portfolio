@@ -29,3 +29,5 @@ yarn-error.log*
 
 # .history 폴더 무시
 .history/
+
+package.json
