@@ -83,7 +83,7 @@ S.SearchInput = styled.div`
       cursor: pointer;
   }
   
-  svg {
+  img {
       position: absolute;
       right: 24px;
       top: 50%;
