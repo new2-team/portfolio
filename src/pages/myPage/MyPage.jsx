@@ -1,6 +1,5 @@
 import S from './style';
-// import CalendarWidget from '../calendar/calendarWidget/CalendarWidget';
-// import ChattingWidget from '../chat/ChattingWidget';
+
 import Friends from './mypageComponent/friends/Friends';
 
 // 프로필
@@ -20,7 +19,6 @@ const MyPage = () => {
                 </S.Friends>
             </S.FirstWrapper>
             <S.SecondWrapper>
-                {/* <CalendarWidget/> */}
                 <S.Chat>
                     {/* <ChattingWidget/> */}
                 </S.Chat>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import CommunityInputComponent from './CommunityInputComponent';
 import CommunityInputResultComponent from './CommunityInputResultComponent';
 
@@ -85,7 +85,25 @@ const CommunityInputContainer = () => {
     }))
   }
   
+  const deleteReply = (postId, commentId, replyId) => {
+    setPost(prev => prev.map(post => {
+      if (post.id !== postId) return post;
+      return {
+        ...post,
+        commentList: post.commentList.map(comment => {
+          if (comment.id !== commentId) return comment;
+          return {
+            ...comment,
+            replies: comment.replies.filter(reply => reply.id !== replyId)
+          }
+        })
+      }
+    }))
+  }
 
+
+  
+ 
   return (
     <div>
       <CommunityInputComponent post={post} setPost={setPost}
@@ -97,6 +115,7 @@ const CommunityInputContainer = () => {
       countComment={countComment} setCountComment={setCountComment} deletePost={deletePost} 
       deleteComment={deleteComment} openReplyInput={openReplyInput} toggleReplyInput={toggleReplyInput}
       replyInput={replyInput} setReplyInput={setReplyInput} addReply={addReply} setOpenReplyInput={setOpenReplyInput}
+      deleteReply={deleteReply}
       /> : null}
     </div>
   );
