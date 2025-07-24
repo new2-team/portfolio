@@ -1,19 +1,27 @@
 import React, { useState } from "react";
-import { ReactComponent as CheckedIcon } from "../icons/check-on.svg";
-import { ReactComponent as UncheckedIcon } from "../icons/check-off.svg";
 import S from "./style";
 import Text from "../text/size";
 
-const CheckboxWithLabel = ({ label }) => {
-  const [checked, setChecked] = useState(false);
+const CheckboxWithLabel = ({ label, checked, onChange }) => {
+  const isControlled = typeof checked === "boolean";
+  const [internalChecked, setInternalChecked] = useState(false);
+  const isChecked = isControlled ? checked : internalChecked;
+
+  const handleClick = () => {
+    if (!isControlled) {
+      setInternalChecked(!internalChecked);
+    }
+    onChange?.(!isChecked);
+  };
 
   return (
-    <S.CheckboxWithLabelWrapper onClick={() => setChecked(!checked)}>
-      {checked ? (
-        <CheckedIcon width={20} height={20} />
-      ) : (
-        <UncheckedIcon width={20} height={20} />
-      )}
+    <S.CheckboxWithLabelWrapper onClick={handleClick}>
+      <img
+        src={isChecked ? "/assets/icons/check-on.png" : "/assets/icons/check-off.png"}
+        width={20}
+        height={20}
+        alt={isChecked ? "체크됨" : "체크안됨"}
+      />
       <Text.Body3 ml="10" fontWeight="600">
         {label}
       </Text.Body3>

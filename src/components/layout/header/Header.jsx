@@ -1,8 +1,5 @@
 import React from "react";
 import S from "./style";
-import { ReactComponent as BellIcon } from "../../icons/bell.svg";
-import { ReactComponent as SendIcon } from "../../icons/send.svg";
-import { ReactComponent as CalendarIcon } from "../../icons/calendar.svg";
 import BasicButton from "../../button/BasicButton";
 import Text from "../../text/size";
 
@@ -33,17 +30,17 @@ const Header = ({ isLoggedIn, user }) => {
           <>
             <S.IconWrap>
               <S.Badge>
-                <BellIcon />
+                <img src="/assets/icons/bell.svg" alt="알림" width={30} height={30} />
                 <S.BadgeCount>2</S.BadgeCount>
               </S.Badge>
 
               <S.Badge>
-                <SendIcon />
+                <img src="/assets/icons/send.svg" alt="쪽지" width={30} height={30} />
                 <S.BadgeCount>5</S.BadgeCount>
               </S.Badge>
 
               <S.Badge>
-                <CalendarIcon />
+                <img src="/assets/icons/calendar.svg" alt="캘린더" width={30} height={30} />
                 <S.BadgeCount>1</S.BadgeCount>
               </S.Badge>
             </S.IconWrap>
