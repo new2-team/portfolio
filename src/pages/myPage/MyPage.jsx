@@ -1,6 +1,5 @@
 import React from 'react';
 import S from './style';
-import CalendarWidget from '../calendar/calendarWidget/CalendarWidget';
 import ChattingWidget from '../chat/ChattingWidget';
 import Profile from './mypageComponent/profile/Profile';
 import Friends from './mypageComponent/friends/Friends';
@@ -22,7 +21,6 @@ const MyPage = () => {
                 </S.Friends>
             </S.FirstWrapper>
             <S.SecondWrapper>
-                <CalendarWidget/>
                 <S.Chat>
                     <ChattingWidget/>
                 </S.Chat>
