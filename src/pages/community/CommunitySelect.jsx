@@ -1,9 +1,9 @@
 
+import BasicInput from '../../components/input/BasicInput';
 import SelectBox from '../../components/selectBox/SelectBox';
 import S from './style';
+
 const CommunitySelect = () => {
-
-
   return (
     <>
       <S.Search>
@@ -16,8 +16,8 @@ const CommunitySelect = () => {
         <SelectBox 
         options={["전체","내용","제목","작성자"]} placeholder='전체'/>
         <S.SearchInput>
-          {/* <BasicInput type="text" placeholder="검색어를 입력하세요" /> */}
-          {/* <SearchIcon width={30} height={30} /> */}
+          <BasicInput type="text" placeholder="검색어를 입력하세요" />
+          <img src="/assets/icons/search.svg" width={30} height={30} alt="검색" />
         </S.SearchInput>
         </S.Search>
         <S.Filter>
