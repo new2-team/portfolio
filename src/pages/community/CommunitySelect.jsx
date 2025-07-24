@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
-import S from './style';
-import searchImg from "../../components/icons/search.svg";
+
 import SelectBox from '../../components/selectBox/SelectBox';
-import BasicInput from '../../components/input/BasicInput';
-import { ReactComponent as SearchIcon } from "../../components/icons/search.svg";
+import S from './style';
 const CommunitySelect = () => {
 
 
@@ -19,8 +16,8 @@ const CommunitySelect = () => {
         <SelectBox 
         options={["전체","내용","제목","작성자"]} placeholder='전체'/>
         <S.SearchInput>
-          <BasicInput type="text" placeholder="검색어를 입력하세요" />
-          <SearchIcon width={30} height={30} />
+          {/* <BasicInput type="text" placeholder="검색어를 입력하세요" /> */}
+          {/* <SearchIcon width={30} height={30} /> */}
         </S.SearchInput>
         </S.Search>
         <S.Filter>
