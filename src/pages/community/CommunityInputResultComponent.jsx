@@ -12,7 +12,7 @@ import { ReactComponent as HeartClickIcon } from "../../components/icons/heart-c
 const CommunityInputResultComponent = ({post, openPost, togglePost, 
   handleComment,handleLike,setCommentInput,commentInput,
   countComment, setCountComment, deletePost, deleteComment, toggleReplyInput, openReplyInput,
-  replyInput, setReplyInput, addReply, setOpenReplyInput}) => {
+  replyInput, setReplyInput, addReply, setOpenReplyInput, deleteReply}) => {
 
 
 const getTime = (time) => {
@@ -137,7 +137,7 @@ return (
                           <S.Reply>{reply.text}</S.Reply>
                           <S.DeleteCommentButton className='ReplyDelete' onClick={() => {
                             setIsLargeOpenComment(true);
-                            setShowConfirm(() => () => deleteComment(postItem.id,comment.id))
+                            setShowConfirm(() => () => deleteReply(postItem.id,comment.id, reply.id))
                           }}>삭제하기</S.DeleteCommentButton>
                         </S.PCRBottom>
                         <S.Line/>
