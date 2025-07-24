@@ -1,0 +1,14 @@
+{
+  "..\\..\\..\\..\\Users\\simje\\AppData\\Local\\npm-cache\\_npx\\8b377f6eec906bc4\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": "..\\..\\..\\..\\Users\\simje\\AppData\\Local\\npm-cache\\_npx\\8b377f6eec906bc4\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app",
+    "files": [
+      "static/chunks/fallback/_pages-dir-browser_Users_simje_AppData_Local_npm-cache__npx_8b377f6eec906bc4_node_modules_nex-4223d0.js"
+    ]
+  },
+  "..\\..\\..\\..\\Users\\simje\\AppData\\Local\\npm-cache\\_npx\\8b377f6eec906bc4\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": "..\\..\\..\\..\\Users\\simje\\AppData\\Local\\npm-cache\\_npx\\8b377f6eec906bc4\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error",
+    "files": [
+      "static/chunks/fallback/_pages-dir-browser_Users_simje_AppData_Local_npm-cache__npx_8b377f6eec906bc4_node_modules_nex-930d48.js"
+    ]
+  }
+}
