@@ -4,8 +4,6 @@ import S from './style';
 import Text from '../../components/text/size';
 import BasicInput from '../../components/input/BasicInput';
 import Container from '../../components/layout/Container';
-import { ReactComponent as CalendarIcon } from "../../components/icons/calendar.svg";
-import { ReactComponent as SearchIcon } from "../../components/icons/search.svg";
 import SelectBox from "../../components/selectBox/SelectBox";
 import Radio from '../../components/radio/Radio';
 import { Controller, useForm } from 'react-hook-form';
@@ -164,7 +162,7 @@ const AddProfile = () => {
                             {errors.weight?.type === "required" && (
                             <span style={{color:"#f74c26"}}>생년월일을 입력해주세요.</span>
                             )}                         
-                            <CalendarIcon width={30} height={30} 
+                            <img src="/assets/icons/calendar.svg" width={30} height={30} alt="캘린더" 
                         onClick={() => calendarRef.current?.setFocus()}
                         style={{ position: "absolute", cursor: "pointer", marginLeft: "8px" }}/>
                 </S.InputReguler>
@@ -199,7 +197,7 @@ const AddProfile = () => {
                         value={address}
                         placeholder="도로명 주소를 검색하세요"
                         readOnly />
-                        <SearchIcon width={30} height={30} />
+                        <img src="/assets/icons/search.svg" width={30} height={30} alt="검색" />
                     </S.InputButtonWrapper>
                 </S.InputReguler>
                 <S.InputReguler >

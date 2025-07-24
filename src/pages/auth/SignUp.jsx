@@ -3,6 +3,7 @@ import Container from "../../components/layout/Container";
 import SocialTabWrapper from "./SocialTabWrapper";
 import ProgressStep from "../../components/progressStep/ProgressStep";
 import { getSignUpSteps } from "../../components/progressStep/SignUpStepData";
+import AcceptTerms from "./AcceptTerms";
 
 // 현재 진행 단계
 const activeStep = 2;
@@ -15,6 +16,7 @@ const SignUp = () => (
     <SocialTabWrapper />
     {/* 진행 단계 컴포넌트 */}
     <ProgressStep steps={steps} activeStep={activeStep} />
+    <AcceptTerms />
   </Container>
 );
 
