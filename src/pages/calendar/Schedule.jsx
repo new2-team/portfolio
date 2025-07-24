@@ -8,15 +8,12 @@ import './Calendar.css';
 import styles from './style';
 
 const Schedule = ({ eventId, selectedDate }) => {
+  const [date, setDate] = useState(selectedDate);
+  console.log("지정날짜2", date)
   const [schedule, setSchedule] = useState({});
   const [title, setTitle] = useState('');
-  const [showError, setShowError] = useState(false);
-
   const [startTime, setStartTime] = useState(null);
   const [location, setLocation] = useState('');
-
-  const [selectedFriends, setSelectedFriends] = useState([]);
-  const [hoveredFriend, setHoveredFriend] = useState(null);
 
   const [friends, setFriends] = useState([
     '/assets/img/chat/soul.png',
@@ -26,12 +23,29 @@ const Schedule = ({ eventId, selectedDate }) => {
     '/assets/img/chat/melody.png',
     '/assets/img/chat/coco.png',
   ]);
+  const [selectedFriends, setSelectedFriends] = useState([]);
+  const [hoveredFriend, setHoveredFriend] = useState(null);
+
+  const [showError, setShowError] = useState(false);
+  // 백에서 온 메세지
+  const [value, setValue] = useState("")
+  const onChangeValue = (e) => {
+    setValue(e.target.value)
+  }
+
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleLocationChange = (e) => setLocation(e.target.value);
 
   useEffect(() => {
     const dummy = {};
+  //   const dummy = {
+  //   title: '한강 산책 모임',
+  //   date: '8월 3일 (토)',
+  //   startTime: '18:00',
+  //   endTime: '20:00',
+  //   location: '여의나루역 2번 출구 앞',
+  // };
     setSchedule(dummy);
   }, [eventId]);
 
@@ -59,14 +73,36 @@ const Schedule = ({ eventId, selectedDate }) => {
       });
     }
   }
-
-  const handleSave = () => {
+  // 저장버튼
+  const handleSave = async () => {
     if (!title.trim()) {
       setShowError(true);
       return;
     }
-    // 저장 로직
     setShowError(false);
+    await fetch(`http://localhost:8000/calender/api/post-schedules`, {
+      method : "POST",
+      headers : {
+        "Content-Type" : "application/json"
+      },
+      body : JSON.stringify({
+        title : title,
+        date: date,
+        time: startTime,
+        place: location
+      })
+    })
+    .then((res) => {
+      if(!res.ok) throw new Error(`Response Fetching Error`);
+      return res.json()
+    })
+    .then((res) => {
+        console.log(res)
+        if(res.message) alert(res.message);
+        // setValue("")
+        // setIsUpdate(!isUpdate) // 상태 리랜더링
+      })
+      .catch(console.error)
   };
 
   return (
