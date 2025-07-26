@@ -1,8 +1,6 @@
 import styled, { css, ThemeProvider } from "styled-components";
 import { spacingProps } from "../../styles/spacingProps";
 import { flexColumn, flexRow } from "../../styles/common";
-import { ReactComponent as EyeOnIcon } from "../icons/eye-on.svg";
-import { ReactComponent as EyeOffIcon } from "../icons/eye-off.svg";
 
 const S = {};
 
@@ -89,7 +87,7 @@ S.InputButtonWrapper = styled.div`
     cursor: pointer;
   }
 
-  svg {
+  img {
     position: absolute;
     right: 24px;
     top: 50%;
@@ -102,7 +100,10 @@ S.PasswordInputWrapper = styled.div`
   ${flexColumn}
 `;
 
-S.EyeOn = styled(EyeOnIcon)`
+S.EyeOn = styled.img.attrs({
+  src: "/assets/icons/eye-on.svg",
+  alt: "비밀번호 보기"
+})`
   position: absolute;
   right: 24px;
   top: 50%;
@@ -110,7 +111,10 @@ S.EyeOn = styled(EyeOnIcon)`
   cursor: pointer;
 `;
 
-S.EyeOff = styled(EyeOffIcon)`
+S.EyeOff = styled.img.attrs({
+  src: "/assets/icons/eye-off.svg",
+  alt: "비밀번호 숨기기"
+})`
   position: absolute;
   right: 24px;
   top: 50%;

@@ -57,7 +57,109 @@ S.PasswordText = styled.div`
   }
 `;
 
+S.AllAgreeWrapper = styled.div`
+  ${flexCenter};
+  justify-content: flex-end;
+  margin-top: 200px;
+`;
 
+S.TermsWrapper = styled.div`
+  ${flexColumn};
+  gap: 60px 0;
+`;
+
+S.TermsBoxWrapper = styled.div`
+  ${flexColumn};
+  gap: 20px 0;
+  margin-top: 67px;
+`;
+
+S.TermsBox = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  padding: 32px 40px;
+  background: #fff;
+  max-width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+`;
+
+S.TermsTextBox = styled.div`
+  ${flexColumn};
+  gap: 10px 0;
+  ${spacingProps}
+`;
+
+S.TermsTitle = styled.p`
+  font-size: 16px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.PALLETE.primary.dark};
+`;
+
+S.TermsText = styled.p`
+  font-size: 14px;
+  color: #888;
+`;
+
+S.TermsListDemical = styled.ul`
+  list-style: decimal;
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px 0;
+`;
+
+S.TermsListDemicalItem = styled.li`
+  font-size: 14px;
+  color: #888;
+`;
+
+S.TermsList = styled.ul`
+  list-style: disc;
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px 0;
+`;
+
+S.TermsListItem = styled.li`
+  font-size: 14px;
+  color: #888;
+`;
+
+S.CheckboxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0 20px;
+`;
+
+
+S.NoticeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #F8F8F8;
+  border-radius: 24px;
+  padding: 48px 40px;
+  margin-top: 100px;
+`;
+
+S.NoticeText = styled.div`
+  ${flexColumn};
+  margin-left: 40px;
+`;
+
+S.NoticeTextTitle = styled.p`
+  font-size: 30px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.PALLETE.primary.main};
+`;
+
+S.TermsButtonWrapper = styled.div`
+  ${flexCenter};
+  margin-top: 200px;
+  margin-bottom: 300px;
+`;
 
 
 S.SocialLogin = styled.div`
@@ -144,10 +246,10 @@ S.KakaoIcon = styled.div`
   }
 `;
 
-
-
-
-
+S.RequiredText = styled.span`
+  color: ${({ theme }) => theme.PALLETE.primary.main};
+  font-weight: 600;
+`;
 
 
 export default S;

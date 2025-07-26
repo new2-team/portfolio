@@ -19,8 +19,6 @@ import AddProfile from "../pages/profile/AddProfile";
 import Faq from "../pages/support/Faq";
 import Inquiry from "../pages/support/Inquiry";
 
-
-
 const router = createBrowserRouter([
     {
         path : "/",

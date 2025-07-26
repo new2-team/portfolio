@@ -23,7 +23,7 @@ S.InputButtonWrapper = styled.div`
     cursor: pointer;
   }
 
-  svg {
+  img {
     width: 30px;
     height: 30px;
     position: absolute;
