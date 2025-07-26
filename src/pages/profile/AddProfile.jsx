@@ -12,6 +12,10 @@ import { Controller, useForm } from 'react-hook-form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRef } from "react";
+import Charactor from './Charactor';
+import Favorit from './Favorit';
+import Caution from './Caution';
+import { flexCenter } from '../../styles/common';
 
 
 
@@ -26,6 +30,7 @@ const AddProfile = () => {
     const [address, setAddress] = useState("");
     const [selectedNeutralization, setselectedNeutralization] = useState("")
     const [selected, setSelected] = useState("")
+    const [error, setError] = useState('');
 
     const handleSearchAddress = () => {
         new window.daum.Postcode({
@@ -34,6 +39,7 @@ const AddProfile = () => {
         },
         }).open();
     };
+    
 
     const BREEDS = ["말티푸", "시츄", "골든리트리버", "푸들", "보더콜리", "비숑프리제",
         "포메라니안", "닥스훈트", "치와와", "요크셔테리어", "이탈리안 그레이하운드", "퍼그",
@@ -90,7 +96,10 @@ const AddProfile = () => {
         }
     }
 
-    //onValid, onInvalid
+    const handleGenderClick = (gender) => {
+        setSelectedGender(gender);
+        setValue('gender', gender, { shouldValidate: true }); // 유효성 검사도 동시에 트리거
+    };
 
     const onValid = (data) => {
         console.log("폼 유효! 제출데이터", data);
@@ -116,9 +125,7 @@ const AddProfile = () => {
                         <BasicInput 
                         type="text" 
                         placeholder="멍이의 이름을 입력해주세요"
-                        {...register("name", {
-                            required: true
-                        })}
+                        {...register("name", {required: true})}
                         />
                         {errors.name?.type === "required" && (
                         <span style={{color:"#f74c26"}}>이름을 입력해주세요.</span>
@@ -127,15 +134,15 @@ const AddProfile = () => {
                     <S.NamekgWrap >
                         <S.CaptionTitlewrap>몸무게</S.CaptionTitlewrap>
                         <S.InputButtonWrapper >
-                            <BasicInput type="text" placeholder=""
-                            {...register("weight", {
-                                required: true
-                            })}
-                            />
-                            {errors.weight?.type === "required" && (
-                            <span style={{color:"#f74c26"}}>몸무게를 입력해주세요.</span>
-                            )}                            
                             <Text.Body3>kg</Text.Body3>
+                            <BasicInput s type="text" placeholder=""
+                            {...register("weight", {required: true})}
+                            />
+                            <div style={{width:"100%", textAlign:"center"}}>
+                            {errors.weight?.type === "required" && (
+                                <span style={{color:"#f74c26"}}>몸무게를 입력해주세요.</span>
+                            )}                            
+                            </div>
                         </S.InputButtonWrapper>
                     </S.NamekgWrap>
                 </S.inputinline>
@@ -158,12 +165,14 @@ const AddProfile = () => {
                             }
                             ref={calendarRef}
                             />
-                        )}
-                        />
-                    </S.InputButtonWrapper>
-                            {errors.weight?.type === "required" && (
+                            )}
+                            />
+                        <div style={{width:"100%", textAlign:"center"}}>
+                        {errors.birthDate?.type === "required" && (
                             <span style={{color:"#f74c26"}}>생년월일을 입력해주세요.</span>
-                            )}                         
+                        )}                            
+                        </div>
+                    </S.InputButtonWrapper>
                             <CalendarIcon width={30} height={30} 
                         onClick={() => calendarRef.current?.setFocus()}
                         style={{ position: "absolute", cursor: "pointer", marginLeft: "8px" }}/>
@@ -176,31 +185,51 @@ const AddProfile = () => {
                             basicButton="superSmall" 
                             variant={selectedGender === "male" ? "filled" : "default"}
                             style={{width:"100%"}}
-                            onClick={() => setSelectedGender('male')}>
+                            onClick={() => handleGenderClick('male')}>
                                 남아
                             </BasicButton>
                         </S.NamekgWrap>
                         <S.NamekgWrap>
-                            <BasicButton 
+                            <BasicButton
                             basicButton="superSmall" 
                             variant={selectedGender === "female" ? "filled" : "default"}
                             style={{width:"100%"}}
-                            onClick={() => setSelectedGender('female')}>                                
+                            onClick={() => handleGenderClick('female')}>                                
                             여아
                             </BasicButton>
                         </S.NamekgWrap>
                     </S.inputinline>
+                    <input
+                    type='hidden'
+                    {...register("gender", {required:"성별을 선택해주세요.", 
+                        validate: (value) => value === "male" || value === "female" || "성별을 선택해주세요."
+                    })}
+                    />
+                    <div  style={{width:"100%", textAlign:"center"}}>
+                    {errors.gender && (
+                        <span style={{color:"#f74c26"}}>
+                            {errors.gender.message}
+                        </span>
+                    )}                            
+                    </div>
                 </S.InputReguler>
                 <S.InputReguler >
                     <S.CaptionTitlewrap>주소</S.CaptionTitlewrap>
-                    <S.InputButtonWrapper onClick={handleSearchAddress} style={{cursor:"pointer"}}>
+                        <S.InputButtonWrapper 
+                        onClick={handleSearchAddress} style={{cursor:"pointer"}}>
                         <BasicInput 
                         type="text" 
                         value={address}
                         placeholder="도로명 주소를 검색하세요"
-                        readOnly />
+                        readOnly
+                        />
                         <SearchIcon width={30} height={30} />
                     </S.InputButtonWrapper>
+                    <div style={{width:"100%", textAlign:"center"}}>
+                        {errors.address?.type === "required" && (
+                        <span style={{color:"#f74c26"}}>품종을 선택해주세요.</span>
+                        )}                       
+                    </div>
                 </S.InputReguler>
                 <S.InputReguler >
                     <S.CaptionTitlewrap>품종</S.CaptionTitlewrap>
@@ -208,8 +237,10 @@ const AddProfile = () => {
                         <SelectBox
                             options={BREEDS}
                             placeholder="강아지 품종을 선택하세요."
+                            {...register("breed", {required: true})}
                             onSelect={(v) => setSelectedBreed(v)}
-                            style={{width:"100%"}}/>
+                            style={{width:"100%"}}
+                            />
                     </S.InputButtonWrapper>
                     {selectedBreed  === "기타" && (
                         <S.InputButtonWrapper style={{marginTop:"10px"}}>
@@ -220,11 +251,17 @@ const AddProfile = () => {
                              onChange={(e) => setCustomBreed(e.target.value)}
                              style={{
                                 width: "100%",
-                                padding: "10px"
+                                height: "64px",
+                                padding: "20px 24px"
                              }}
                             ></BasicInput>
                         </S.InputButtonWrapper>
                     )}
+                    <div style={{width:"100%", textAlign:"center"}}>
+                        {errors.breed?.type === "required" && (
+                        <span style={{color:"#f74c26"}}>품종을 선택해주세요.</span>
+                        )}                         
+                    </div>
                 </S.InputReguler>
                 <S.TitleWrap style={{marginTop:"42px"}}> 
                     <Text.Body2>
@@ -241,6 +278,7 @@ const AddProfile = () => {
                                 src={imageSrc} 
                                 style={{marginTop:"30px"}}
                                 onClick={handleClick}
+                                {...register("profilePhoto", {required: true})}
                                 />
                             <input
                                 id="profile"
@@ -249,7 +287,12 @@ const AddProfile = () => {
                                 accept="image/*"
                                 ref={fileInputRef}
                                 onChange={handleImageChange}
-                            />                            
+                            />
+                        <div style={{width:"100%", textAlign:"center"}}>
+                            {errors.profilePhoto?.type === "required" && (
+                            <span style={{color:"#f74c26"}}>사진을 등록해주세요</span>
+                            )}                         
+                        </div>
                     </S.NamekgWrap>
                         <S.NamekgWrap >
                             <S.CaptionTitlewrap >별명</S.CaptionTitlewrap>
@@ -268,97 +311,29 @@ const AddProfile = () => {
                         <S.highlight style={{ fontWeight: 'bold'}}>기타 정보</S.highlight>
                     </Text.Body1>
                 </S.TitleWrap>
+
                 <S.inputinline>
                         <span style={{ color: '#CE5347', fontWeight: 'bold'}}>*&nbsp;</span>
                         <S.CaptionTitlewrap >우리 멍이의 성격은?</S.CaptionTitlewrap>
                 </S.inputinline>
-               <S.inputinline>
-                    <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect src='/assets/img/progile/personality/popularPuppy.png'></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나는 개인싸!<br/></Text.Body2>
-                        <Text.Body3>누구와도 잘 지내요</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect src='/assets/img/progile/personality/popularPuppy.png'></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나를 따르라!<br/></Text.Body2>
-                        <Text.Body3>가만히 있지 못해요!</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나랑만 있어줘...<br/></Text.Body2>
-                        <Text.Body3>애착형이고 애교가 많아요</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>모든 건 규칙적!<br/></Text.Body2>
-                        <Text.Body3>루틴과 규칙을 좋아해요</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                </S.inputinline>
+
+                {/*  기타정보-강아지 성격 */}
+                <Charactor></Charactor>
                 <S.inputinline>
                         <span style={{ color: '#CE5347', fontWeight: 'bold'}}>*&nbsp;</span>
                         <S.CaptionTitlewrap >우리 멍이가 좋아하는 것은?
                          <span style={{ color: '#CE5347', fontSize:'small' ,fontWeight: 'normal'}}>&nbsp;&nbsp;다중선택가능</span></S.CaptionTitlewrap>
                 </S.inputinline>
-               <S.inputinline>
-                    <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>간식이 좋아<br/></Text.Body2>
-                        <Text.Body3>육포, 개껌, 치즈...</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>산책이 짱!<br/></Text.Body2>
-                        <Text.Body3>산책 없이 못살아!</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>쉬는 게 최고<br/></Text.Body2>
-                        <Text.Body3>힐링이 최고다 멍!</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>애카 가자!<br/></Text.Body2>
-                        <Text.Body3>친구들이 제일 좋아!</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                </S.inputinline>
+
+                {/*  기타정보-강아지 취향 */}
+                <Favorit></Favorit>
                 <S.inputinline>
                         <S.CaptionTitlewrap>주의해 주세요!
                          <span style={{ color: '#CE5347', fontSize:'small' ,fontWeight: 'normal'}}>&nbsp;&nbsp;다중선택가능</span></S.CaptionTitlewrap>
                 </S.inputinline>
-               <S.inputinline>
-                    <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>만지는 거 싫어!<br/></Text.Body2>
-                        <Text.Body3>나는 예민해요</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>친구 무서워요<br/></Text.Body2>
-                        <Text.Body3>나를 보호해주세요</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap style={{marginRight:'30px'}}>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>알러지가 있어요<br/></Text.Body2>
-                        <Text.Body3>다 먹을 수 없어요😢</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                   <S.NamekgWrap>
-                        <S.radioselect></S.radioselect>
-                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>소리에 놀라요<br/></Text.Body2>
-                        <Text.Body3>나는 소리에 민감해요!</Text.Body3>
-                        <Radio size="M" mt="20"/>
-                    </S.NamekgWrap>
-                </S.inputinline>
+
+                {/* 기타정보-강아지 주의할 점 */}
+                    <Caution></Caution>
                 <S.CaptionTitlewrap>
                     <Text.Body1>
                         <S.highlight style={{ fontWeight: 'bold'}}>선택 정보</S.highlight>
