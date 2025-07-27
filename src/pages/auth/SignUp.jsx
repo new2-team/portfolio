@@ -1,9 +1,9 @@
 import React from "react";
 import Container from "../../components/layout/Container";
-import SocialTabWrapper from "./SocialTabWrapper";
+import SocialTabWrapper from "./components/SocialTabWrapper";
 import ProgressStep from "../../components/progressStep/ProgressStep";
 import { getSignUpSteps } from "../../components/progressStep/SignUpStepData";
-import AcceptTerms from "./AcceptTerms";
+import AcceptTerms from "./components/AcceptTerms";
 
 // 현재 진행 단계
 const activeStep = 2;

@@ -14,6 +14,7 @@ import SelectBox from "../../components/selectBox/SelectBox";
 import Accordion from "../../components/accordion/Accordion";
 import Container from "../../components/layout/Container";
 import MiniFooter from "../../components/layout/footer/MiniFooter";
+import RadioGroupExample from "../../components/radio/RadioGroupExample";
 
 const Main = () => {
   return (
@@ -141,7 +142,12 @@ const Main = () => {
         </div>
       </section>
       <MiniFooter></MiniFooter>
+
+
+<RadioGroupExample/>
     </Container>
+
+
 
  
   );

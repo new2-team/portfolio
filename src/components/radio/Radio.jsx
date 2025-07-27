@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import S from "./style";
+import { useToggle } from "../../hooks/useToggle";
 
 const Radio = ({ checked, onChange, size = "M", ...props }) => {
   const isControlled = typeof checked === "boolean";
-  const [internalChecked, setInternalChecked] = useState(false);
+  const [internalChecked, toggleChecked, setInternalChecked] = useToggle(false);
   const isChecked = isControlled ? checked : internalChecked;
 
   const handleClick = () => {
     if (!isControlled) {
-      setInternalChecked(!internalChecked);
+      toggleChecked(); // 내부 상태 토글
     }
-    onChange?.(!isChecked);
+    onChange?.(!isChecked); // 외부 onChange 호출
   };
 
   const iconSize = getSize(size);
@@ -27,6 +28,7 @@ const Radio = ({ checked, onChange, size = "M", ...props }) => {
   );
 };
 
+// 크기별 아이콘 사이즈 반환
 const getSize = (size) => {
   switch (size) {
     case "L":
