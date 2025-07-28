@@ -1,6 +1,6 @@
 import React from "react";
-import S from "./style";
-import Text from '../../components/text/size';
+import S from "../style";
+import Text from "../../../components/text/size";
 
 const SocialLogin = (props) => {
   return (
