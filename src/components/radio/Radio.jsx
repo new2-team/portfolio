@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { ReactComponent as RadioOnIcon } from "../icons/radio-on.svg";
-import { ReactComponent as RadioOffIcon } from "../icons/radio-off.svg";
 import S from "./style";
 
 const Radio = ({ checked, onChange, size = "M", ...props }) => {
@@ -19,11 +17,12 @@ const Radio = ({ checked, onChange, size = "M", ...props }) => {
 
   return (
     <S.RadioWrapper onClick={handleClick} {...props}>
-      {isChecked ? (
-        <RadioOnIcon width={iconSize} height={iconSize} />
-      ) : (
-        <RadioOffIcon width={iconSize} height={iconSize} />
-      )}
+      <img
+        src={isChecked ? "/assets/icons/radio-on.png" : "/assets/icons/radio-off.png"}
+        width={iconSize}
+        height={iconSize}
+        alt={isChecked ? "선택됨" : "선택안됨"}
+      />
     </S.RadioWrapper>
   );
 };

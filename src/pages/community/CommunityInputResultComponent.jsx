@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import S from './style';
-import arrowDown from "../../components/icons/arrow-down.svg";
-import arrowUp from "../../components/icons/arrow-up.svg";
 import BasicInput from '../../components/input/BasicInput';
-import arrowDownRed from "../../components/icons/arrow-down-red.svg";
 import PopupCardLarge from '../../components/popUp/PopupCardLarge';
-import { ReactComponent as ChatIcon } from "../../components/icons/chat.svg";
-import { ReactComponent as HeartIcon } from "../../components/icons/heart.svg";
-import { ReactComponent as HeartClickIcon } from "../../components/icons/heart-click.svg";
 
 const CommunityInputResultComponent = ({post, openPost, togglePost, 
   handleComment,handleLike,setCommentInput,commentInput,
   countComment, setCountComment, deletePost, deleteComment, toggleReplyInput, openReplyInput,
-  replyInput, setReplyInput, addReply, setOpenReplyInput}) => {
+  replyInput, setReplyInput, addReply, setOpenReplyInput, deleteReply}) => {
 
 
 const getTime = (time) => {
@@ -59,16 +53,15 @@ return (
             <S.HCTBWrapper>
               {!isOpen && (<S.HeartCommentTop>
                   <S.HeartButton onClick={()=> handleLike(postItem.id)} type='button'>
-                    <HeartIcon/>
-                    
+                    <img src="/assets/icons/heart.svg" width={24} height={24} alt="좋아요" />
                   </S.HeartButton>
                   <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
                   <S.CommentButton type='submit'>
-                    <ChatIcon />
+                    <img src="/assets/icons/chat.svg" width={24} height={24} alt="댓글" />
                   </S.CommentButton>
                   <S.HeartCommentCount>{postItem.commentList.length}</S.HeartCommentCount>
               </S.HeartCommentTop>)}
-              <S.ArrowButton onClick={() => togglePost(postItem.id)}>{isOpen ? <img src={arrowUp}/>:<img src={arrowDown}/>}</S.ArrowButton>
+              <S.ArrowButton onClick={() => togglePost(postItem.id)}>{isOpen ? <img src="/assets/icons/arrow-up.svg" width={24} height={24} alt="열림" />:<img src="/assets/icons/arrow-down.svg" width={24} height={24} alt="닫힘" />}</S.ArrowButton>
             </S.HCTBWrapper>
           </S.TRPWBottom>
           
@@ -82,11 +75,11 @@ return (
             <S.HeartLine>
               <S.HeartComment>
                 <S.HeartButton onClick={()=> handleLike(postItem.id)} type='submit'>
-                  <HeartIcon />
+                  <img src="/assets/icons/heart.svg" width={24} height={24} alt="좋아요" />
                 </S.HeartButton>
                 <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
                 <S.CommentButton type='submit'>
-                  <ChatIcon />
+                  <img src="/assets/icons/chat.svg" width={24} height={24} alt="댓글" />
                 </S.CommentButton>
                 <S.HeartCommentCount>{postItem.commentList.length}</S.HeartCommentCount>
               </S.HeartComment>
@@ -126,7 +119,7 @@ return (
                     
                       <S.PlusCommentResultWrapper key={reply.id}>
                         <S.PCRTop>
-                          <img src={arrowDownRed} alt="" />
+                          <img src="/assets/icons/arrow-down-red.svg" width={18} height={18} alt="대댓글" />
                           <S.ProfileImage src="/assets/img/profile3.jpg" alt="profile" />
                           <div>
                             <span className='TRName'>뭉치</span>
@@ -137,7 +130,7 @@ return (
                           <S.Reply>{reply.text}</S.Reply>
                           <S.DeleteCommentButton className='ReplyDelete' onClick={() => {
                             setIsLargeOpenComment(true);
-                            setShowConfirm(() => () => deleteComment(postItem.id,comment.id))
+                            setShowConfirm(() => () => deleteReply(postItem.id,comment.id, reply.id))
                           }}>삭제하기</S.DeleteCommentButton>
                         </S.PCRBottom>
                         <S.Line/>

@@ -4,10 +4,8 @@ import S from './style';
 import Text from '../../components/text/size';
 import BasicButton from '../../components/button/BasicButton';
 import BasicInput from '../../components/input/BasicInput';
-import { ReactComponent as CalendarIcon } from "../../components/icons/calendar.svg";
 import Radio from '../../components/radio/Radio';
 import { useForm } from 'react-hook-form';
-
 
 const AddHealthProfile = () => {
         const {  formState: {errors} } = useForm({ mode: "onChange" });
@@ -90,7 +88,7 @@ const AddHealthProfile = () => {
                 </S.InputButtonWrapper>   
                 <S.InputButtonWrapper>
                     <BasicInput type="text" placeholder="마지막 방문일" style={{boxSizing:"border-box"}}/>
-                    <CalendarIcon width={30} height={30} />
+                    <img src="/assets/icons/calendar.svg" width={30} height={30} alt="캘린더" />
                 </S.InputButtonWrapper>
                 <S.TitleWrap > 
                     <Text.Body1>
