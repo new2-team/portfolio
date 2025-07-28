@@ -68,6 +68,8 @@ S.ErrorMessage = styled.div`
 `;
 
 S.InputButtonWrapper = styled.div`
+  width: 100%; 
+  flex: 1;
   position: relative;
   ${spacingProps}
 
@@ -97,6 +99,10 @@ S.InputButtonWrapper = styled.div`
 `;
 
 S.PasswordInputWrapper = styled.div`
+  width: 100%; 
+  flex: 1;
+  position: relative;
+  ${spacingProps}
   ${flexColumn}
 `;
 
