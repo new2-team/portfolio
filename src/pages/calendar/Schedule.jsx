@@ -9,7 +9,6 @@ import styles from './style';
 
 const Schedule = ({ eventId, selectedDate }) => {
   const [date, setDate] = useState(selectedDate);
-  console.log("지정날짜2", date)
   const [schedule, setSchedule] = useState({});
   const [title, setTitle] = useState('');
   const [startTime, setStartTime] = useState(null);
@@ -23,7 +22,8 @@ const Schedule = ({ eventId, selectedDate }) => {
     '/assets/img/chat/melody.png',
     '/assets/img/chat/coco.png',
   ]);
-  const [selectedFriends, setSelectedFriends] = useState([]);
+
+  const [selectedFriends, setSelectedFriends] = useState([]); // 선택된 친구
   const [hoveredFriend, setHoveredFriend] = useState(null);
 
   const [showError, setShowError] = useState(false);
@@ -80,7 +80,7 @@ const Schedule = ({ eventId, selectedDate }) => {
       return;
     }
     setShowError(false);
-    await fetch(`http://localhost:8000/calender/api/post-schedules`, {
+    await fetch(`http://localhost:8000/calendar/api/post-schedules`, {
       method : "POST",
       headers : {
         "Content-Type" : "application/json"
@@ -215,6 +215,7 @@ const Schedule = ({ eventId, selectedDate }) => {
             </BasicButton>
           </>
         ) : (
+          // 수정하기 누르면 -> 저장하기 나오게 하기
           <BasicButton
             roundButton="small"
             variant="filled"
