@@ -5,6 +5,9 @@ import Text from "../../components/text/size";
 
 const S = {};
 
+// =========================
+// 로그인 페이지 스타일
+// =========================
 S.LoginWrapper = styled.div`
   width: 600px;
   margin: auto;
@@ -57,6 +60,9 @@ S.PasswordText = styled.div`
   }
 `;
 
+// =========================
+// 약관동의(이용약관) 페이지 스타일
+// =========================
 S.AllAgreeWrapper = styled.div`
   ${flexCenter};
   justify-content: flex-end;
@@ -134,7 +140,6 @@ S.CheckboxWrapper = styled.div`
   gap: 0 20px;
 `;
 
-
 S.NoticeWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -161,7 +166,9 @@ S.TermsButtonWrapper = styled.div`
   margin-bottom: 300px;
 `;
 
-
+// =========================
+// 소셜 로그인/탭 스타일 (약관동의 1단계에서만 사용)
+// =========================
 S.SocialLogin = styled.div`
   margin-top: 80px;
 `;
@@ -251,5 +258,22 @@ S.RequiredText = styled.span`
   font-weight: 600;
 `;
 
+// =========================
+// 회원정보 입력 페이지 스타일
+// =========================
+S.SignUpInfoWrapper = styled.div`
+  ${flexColumn};
+  gap: 40px 0;
+  margin-top: 150px;
+`;
+
+S.SignUpInfoInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  p {
+    min-width: 300px;
+  }
+`;
 
 export default S;

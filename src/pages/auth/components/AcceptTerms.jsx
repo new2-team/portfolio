@@ -1,12 +1,11 @@
 import React from 'react';
 import RadioWithLabel from '../../../components/radio/RadioWithLabel';
-import Container from '../../../components/layout/Container';
 import S from '../style';
 import Text from '../../../components/text/size';
 import CheckboxWithLabel from '../../../components/checkbox/CheckboxWithLabel';
 import BasicButton from '../../../components/button/BasicButton';
 import { useCheckGroup } from '../../../hooks/useCheckGroup';
-import { useToggle } from '../../../hooks/useToggle';
+import SocialTabWrapper from './SocialTabWrapper';
 
 // 이용약관 동의 페이지
 const AcceptTerms = () => {

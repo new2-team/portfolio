@@ -1,6 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import SignIn from "../pages/auth/SignIn";
-import SignUp from "../pages/auth/SignUp";
+import SignUpLayout from "../pages/auth/SignUpLayout";
+import SignUpAgree from "../pages/auth/SignUpAgree";
+import SignUpInfo from "../pages/auth/SignUpInfo";
+import SignUpProfile from "../pages/auth/SignUpProfile";
+import SignUpComplete from "../pages/auth/SignUpComplete";
 import Calendar from "../pages/calendar/Calendar";
 import CalendarDay from "../pages/calendar/CalendarDay";
 import CalendarMonth from "../pages/calendar/CalendarMonth";
@@ -23,7 +27,16 @@ const router = createBrowserRouter([
     children: [
       { path: "main", element: <Main /> },
       { path: "sign-in", element: <SignIn /> },
-      { path: "sign-up", element: <SignUp /> },
+      {
+        path: "sign-up",
+        element: <SignUpLayout />, // 진행바/공통 레이아웃
+        children: [
+          { index: true, element: <SignUpAgree /> }, // /sign-up
+          { path: "info", element: <SignUpInfo /> }, // /sign-up/info
+          { path: "profile", element: <SignUpProfile /> }, // /sign-up/profile
+          { path: "complete", element: <SignUpComplete /> }, // /sign-up/complete
+        ],
+      },
       // 프로필 관련
       {
         path: "profile",
