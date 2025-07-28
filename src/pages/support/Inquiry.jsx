@@ -7,8 +7,8 @@ import Radio from '../../components/radio/Radio';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStarOfLife } from '@fortawesome/free-solid-svg-icons';
 import SelectBox from '../../components/selectBox/SelectBox';
-import TextArea from '../../components/input/TextArea';
 import FileUpload from '../../components/fileUpload/FileUpload';
+import TextArea from '../../components/textArea/TextArea';
 
 const Inquiry = () => {
 
@@ -60,7 +60,21 @@ const Inquiry = () => {
                     <BasicInput placeholder="이메일을 입력해주세요" />
                     <S.Email>@</S.Email>
                     <S.EmailSelectBox>
-                     <SelectBox options={[0, 1, 2]} />
+                     <SelectBox options={[
+                        "naver.com", 
+                        "gmail.com", 
+                        "hanmail.net", 
+                        "hotmail.com", 
+                        "nate.com", 
+                        "yahoo.com", 
+                        "empas.com",
+                        "dreamwiz.com", 
+                        "freechal.com", 
+                        "lycos.co.kr", 
+                        "korea.com", 
+                        "hanmir.com", 
+                        "paran.com"
+                        ]} />
                     </S.EmailSelectBox>
                    </S.InputsWrapper>
                </S.InquiryEmailWrapper>

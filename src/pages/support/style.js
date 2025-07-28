@@ -120,7 +120,7 @@ S.InquiryNameWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 64px;
+ height: 72px;
 `
 
 S.NameInput = styled.div`
@@ -132,9 +132,9 @@ S.NameInput = styled.div`
 
 S.InquiryPhoneWrapper = styled.div`
  display: flex;
- align-items: center;
+ align-items: center;   
  width: 960px;
- height: 64px;
+ height: 72px;
 `
 
 S.SelectPhonStart = styled.div`
@@ -153,7 +153,7 @@ S.InquiryEmailWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 64px;
+ height: 672px;
 `
 
 S.Email = styled.p`
@@ -172,7 +172,7 @@ S.InquiryQuestionCategoryWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 64px;
+ height: 72px;
 `
 
 S.RadiosWrapper = styled.div`
@@ -195,7 +195,7 @@ S.InquiryQuestionTitleWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 64px;
+ height: 72px;
 `
 
 // 내용
@@ -234,7 +234,7 @@ S.InquiryFileWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 112px;
+ height: 114px;
 `
 
 S.FileWrapper = styled.div`
@@ -253,7 +253,7 @@ p{
 
 S.FileInputButton = styled.div`
  display: flex;
- height: 64px;
+ height: 72px;
 `
 
 S.FileInput = styled.div`
