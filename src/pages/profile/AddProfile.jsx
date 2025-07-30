@@ -9,28 +9,25 @@ import { Controller, useForm } from 'react-hook-form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRef } from "react";
-import Charactor from './Charactor';
-import Favorit from './Favorit';
-import Caution from './Caution';
-import { isValid } from 'date-fns';
-
+import Radio from '../../components/radio/Radio';
+import Checkbox from '../../components/checkbox/Checkbox';
+import DatePickerSingle from './DatePickerSingle';
 
 
 const AddProfile = () => {
     
     const calendarRef = useRef(null);
     const fileInputRef = useRef(null);
-    const charactorRef = useRef();
-    const favoritRef = useRef();
-    const cautionRef = useRef();
-
-    const { register, handleSubmit, formState: {isSubmitting, errors}, control, setValue } = useForm({ mode: "onChange" });
-    const[selectedCharactor, setSelectedCharactor] = useState();
+    const { register, handleSubmit, formState: {isSubmitting, errors}, control, setValue, getValues } = useForm({ mode: "onChange" });
+    const [selectedCharactor, setSelectedCharactor] = useState();
+    const [selectedFavorite, setSelectedFavorite] = useState([]);
+    const [selectedCautions, setSelectedCautions] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(null);
     const [thumbnail, setThumbnail] = useState(null); //상태 수정을 위한 경로
     const [form, setForm] = useState({
         name:'',
         weight:'',
-        birthDate: null,
+        birthDate: '',
         gender:'',
         breed:'',
         custombreed:'',
@@ -41,9 +38,9 @@ const AddProfile = () => {
         favoriteSnack:'',
         walkingCourse:'',
         messageToFriend:'',
-        charactor:null,
-        favorites:[],
-        cautions:[],
+        charactor:'',
+        favorites:'',
+        cautions:'',
     });
 
     const [validationErrors, setValidationErrors] = useState({ isValid: false});
@@ -56,7 +53,7 @@ const AddProfile = () => {
             const name = formData.name || form.name;
             if (!name || name.trim() === '') {
                 errors.name = "이름을 입력해주세요.";
-            }
+            } 
             
             const weight = formData.weight || form.weight;
             if (!weight || weight.trim() === '') {
@@ -106,21 +103,20 @@ const AddProfile = () => {
             const messageToFriend = formData.messageToFriend || form.messageToFriend;
             if (!messageToFriend || messageToFriend.trim() === '') {
                 errors.messageToFriend = "새 친구에게 한마디를 입력해주세요.";
+            } 
+
+            const charactorValue = formData.Charactor || form.charactor;
+            if (!charactorValue) {
+                console.log("charactorValue:", charactorValue)
+                errors.Charactor = "우리 멍이의 성격을 선택해주세요";
             }
 
-            // if (charactorRef.current){
-            //     const charactorValue = charactorRef.current.getValue();
-                const charactorValue = form.charactor
-                if (!charactorValue) {
-                    errors.Charactor = "우리 멍이의 성격을 선택해주세요";
-                }
-            
-
             // if (favoritRef.current){
-                const favoritValue = favoritRef.current.getValue();
-                if (!favoritValue.isValid) {
+            const favoritValue = formData.favorites || form.favorites
+                if (!favoritValue) {
+                console.log("favoritValue:", favoritValue)
                     errors.Favorit = "우리 멍이가 좋아하는 것을 선택해주세요";
-                // }
+                // } 
             }
 
             console.log('검증 중인 데이터:', { formData, form, errors }); // 디버깅용
@@ -136,12 +132,6 @@ const AddProfile = () => {
         );
     };
 
-        useImperativeHandle(charactorRef, () => ({
-        validate: () => {
-            return { isValid: selectedCharactor !== null };
-        },
-        getValue: () => selectedCharactor,
-    }));
     const handleSearchAddress = () => {
         new window.daum.Postcode({
         oncomplete: function (data) {
@@ -203,9 +193,43 @@ const AddProfile = () => {
         }
     }
 
+
     const handleGenderClick = (gender) => {
         setForm({...form, gender});
         setValue('gender', gender, { shouldValidate: true }); // 유효성 검사도 동시에 트리거
+    };
+
+    const selectCharactor = (id) => {
+        console.log("선택된 값", id)
+        setSelectedCharactor(id);
+        setForm({...form, charactor: id});
+        setValue("charactor", id, {shouldValidate: true});
+        console.log("setValue 후 form 값", getValues("charactor"))
+    };
+
+    const selectFavorite = (id) => {
+        console.log("선택된 값", id)
+        setSelectedFavorite((prev) => {
+            const updated = prev.includes(id) 
+            ? prev.filter((v) => v !== id) : [...prev, id]
+
+            setForm({...form, favorites: updated});
+            setValue("favorite", updated, {shouldValidate: true});
+            console.log("filter 후 ", updated)
+            return updated;
+    })};
+
+    const selectCautions = (id) => {
+        console.log("선택된 값", id)
+        setSelectedCautions((prev) => {
+            const updated = prev.includes(id) 
+            ? prev.filter((v) => v !== id) : [...prev, id]
+
+            setForm({...form, cautions: updated});
+            setValue("cautions", updated, {shouldValidate: true});
+            console.log("filter 후 ", updated)
+            return updated
+        });
     };
 
     const handleFormSubmit = (data) => {
@@ -263,7 +287,7 @@ const AddProfile = () => {
                         type="text" 
                         placeholder="멍이의 이름을 입력해주세요"
                         {...register("name", {
-                            required: true,
+                            required: true, 
                             onChange: (e) => setForm({...form, name: e.target.value})})}
                         />
                         <ErrorMessage
@@ -279,7 +303,7 @@ const AddProfile = () => {
                             {...register("weight", {
                                 required: true,
                                 onChange: (e) => setForm({...form, weight: e.target.value})})}
-                            />
+                            /> 
                         </S.InputButtonWrapper>
                         <ErrorMessage
                             show={hasSubmitted && validationErrors.weight}
@@ -291,27 +315,36 @@ const AddProfile = () => {
                     <S.CaptionTitlewrap>생년월일</S.CaptionTitlewrap>
                     <S.InputButtonWrapper>
                         <Controller 
-                            name="birthDate"
+                            name="birthDate" 
                             control={control}
                             rules={{ required: "생년월일을 선택해주세요" }}
-                            render={({ field }) => (
-                                <DatePicker
-                                // display='block'
-                                selected={field.value}
+                            render={({ field }) => ( 
+                            <DatePickerSingle
+                                ref={calendarRef}
+                                selectedDate={selectedDate}
+                                setSelectedDate={setSelectedDate}
+                                selected={field.value} 
                                 onChange={(date) => {
                                     field.onChange(date);
+                                    setSelectedDate(date);
                                     setForm({...form, birthDate: date})
-                                }}
-                                dateFormat="yyyy-MM-dd"
-                                placeholderText="YYYY-MM-DD"
-                                customInput={<BasicInput style={{ width: "300px"}}/>}
-                                ref={calendarRef}
-                                />
+                                }} 
+                                // customInput={<CustomInput/>}
+                                // dateFormat="yyyy-MM-dd"
+                                // renderCu
+                                    />
+                                    // <DatePicker
+                                    // // display='block'
+                                    
+                                    // placeholderText="YYYY-MM-DD"
+                                // />
                             )}
-                            />
+                            /> 
                         <img src="/assets/icons/calendar.svg" width={30} height={30} alt="캘린더" 
-                            onClick={() => calendarRef.current?.setFocus()}
-                            style={{ position: "absolute", cursor: "pointer", marginLeft: "8px" }}/>
+                            onClick={() => calendarRef.current?.setFocus()
+                            }
+                            style={{ position: "absolute", cursor: "pointer", marginLeft: "8px" }} />
+                            
                     </S.InputButtonWrapper>
                     <ErrorMessage
                         show={hasSubmitted && validationErrors.birthDate}
@@ -510,8 +543,42 @@ const AddProfile = () => {
                         message={validationErrors.Charactor}  
                     />
                 </S.inputinline>
-                <Charactor
-                    ref={charactorRef}/>
+                <S.inputinline>
+                    <S.NamekgWrap style={{marginRight:'30px'}} 
+                            onClick={()=>selectCharactor(1)} selectedCharactor={selectedCharactor === 1}>
+                        <S.radioselect src='/assets/img/progile/personality/popularPuppy.png'></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나는 개인싸!<br/></Text.Body2>
+                        <Text.Body3>누구와도 잘 지내요</Text.Body3>
+                        <Radio checked={selectedCharactor === 1} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                   <S.NamekgWrap  style={{marginRight:'30px'}} onClick={()=>selectCharactor(2)} selectedCharactor={selectedCharactor === 2}>
+                        <S.radioselect src='/assets/img/progile/personality/popularPuppy.png'></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나를 따르라!<br/></Text.Body2>
+                        <Text.Body3>가만히 있지 못해요!</Text.Body3>
+                        <Radio checked={selectedCharactor === 2} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                   <S.NamekgWrap style={{marginRight:'30px'}} onClick={()=>selectCharactor(3)} selectedCharactor={selectedCharactor === 3}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나랑만 있어줘...<br/></Text.Body2>
+                        <Text.Body3>애착형이고 애교가 많아요</Text.Body3>
+                        <Radio checked={selectedCharactor === 3} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                   <S.NamekgWrap onClick={()=>selectCharactor(4)} selectedCharactor={selectedCharactor === 4}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>모든 건 규칙적!<br/></Text.Body2>
+                        <Text.Body3>루틴과 규칙을 좋아해요</Text.Body3>
+                        <Radio checked={selectedCharactor === 4} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                </S.inputinline>
+                    <input
+                        type='hidden'
+                        {...register("charactor", {
+                            required:"멍이의 성격을 선택해주세요", 
+                            validate: (value) => {
+                                const validOptions = [1, 2, 3, 4];
+                                return validOptions.includes(value) || "멍이의 성격을 선택해주세요"
+                        }})}
+                    />
 
                 {/*  기타정보-강아지 취향 */}
                 <S.inputinline style={{display:'flex', alignItems:'flex-start'}}>
@@ -523,17 +590,64 @@ const AddProfile = () => {
                         message={validationErrors.Favorit }  
                     />
                 </S.inputinline>
-                <Favorit
-                    ref={favoritRef}/>
+                <S.inputinline>
+                    <S.NamekgWrap onClick={() => selectFavorite(1)} selected={selectedFavorite.includes(1)} style={{marginRight:'30px'}}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>간식이 좋아<br/></Text.Body2>
+                        <Text.Body3>육포, 개껌, 치즈...</Text.Body3>
+                        <Checkbox checked={selectedFavorite.includes(1)} size="L" mt="20"/>
+                    </S.NamekgWrap>
+                   <S.NamekgWrap onClick={() => selectFavorite(2)} selected={selectedFavorite.includes(2)} style={{marginRight:'30px'}}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>산책이 짱!<br/></Text.Body2>
+                        <Text.Body3>산책 없이 못살아!</Text.Body3>
+                        <Checkbox checked={selectedFavorite.includes(2)} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                   <S.NamekgWrap onClick={() => selectFavorite(3)} selected={selectedFavorite.includes(3)} style={{marginRight:'30px'}}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>쉬는 게 최고<br/></Text.Body2>
+                        <Text.Body3>힐링이 최고다 멍!</Text.Body3>
+                        <Checkbox checked={selectedFavorite.includes(3)} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                   <S.NamekgWrap onClick={() => selectFavorite(4)} selected={selectedFavorite.includes(4)}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>애카 가자!<br/></Text.Body2>
+                        <Text.Body3>친구들이 제일 좋아!</Text.Body3>
+                        <Checkbox checked={selectedFavorite.includes(4)} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                </S.inputinline>
 
                 {/* 기타정보-강아지 주의할 점 */}
                 <S.inputinline>
                     <S.CaptionTitlewrap>주의해 주세요!
                         <span style={{ color: '#CE5347', fontSize:'small' ,fontWeight: 'normal'}}>&nbsp;&nbsp;다중선택가능</span></S.CaptionTitlewrap>
                 </S.inputinline>
-
-                <Caution
-                    ref={cautionRef}/>
+                <S.inputinline>
+                    <S.NamekgWrap onClick={() => selectCautions(1)} selected={selectedCautions.includes(1)} style={{marginRight:'30px'}}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>만지는 거 싫어!<br/></Text.Body2>
+                        <Text.Body3>나는 예민해요</Text.Body3>
+                        <Checkbox checked={selectedCautions.includes(1)} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                   <S.NamekgWrap onClick={() => selectCautions(2)} selected={selectedCautions.includes(2)} style={{marginRight:'30px'}}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>친구 무서워요<br/></Text.Body2>
+                        <Text.Body3>나를 보호해주세요</Text.Body3>
+                        <Checkbox checked={selectedCautions.includes(2)} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                   <S.NamekgWrap onClick={() => selectCautions(3)} selected={selectedCautions.includes(3)} style={{marginRight:'30px'}}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>알러지가 있어요<br/></Text.Body2>
+                        <Text.Body3>다 먹을 수 없어요😢</Text.Body3>
+                        <Checkbox checked={selectedCautions.includes(3)} size="M" mt="20"/>
+                    </S.NamekgWrap >
+                   <S.NamekgWrap onClick={() => selectCautions(4)} selected={selectedCautions.includes(4)}>
+                        <S.radioselect></S.radioselect>
+                        <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>소리에 놀라요<br/></Text.Body2>
+                        <Text.Body3>나는 소리에 민감해요!</Text.Body3>
+                        <Checkbox checked={selectedCautions.includes(4)} size="M" mt="20"/>
+                    </S.NamekgWrap>
+                </S.inputinline>
                 <S.CaptionTitlewrap>
                     <Text.Body1>
                         <S.highlight style={{ fontWeight: 'bold'}}>선택 정보</S.highlight>
