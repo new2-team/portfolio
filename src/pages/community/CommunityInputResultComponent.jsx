@@ -65,8 +65,10 @@ return (
             <S.TRTitle>{postItem.title}</S.TRTitle>
             <S.HCTBWrapper>
               {!isOpen && (<S.HeartCommentTop>
-                  <S.HeartButton onClick={()=> handleLike(postItem.id)} type='button'>
-                    <img src="/assets/icons/heart.svg"  alt="좋아요" />
+                  <S.HeartButton onClick={()=> handleLike(postItem.id)} type='button'
+                    $liked={postItem.liked}  
+                  >
+                    <img src={postItem.liked ? "/assets/icons/heart-click.svg" : "/assets/icons/heart.svg"}  alt="좋아요" />
                   </S.HeartButton>
                   <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
                   <S.CommentButton type='submit'>
@@ -88,7 +90,7 @@ return (
             <S.HeartLine>
               <S.HeartComment>
                 <S.HeartButton onClick={()=> handleLike(postItem.id)} type='submit'>
-                  <img src="/assets/icons/heart.svg" width={24} height={24} alt="좋아요" />
+                  <img src={postItem.liked ? "/assets/icons/heart-click.svg" : "/assets/icons/heart.svg"} width={24} height={24} alt="좋아요" />
                 </S.HeartButton>
                 <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
                 <S.CommentButton type='submit'>

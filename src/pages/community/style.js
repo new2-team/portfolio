@@ -347,9 +347,9 @@ S.ContentInputWrapper = styled.div`
   textarea {
     height: 130px;
   }
-  > div > div {
-    
+  > div > div {    
   }
+  margin-bottom: 15px;
 `
 
 
@@ -395,58 +395,58 @@ S.ContentInputWrapper = styled.div`
 // `
 
 
-S.ContentInput = styled.textarea`
-  flex:1;
-  height: 130px;
-  width: 600px;
-  margin-bottom: 29px;
-  resize: none;
-  font-size : ${({theme}) => theme.FONT_SIZE.body3};
-  font-family: 'SUIT';
-  &::placeholder {
-    font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
-    font-family: 'SUIT';
+// S.ContentInput = styled.textarea`
+//   flex:1;
+//   height: 130px;
+//   width: 600px;
+//   margin-bottom: 29px;
+//   resize: none;
+//   font-size : ${({theme}) => theme.FONT_SIZE.body3};
+//   font-family: 'SUIT';
+//   &::placeholder {
+//     font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
+//     font-family: 'SUIT';
 
-  }
+//   }
  
-  background-color: ${({ theme }) => theme.PALLETE.background.white};
-  border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
-  border-radius: 8px;
-  line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
-  padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
-  ${spacingProps}
+//   background-color: ${({ theme }) => theme.PALLETE.background.white};
+//   border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
+//   border-radius: 8px;
+//   line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
+//   padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
+//   ${spacingProps}
 
-      //아무스 호버 상태
-      &:hover {
-          border-color: ${({ theme }) => theme.PALLETE.primary.main};
-      }
-      //placeholder 텍스트 색상
-      &::placeholder {
-          color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
-      }
+//       //아무스 호버 상태
+//       &:hover {
+//           border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//       }
+//       //placeholder 텍스트 색상
+//       &::placeholder {
+//           color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
+//       }
 
-      //입력중일때
-      &:focus {
-          outline: none;
-          border-color: ${({ theme }) => theme.PALLETE.primary.main};
-          box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
-      }
+//       //입력중일때
+//       &:focus {
+//           outline: none;
+//           border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//           box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+//       }
 
-      //disabled 상태일때
-      &:disabled {
-          outline: none;
-          background-color: ${({ theme }) => theme.PALLETE.background.gray100};
-          border: none;
-      }
+//       //disabled 상태일때
+//       &:disabled {
+//           outline: none;
+//           background-color: ${({ theme }) => theme.PALLETE.background.gray100};
+//           border: none;
+//       }
 
-      //입력 다 한 상태
-      &:not(:focus):not(:placeholder-shown) {
-          border-color: ${({ theme }) => theme.PALLETE.primary.main};
-      }
+//       //입력 다 한 상태
+//       &:not(:focus):not(:placeholder-shown) {
+//           border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//       }
    
     
    
-`
+// `
 
 S.TBButton = styled.div`
   display: flex;
