@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { spacingProps } from "../../styles/spacingProps";
 import { flexCenter, flexColumn } from "../../styles/common";
 import { faHandPointDown } from "@fortawesome/free-solid-svg-icons/faHandPointDown";
@@ -269,48 +269,130 @@ S.TextBoxLeftWrapper = styled.div`
 S.TextBoxInputWrapper = styled.div`
   
   ${flexColumn}
-
+  
+  `
+//준재님 textarea 컴포넌트
+S.TextAreaWrapper = styled.div`
+ position: relative;
+ width: 100%;
+ height: 100%;
+ font-family: 'SUIT';
 `
-S.TitleInput = styled.input`
-    height: 64px;
-    width: 600px;
-    margin-top: 29px;
-    background-color: ${({ theme }) => theme.PALLETE.background.white};
-    border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
-    border-radius: 8px;
-    font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
-    line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
-    padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
-    ${spacingProps}
 
-        //아무스 호버 상태
-        &:hover {
-            border-color: ${({ theme }) => theme.PALLETE.primary.main};
-        }
-        //placeholder 텍스트 색상
-        &::placeholder {
-            color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
-        }
+S.TextArea = styled.textarea`
+ height: 64px;
+ width: 600px;
+ border-radius: 8px;
+ font-size: 20px;
+ padding: 20px 24px;
+ resize: none;
+ font-family: 'SUIT';
 
-        //입력중일때
-        &:focus {
-            outline: none;
-            border-color: ${({ theme }) => theme.PALLETE.primary.main};
-            box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
-        }
+ &:hover {
+        ${({ readOnly }) =>
+                !readOnly &&
+                css`
+      border-color: ${({ theme }) => theme.PALLETE.primary.main};
+    `}
+    }
+    
+    //placeholder 텍스트 색상
+    &::placeholder {
+        color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
+    }
 
-        //disabled 상태일때
-        &:disabled {
-            outline: none;
-            background-color: ${({ theme }) => theme.PALLETE.background.gray100};
-            border: none;
-        }
+    //입력중일때
+    &:focus {
+        ${({ readOnly }) =>
+                !readOnly &&
+                css`
+      outline: none;
+      border-color: ${({ theme }) => theme.PALLETE.primary.main};
+      box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+    `}
+    }
 
-        //입력 다 한 상태
-        &:not(:focus):not(:placeholder-shown) {
-            border-color: ${({ theme }) => theme.PALLETE.primary.main};
-        }
+    //disabled 상태일때
+    &:disabled {
+        outline: none;
+        background-color: ${({ theme }) => theme.PALLETE.background.gray100};
+        border: none;
+    }
+
+    //입력 다 한 상태
+    &:not(:focus):not(:placeholder-shown) {
+        border-color: ${({ theme }) => theme.PALLETE.text.main};
+    }
 `
+
+S.CharCount = styled.div`
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  text-align: right;
+  font-size: 14px;
+  color: ${(props) => (props.limitReached ? 'red' : '#666')};
+  font-family: 'SUIT';
+
+`;
+
+S.TitleInputWrapper = styled.div`
+  margin-top: 29px;
+
+  > div > div {
+    margin-right: 200px;
+  }
+`
+S.ContentInputWrapper = styled.div`
+  textarea {
+    height: 130px;
+  }
+  > div > div {
+    
+  }
+`
+
+
+// S.TitleInput = styled.input`
+//     height: 64px;
+//     width: 600px;
+//     margin-top: 29px;
+//     background-color: ${({ theme }) => theme.PALLETE.background.white};
+//     border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
+//     border-radius: 8px;
+//     font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
+//     line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
+//     padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
+//     ${spacingProps}
+
+//         //아무스 호버 상태
+//         &:hover {
+//             border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//         }
+//         //placeholder 텍스트 색상
+//         &::placeholder {
+//             color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
+//         }
+
+//         //입력중일때
+//         &:focus {
+//             outline: none;
+//             border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//             box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+//         }
+
+//         //disabled 상태일때
+//         &:disabled {
+//             outline: none;
+//             background-color: ${({ theme }) => theme.PALLETE.background.gray100};
+//             border: none;
+//         }
+
+//         //입력 다 한 상태
+//         &:not(:focus):not(:placeholder-shown) {
+//             border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//         }
+// `
 
 
 S.ContentInput = styled.textarea`
