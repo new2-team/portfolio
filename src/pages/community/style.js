@@ -556,17 +556,21 @@ S.HeartButton = styled.button`
     width: 25px;
     height: 25px;
     display: block;
+    overflow: visible;
+    margin-bottom: 2px;
   }
   /* margin-right: 3px; */
-
+  
   `
 
 S.CommentButton = styled.button`
   background: none;
-  width: 23px;
-  height: 23px;
-  margin-right: 6px;
-  margin-bottom: 7px;
+  img {
+    margin-top: 1px;
+    width: 28px;
+    height: 28px;
+    overflow: visible;
+  }
 `
 
 S.HeartCommentCount = styled.span`
