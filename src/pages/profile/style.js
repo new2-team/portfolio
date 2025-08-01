@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { flexCenter, flexColumnCenter } from "../../styles/common";
 import { spacingProps } from "../../styles/spacingProps";
 
 const S = {};

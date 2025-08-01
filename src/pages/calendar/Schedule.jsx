@@ -5,15 +5,16 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
-import styles from './style';
+import S from './style2';
 
 const Schedule = ({ eventId, selectedDate }) => {
-  const [date, setDate] = useState(selectedDate);
-  const [schedule, setSchedule] = useState({});
-  const [title, setTitle] = useState('');
-  const [startTime, setStartTime] = useState(null);
-  const [location, setLocation] = useState('');
 
+  const [date, setDate] = useState(selectedDate); // props에서 받은날짜
+  const [schedule, setSchedule] = useState({}); // 일정객체를 통째로 등록
+  const [title, setTitle] = useState(''); // 일정 제목
+  const [startTime, setStartTime] = useState(null); // 일정시작시간
+  const [location, setLocation] = useState(''); // 일정 장소
+  // 친구 목록 -> 친구 id값을 가지고와서 프로필을 띄워야 함
   const [friends, setFriends] = useState([
     '/assets/img/chat/soul.png',
     '/assets/img/chat/melody.png',
@@ -23,7 +24,7 @@ const Schedule = ({ eventId, selectedDate }) => {
     '/assets/img/chat/coco.png',
   ]);
 
-  const [selectedFriends, setSelectedFriends] = useState([]); // 선택된 친구
+  const [selectedFriends, setSelectedFriends] = useState([]); // 선택된 친구 -> id로 상태 저장
   const [hoveredFriend, setHoveredFriend] = useState(null);
 
   const [showError, setShowError] = useState(false);
@@ -37,15 +38,18 @@ const Schedule = ({ eventId, selectedDate }) => {
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleLocationChange = (e) => setLocation(e.target.value);
 
+  // useEffect해서 일정 객체를 eventId로 가지고오거나, selectedDate로 가지고 오기
+  // useEFfect해서 api 일정 조회를 연동하기
+  // useEffect해서 친구목록을 api로 가지고 오고 setFriends로 연결
+
   useEffect(() => {
     const dummy = {};
-  //   const dummy = {
-  //   title: '한강 산책 모임',
-  //   date: '8월 3일 (토)',
-  //   startTime: '18:00',
-  //   endTime: '20:00',
-  //   location: '여의나루역 2번 출구 앞',
-  // };
+    // const dummy = {
+    //   title: '한강 산책 모임',
+    //   date: '8월 3일 (토)',
+    //   startTime: '18:00',
+    //   location: '여의나루역 2번 출구 앞',
+    // };
     setSchedule(dummy);
   }, [eventId]);
 
@@ -73,7 +77,8 @@ const Schedule = ({ eventId, selectedDate }) => {
       });
     }
   }
-  // 저장버튼
+
+  // 저장버튼 - api 일정 등록
   const handleSave = async () => {
     if (!title.trim()) {
       setShowError(true);
@@ -89,7 +94,8 @@ const Schedule = ({ eventId, selectedDate }) => {
         title : title,
         date: date,
         time: startTime,
-        place: location
+        place: location,
+        // friend_id: selectedFriends,
       })
     })
     .then((res) => {
@@ -105,38 +111,47 @@ const Schedule = ({ eventId, selectedDate }) => {
       .catch(console.error)
   };
 
+  // 수정버튼 - api 일정 수정 
+  const handleEdit = async () => {
+
+  }
+
+  // 삭제버튼 - api 일정 삭제
+  const handleDelete = async () => {
+    
+  }
+
   return (
-    <div style={styles.scheduleCard}>
+    <S.ScheduleCard>
       {schedule.title ? (
-        <h3 style={styles.scheduleTitle2}>{schedule.title}</h3>
+        <S.ScheduleTitle1>{schedule.title}</S.ScheduleTitle1>
       ) : (
-        <input
+        <S.ScheduleTitleInput
           type="text"
           placeholder="새로운 일정을 추가해주세요"
           value={title}
           onChange={handleTitleChange}
-          style={styles.scheduleTitle2}
         />
       )}
-
-      <div style={styles.inputGroupContainer}>
-        <FontAwesomeIcon icon={faCalendarDays} style={styles.icon} />
-        <div style={styles.inputGroup}>
+      
+      <S.InputGroupContainer>
+        <FontAwesomeIcon icon={faCalendarDays} style={{ size: '20px', marginRight: '15px', color: '#616161' }} />
+        <S.InputGroup>
           <span>{schedule.date || formattedSelectedDate}</span>
-        </div>
-      </div>
+        </S.InputGroup>
+      </S.InputGroupContainer>
 
-      {schedule.startTime && schedule.endTime ? (
-        <div style={styles.inputGroupContainer}>
-          <FontAwesomeIcon icon={faClock} style={styles.icon} />
-          <span style={styles.inputGroup}>
-            {schedule.startTime} ~ {schedule.endTime}
-          </span>
-        </div>
+      {schedule.startTime ? (
+        <S.InputGroupContainer>
+          <FontAwesomeIcon icon={faClock} style={{ size: '20px', marginRight: '15px', color: '#616161' }} />
+          <S.InputGroup>
+            {schedule.startTime}
+          </S.InputGroup>
+        </S.InputGroupContainer>
       ) : (
-        <div style={styles.inputGroupContainer}>
-          <FontAwesomeIcon icon={faClock} style={styles.icon} />
-          <span style={styles.inputGroup}>
+        <S.InputGroupContainer>
+          <FontAwesomeIcon icon={faClock} style={{ size: '20px', marginRight: '15px', color: '#616161' }} />
+          <S.InputGroup>
             <DatePicker
               selected={startTime}
               onChange={(date) => setStartTime(date)}
@@ -145,88 +160,64 @@ const Schedule = ({ eventId, selectedDate }) => {
               timeIntervals={30}
               dateFormat="h:mm aa"
               placeholderText="시작 시간을 선택하세요"
-              customInput={
-                <input
-                  style={styles.datePicker}
-                />
-              }
+              customInput={<S.DateInput />}
             />
-          </span>
-        </div>
+          </S.InputGroup> 
+        </S.InputGroupContainer>
       )}
 
-      <div style={styles.inputGroupContainer}>
-        <FontAwesomeIcon icon={faLocationDot} style={styles.icon} />
-        <span style={styles.inputGroup}>
+      <S.InputGroupContainer>
+        <FontAwesomeIcon icon={faLocationDot} style={{ size: '20px', marginRight: '15px', color: '#616161' }} />
+        <S.InputGroup>
           {schedule.location ? (
             <span>{schedule.location}</span>
           ) : (
-            <input
+            <S.LocationInput
               type="text"
               placeholder="장소를 입력하세요"
               value={location}
               onChange={handleLocationChange}
-              style={styles.location}
             />
           )}
-        </span>
-      </div>
+        </S.InputGroup>
+      </S.InputGroupContainer>
 
-      <div
-        className="friends-select"
-        style={{
-          ...styles.friendsSelect,
-          maxWidth: `${(80 + 10) * 5}px`,
-        }}
-      >
+      {/* 친구 목록 */}
+      <S.FriendsSelect $maxWidth={(80 + 10) * 5}>
         {(schedule.friends && schedule.friends.length > 0 ? schedule.friends : friends).map((f, idx) => (
-          <img
+          <S.FriendAvatar
             key={idx}
             src={f}
             alt="friend"
             onClick={() => handleSelectFriend(f)}
             onMouseEnter={() => setHoveredFriend(f)}
             onMouseLeave={() => setHoveredFriend(null)}
-            style={{
-              ...styles.friendAvatar,
-              ...(selectedFriends.includes(f) ? styles.selectedFriendAvatar : {}),
-              filter: hoveredFriend === f ? 'brightness(0.85)' : 'none',
-            }}
+            $isSelected={selectedFriends.includes(f)}
+            $isHovered={hoveredFriend === f}
           />
         ))}
-      </div>
+      </S.FriendsSelect>
 
-      <div style={styles.scheduleButtons}>
+      <S.ScheduleButtons>
         {schedule.title ? (
           <>
-            <BasicButton
-              roundButton="small"
-              variant="default"
-              style={styles.editButton}
-            >
+            <BasicButton roundButton="small" variant="default" style={{ width: '100%' }}
+                          onClick={handleEdit}>
               수정하기
             </BasicButton>
-            <BasicButton
-              roundButton="small"
-              variant="filled"
-              style={styles.deleteButton}
-            >
+            <BasicButton roundButton="small" variant="filled" style={{ width: '100%' }}
+                          onClick={handleDelete}>
               삭제하기
             </BasicButton>
           </>
         ) : (
-          // 수정하기 누르면 -> 저장하기 나오게 하기
-          <BasicButton
-            roundButton="small"
-            variant="filled"
-            onClick={handleSave}
-            style={styles.saveButton}
-          >
+          <BasicButton roundButton="small" variant="filled" style={{ width: '100%' }}
+                        onClick={handleSave}>
             저장하기
           </BasicButton>
         )}
-      </div>
-    </div>
+      </S.ScheduleButtons>
+    </S.ScheduleCard>
   );
 };
 

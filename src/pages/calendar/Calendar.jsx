@@ -6,10 +6,11 @@ import CalendarMonth from './CalendarMonth';
 import ComingSchedule from './ComingSchedule';
 import CompletedSchedule from './CompletedSchedule';
 import MiniCalendar from './MiniCalendar';
-import styles from './style';
+import S from './style2';
 
 const Calendar = () => {
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  // MiniCalendar에서 보낸 selectedDate 관리
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd')); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
 
@@ -18,10 +19,21 @@ const Calendar = () => {
     setIsModalOpen(true);
   };
 
+  // MiniCalendar에서 가져온 날짜 등록
   const handleMiniCalendarDateClick = (date) => {
     setSelectedDate(date);
     setSelectedEventId('mini'); // mini placeholder for eventId
   };
+
+  // ComingSchedule에서 가져온 item 등록
+  const handleComingItemClick = (item) => {
+    
+  }
+
+  // CompletedSchedule에서 가져온 item 등록
+  const handleCompletedItemClick = (item) => {
+
+  }
 
   const handleEventClick = (eventId, eventDate) => {
     setSelectedEventId(eventId);
@@ -33,36 +45,36 @@ const Calendar = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.sidebar}>
-        <MiniCalendar onDateClick={handleMiniCalendarDateClick} />
-        <ComingSchedule />
-        <CompletedSchedule />
-      </div>
+    <S.Container>
+    <S.Sidebar>
+      <MiniCalendar onDateClick={handleMiniCalendarDateClick} />
+      <ComingSchedule onComingItemClick={handleComingItemClick} />
+      <CompletedSchedule onCompletedItemClick={handleCompletedItemClick} />
+    </S.Sidebar>
 
-      <div style={styles.main}>
-        {selectedEventId ? (
-          <CalendarDay
-            eventId={selectedEventId}
-            onBack={handleBackToMonth}
-            initialDate={selectedDate}
-          />
-        ) : (
-          <CalendarMonth
-            onDateClick={handleDateClick}
-            onEventClick={handleEventClick}
-          />
-        )}
-      </div>
-
-      {isModalOpen && (
-        <ScheduleModal
-          step={2}
-          date={selectedDate}
-          onClose={() => setIsModalOpen(false)}
+    <S.Main mt={20} mr={20} mb={20} ml={15}>
+      {selectedEventId ? (
+        <CalendarDay
+          eventId={selectedEventId}
+          onBack={handleBackToMonth}
+          initialDate={selectedDate}
+        />
+      ) : (
+        <CalendarMonth
+          onDateClick={handleDateClick}
+          onEventClick={handleEventClick}
         />
       )}
-    </div>
+    </S.Main>
+
+    {isModalOpen && (
+      <ScheduleModal
+        step={2}
+        date={selectedDate}
+        onClose={() => setIsModalOpen(false)}
+      />
+    )}
+  </S.Container>
   );
 };
 

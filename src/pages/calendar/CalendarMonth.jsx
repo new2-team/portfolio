@@ -3,7 +3,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import { useRef } from 'react';
 import './Calendar.css';
-import styles from './style';
+import S from './style2';
 
 const CalendarMonth = ({ onDateClick, onEventClick }) => {
   const calendarRef = useRef(null);
@@ -29,11 +29,13 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
     },
   ];
 
+  // 월별 캘린더 날짜 클릭했을때
   const handleDateClick = (info) => {
     const clickedDate = info.dateStr;
     onDateClick(clickedDate);
   };
 
+  // 월별 캘린더 일정제목 클릭했을때
   const handleEventClick = (info) => {
     const eventId = info.event.id;
     const eventDate = info.event.startStr.slice(0, 10);
@@ -41,7 +43,7 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
   };
 
   return (
-    <div style={styles.calendarContainer}>
+    <S.CalendarContainer>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
@@ -58,8 +60,7 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
           right: 'prev,next'
         }}
       />
-    </div>
-
+    </S.CalendarContainer>
   );
 };
 
