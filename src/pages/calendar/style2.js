@@ -5,7 +5,7 @@ import theme from '../../styles/theme';
 
 const S = {};
 
-// Calender
+// ---------------Calender-----------------
 S.Container = styled.div`
   display: flex;
   flex-direction: row;
@@ -53,7 +53,7 @@ S.MiniCalendarDate = styled.div`
   text-align: center;
 `;
 
-// ComingSchedule, CompletedSchedule
+// -----------------ComingSchedule, CompletedSchedule-----------------
 S.InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -97,7 +97,7 @@ S.ScheduleTitle = styled.div`
   font-weight: ${theme.FONT_WEIGHT.semiBold};
 `;
 
-// CalenderMonth
+// -----------------CalenderMonth-----------------
 S.CalendarContainer = styled.div`
   padding: 20px;
   overflow: auto;
@@ -109,7 +109,7 @@ S.CalendarContainer = styled.div`
   }
 `;
 
-// calendarDay
+// -----------------calendarDay-----------------
 S.CalendarDay = styled.div`
   box-sizing: border-box;
   width: 100%;
@@ -185,7 +185,7 @@ S.CalendarDayContainer = styled.div`
   }
 `;
 
-// Schedule
+// -----------------Schedule-----------------
 S.ScheduleCard = styled.div`
   background-color: ${({ theme }) => theme.PALLETE.white};
   border-radius: 12px;
@@ -299,7 +299,7 @@ S.ScheduleButtons = styled.div`
   margin: 10px;
 `;
 
-// Diary
+// -----------------Diary-----------------
 S.DiaryCard = styled.div`
   background-color: ${({ theme }) => theme.PALLETE.white};
   border-radius: 12px;
