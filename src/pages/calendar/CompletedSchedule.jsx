@@ -16,7 +16,7 @@ const CompletedSchedule = (item) => {
       <S.ScheduleContainer>
         {completed.map((complete) => (
           <S.ScheduleItem key={complete.id}>
-            <FontAwesomeIcon icon={faCircleCheck} style={{ color: theme.PALLETE.tertiary.main, width: '28px', height: '28px' }} />
+            <FontAwesomeIcon icon={faCircleCheck} style={{ color: theme.PALLETE.tertiary.main, width: '24px', height: '24px' }} />
             <S.ScheduleText>
               <S.ScheduleLabel>완료된 일정</S.ScheduleLabel>
               <S.ScheduleTitle>{complete.title}</S.ScheduleTitle>

@@ -7,9 +7,11 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
+import BasicButton from "../../components/button/BasicButton";
 import './Chatting.css';
+import S from './style';
 
-const ScheduleModal = ({
+const ScheduleModal = ({ 
   onClose,
   onAddSchedule = () => {},
   step: initialStep = 1,
@@ -41,20 +43,24 @@ const ScheduleModal = ({
     }
   };
 
+  // 추가하기, 일정추가 버튼 클릭 시
   const handleAdd = () => {
     if (step === 1 && selectedDate) {
+      // 추가하기 버튼 클릭시
       setStep(2);
     } else if (step === 2) {
+      // 일정추가 버튼 클릭 시
+      // schedule POST API 연동
       if (!title.trim()) {
         setError('일정을 작성해주세요');
         return;
       }
 
       const newSchedule = {
-        title,
+        title: title,
         date: selectedDate.toISOString().split('T')[0],
-        startTime,
-        location,
+        startTime: startTime,
+        location: location,
         friends: selectedFriends,
       };
 
@@ -72,30 +78,39 @@ const ScheduleModal = ({
     if (error) setError('');
   };
 
+  // useEffect -> 처음 마운트했을 때 -> friend 객체 -> 친구 프로필 url 뿌리기
+
   return (
-    <div className="modal" onClick={onClose}>
-      <div className="modal-content fixed-size" onClick={(e) => e.stopPropagation()}>
+     <S.Modal onClick={onClose}>
+      <S.ModalContentFixed onClick={(e) => e.stopPropagation()}>
+        {/* 모달 첫번째 달력 */}
         {step === 1 ? (
           <>
-            <div className="calendar-container">
+            <S.CalendarContainer>
               <DatePicker
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
                 inline
                 locale={ko}
               />
-            </div>
-
-            <button className="full-width-button" onClick={handleAdd}>
+            </S.CalendarContainer>
+            <BasicButton roundButton="superSmall" variant="filled" onClick={handleAdd} style={{ width: '100%'}}>
               추가하기
-            </button>
+            </BasicButton>
           </>
         ) : (
           <>
-            <div className="modal-header">
+          <S.ScheduleContainer>
+            <S.ModalHeader>
               <FontAwesomeIcon
                 icon={faArrowLeft}
-                style={{ color: '#616161', marginLeft: '-10px', marginRight: '20px', cursor: 'pointer' }}
+                style={{
+                  color: '#616161',
+                  marginLeft: '-10px',
+                  marginRight: '20px',
+                  cursor: 'pointer',
+                  width: '24px', height: '24px'
+                }}
                 onClick={() => {
                   setStep(1);
                   setTitle('');
@@ -105,71 +120,79 @@ const ScheduleModal = ({
                   setError('');
                 }}
               />
-              <input
+              <S.ModalTitleInput
                 type="text"
                 placeholder="새로운 일정을 추가해주세요"
                 value={title}
                 onChange={handleTitleChange}
-                className="modal-title-input"
               />
-            </div>
+            </S.ModalHeader>
 
             {error && (
-              <div style={{ color: 'red', marginLeft: '35px', marginTop: '-10px', marginBottom: '10px', fontSize: '13px' }}>
+              <div style={{ color: 'red', marginLeft: '55px', marginTop: '-10px', marginBottom: '10px', fontSize: '15px' }}>
                 {error}
               </div>
             )}
 
-            <div className="input-group-container">
-              <FontAwesomeIcon icon={faCalendarDays} style={{ color: '#616161', marginRight: '15px' }} />
-              <div className="input-group">
-                <span>{selectedDate.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric', weekday: 'short' })}</span>
-              </div>
-            </div>
-            
-            <div className="input-group-container">
-              <FontAwesomeIcon icon={faClock} style={{ color: '#616161', marginRight: '15px' }} />
-              <div className="input-group">
+            <S.InputGroupContainer>
+              <FontAwesomeIcon icon={faCalendarDays} style={{ color: '#616161', marginRight: '15px', width: '24px', height: '24px' }} />
+              <S.InputGroup>
+                <S.InputSpan>
+                  {selectedDate.toLocaleDateString('ko-KR', {
+                    month: 'numeric',
+                    day: 'numeric',
+                    weekday: 'short'
+                  })}
+                </S.InputSpan>
+              </S.InputGroup>
+            </S.InputGroupContainer>
+
+            <S.InputGroupContainer>
+              <FontAwesomeIcon icon={faClock} style={{ color: '#616161', marginRight: '15px', width: '24px', height: '24px' }} />
+              <S.InputGroup>
                 <TimePicker
                   onChange={setStartTime}
                   value={startTime}
-                  disableClock={true}
+                  disableClock
                   clearIcon={null}
                   clockIcon={null}
                   format="HH:mm"
                 />
-              </div>
-            </div>
+              </S.InputGroup>
+            </S.InputGroupContainer>
 
-            <div className="input-group-container">
-              <FontAwesomeIcon icon={faLocationDot} style={{ color: '#616161', marginRight: '15px' }} />
-              <div className="input-group">
-                <input
+            <S.InputGroupContainer>
+              <FontAwesomeIcon icon={faLocationDot} style={{ color: '#616161', marginRight: '15px', width: '24px', height: '24px' }} />
+              <S.InputGroup>
+                <S.Input
                   type="text"
                   value={location}
                   placeholder="장소를 입력하세요"
                   onChange={handleLocationChange}
                 />
-              </div>
-            </div>
+              </S.InputGroup>
+            </S.InputGroupContainer>
 
-            <div className="friends-select">
+            <S.FriendsSelect>
               {friends.map(friend => (
-                <img
+                <S.FriendAvatar
                   key={friend.id}
                   src={friend.avatar}
                   alt={friend.name}
-                  className={`friend-avatar ${selectedFriends.find(f => f.id === friend.id) ? 'selected' : ''}`}
+                  className={selectedFriends.find(f => f.id === friend.id) ? 'selected' : ''}
                   onClick={() => toggleFriend(friend)}
                 />
               ))}
-            </div>
-
-            <button onClick={handleAdd} className="full-width-button">일정추가</button>
+            </S.FriendsSelect>
+          </S.ScheduleContainer>
+          <BasicButton roundButton="superSmall" variant="filled" onClick={handleAdd} style={{ width: '100%' }}>
+            일정추가
+          </BasicButton>
+          
           </>
         )}
-      </div>
-    </div>
+      </S.ModalContentFixed>
+    </S.Modal>
   );
 };
 

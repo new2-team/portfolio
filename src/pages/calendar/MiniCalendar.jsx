@@ -16,15 +16,18 @@ const MiniCalendar = ({ onDateClick }) => {
 
   return (
     <S.MiniCalendar mt={10} mr={0} mb={10} ml={10}
-                        pt={20} pr={20} pb={1} pl={20}>
-      <div className="calendar-container">
-        <DatePicker
-          selected={selected}
-          onChange={handleDateChange}
-          inline
-          calendarStartDay={0}
-        />
-      </div>
+                        pt={10} pr={0} pb={0} pl={0}
+                        >
+      <S.CalendarContainer>
+        <S.DatePickerWrapper>
+          <DatePicker
+            selected={selected}
+            onChange={handleDateChange}
+            inline
+            calendarStartDay={0}
+          />
+        </S.DatePickerWrapper>
+      </S.CalendarContainer>
     </S.MiniCalendar>
   );
 };

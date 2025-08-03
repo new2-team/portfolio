@@ -1,13 +1,13 @@
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
+import theme from '../../styles/theme.js';
 import S from './style.js';
 
 
 const ScheduleAlert = ({ chat }) => {
-  const [activeTab, setActiveTab] = useState('schedule');
-  // const [name, setname] = useState(chat.name);
-
+  const [activeTab, setActiveTab] = useState('schedule'); // 일정, 이미지 탭
+  // chat 객체 받은거 넣기
   const activeChat = chat || {
     id: 0,
     name: '',
@@ -15,6 +15,15 @@ const ScheduleAlert = ({ chat }) => {
   };
 
   const schedules = [
+    { id: 1, title: 'Taking a walk by the Han River' },
+    { id: 2, title: "Soul's birthday party" },
+    { id: 1, title: 'Taking a walk by the Han River' },
+    { id: 2, title: "Soul's birthday party" },
+    { id: 1, title: 'Taking a walk by the Han River' },
+    { id: 2, title: "생일파티" },
+    { id: 1, title: 'Taking a walk by the Han River' },
+    { id: 2, title: "Soul's birthday party" },
+    { id: 2, title: "생일파티" },
     { id: 1, title: 'Taking a walk by the Han River' },
     { id: 2, title: "Soul's birthday party" },
   ]; 
@@ -33,6 +42,14 @@ const ScheduleAlert = ({ chat }) => {
     { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
     { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
   ];
+
+  // chat객체의 id로 schedule 객체의 title만 가져오기
+  // -> 현재 날짜 이후의 날짜의 schedule title만 가져오기
+  // 최신 일정 -> 상단에 띄우기
+
+  // 넘겨받은 chat객체에 id를 받아서 그걸로 api연동 
+  // -> message객체의 이미지 배열 -> 이미지 url뿌리기
+  // 최신 이미지 보낸시간 -> 상단에 띄우기
 
   return (
     <S.ScheduleAlert>
@@ -59,9 +76,10 @@ const ScheduleAlert = ({ chat }) => {
       {activeTab === 'schedule' ? (
         <S.ScheduleList>
           {schedules.map((s) => (
+            // 일정 아이템 클릭되게 해서 -> 일별 캘린더로 이동하게 하기
             <S.ScheduleItem key={s.id}>
               <S.ScheduleIcon>
-                <FontAwesomeIcon icon={faCircleCheck} />
+                <FontAwesomeIcon icon={faCircleCheck} style={{ color: theme.PALLETE.secondary.main, width: '24px', height: '24px' }} />
               </S.ScheduleIcon>
               <S.ScheduleText>
                 <S.ScheduleLabel>예정된 일정</S.ScheduleLabel>
@@ -69,6 +87,7 @@ const ScheduleAlert = ({ chat }) => {
               </S.ScheduleText>
               <S.ScheduleDivider />
             </S.ScheduleItem>
+            // touchable로 감싸기
           ))}
         </S.ScheduleList>
       ) : (

@@ -16,7 +16,7 @@ const ComingSchedule = (item) => {
       <S.ScheduleContainer>
         {schedules.map((schedule) => (
           <S.ScheduleItem key={schedule.id}>
-            <FontAwesomeIcon icon={faCircleCheck} style={{ color: theme.PALLETE.secondary.main, width: '28px', height: '28px' }} />
+            <FontAwesomeIcon icon={faCircleCheck} style={{ color: theme.PALLETE.secondary.main, width: '24px', height: '24px' }} />
             <S.ScheduleText>
               <S.ScheduleLabel>예정된 일정</S.ScheduleLabel>
               <S.ScheduleTitle>{schedule.title}</S.ScheduleTitle>

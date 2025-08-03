@@ -11,8 +11,8 @@ const ChatList = ({ chats, onSelectChat, selectedChat }) => {
   return (
     <S.ChatListContainer p={20} m={20}>
       <S.TitleContainer>
-        <FontAwesomeIcon icon={faPaw} style={{ fontSize: '25px' }} />
-        <S.ChatTitle>매칭된 친구와 채팅을 시작해보세요!</S.ChatTitle>
+        <FontAwesomeIcon icon={faPaw} style={{ fontSize: '25px', marginLeft: '9px' }} />
+        <S.ChatTitle>매칭된 친구와 채팅을 시작해보세요 !</S.ChatTitle>
       </S.TitleContainer>
 
       <S.ChatList>

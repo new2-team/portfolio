@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { flexCenter, flexColumn, flexRow, flexSpaceBetween } from '../../styles/common';
 import { spacingProps } from "../../styles/spacingProps";
+import theme from "../../styles/theme";
 
 const S = {};
 
@@ -39,7 +40,8 @@ S.TitleContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-bottom: ${({ theme }) => theme.SPACING[16]};
+  margin-top: ${({ theme }) => theme.SPACING[7.5]};
+  margin-bottom: ${({ theme }) => theme.SPACING[20]};
 `;
 
 S.ChatTitle = styled.h3`
@@ -298,7 +300,10 @@ S.ScheduleAlert = styled.div`
   overflow-y: auto;
   background-color: ${({ theme }) => theme.PALLETE.white};
   padding-top: ${({ theme }) => theme.SPACING[50] || '50px'};
-  overflow: hidden;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 S.ScheduleProfileSection = styled.div`
@@ -314,8 +319,8 @@ S.ScheduleProfileAvatar = styled.img`
 S.ScheduleProfileName = styled.div`
   margin-top: ${({ theme }) => theme.SPACING[20]};
   margin-bottom: ${({ theme }) => theme.SPACING[40]};
-  font-size: ${({ theme }) => theme.FONT_SIZE.h5};
-  font-weight: ${({ theme }) => theme.FONT_WEIGHT.bold};
+  font-size: ${({ theme }) => theme.FONT_SIZE.body2};
+  font-weight: ${({ theme }) => theme.FONT_WEIGHT.semiBold};
 `;
 
 S.ScheduleTabs = styled.div`
@@ -328,6 +333,7 @@ S.ScheduleTabButton = styled.button`
   padding: ${({ theme }) => theme.SPACING[10]};
   border: none;
   background: ${({ theme }) => theme.PALLETE.white};
+  font-size: ${({ theme }) => theme.FONT_SIZE.caption3};
   cursor: pointer;
 
   &.active {
@@ -335,7 +341,16 @@ S.ScheduleTabButton = styled.button`
   }
 `;
 
-S.ScheduleList = styled.div``;
+S.ScheduleList = styled.div`
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
 
 S.ScheduleItem = styled.div`
   display: flex;
@@ -362,13 +377,13 @@ S.ScheduleText = styled.div`
 `;
 
 S.ScheduleLabel = styled.div`
-  font-size: ${({ theme }) => theme.FONT_SIZE.caption5};
-  color: ${({ theme }) => theme.PALLETE.text.sub2};
+  font-size: ${theme.FONT_SIZE.caption5};
+  color: ${theme.PALLETE.text.sub2};
 `;
 
 S.ScheduleTitle = styled.div`
-  font-size: ${({ theme }) => theme.FONT_SIZE.caption2};
-  font-weight: ${({ theme }) => theme.FONT_WEIGHT.bold};
+  font-size: ${theme.FONT_SIZE.caption2};
+  font-weight: ${theme.FONT_WEIGHT.semiBold};
 `;
 
 S.ScheduleDivider = styled.div`
@@ -384,7 +399,6 @@ S.ScheduleImageGallery = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   overflow-y: auto;
-  max-height: 530px;
   -ms-overflow-style: none;
   scrollbar-width: none;
 
@@ -401,6 +415,187 @@ S.ScheduleGalleryImg = styled.img`
 `;
 
 // --------------ScheduleModal----------------
+S.Modal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+`;
 
+S.ModalContent = styled.div`
+  background: ${({ theme }) => theme.PALLETE.white};
+  padding: ${({ theme }) => theme.SPACING[20]};
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+`;
+
+S.ModalContentFixed = styled(S.ModalContent)`
+  width: 350px;
+  height: 470px;
+  overflow-y: auto;
+`;
+
+S.CalendarContainer = styled.div`
+  width: 100%;
+  height: 100%;
+
+  .react-datepicker {
+    width: 100%;
+    background-color: white;
+    border: none;
+    font-family: var(--global-font, 'Pretendard', sans-serif);
+    box-sizing: border-box;
+  }
+
+  /* 달, 요일 헤더 */
+  .react-datepicker__header {
+    background-color: white;
+    border-bottom: none;
+    width: 100%;
+  }
+  // 날짜 부분 전체 덮는거
+  .react-datepicker__month {
+    /* background-color: black; */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    grid-template-columns: repeat(7, 1fr);
+    width: 100%;
+  }
+  // 요일 부분 전체
+  .react-datepicker__day-names {
+    /* background-color: blue; */
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+  }
+  // 날짜 하나하나
+  .react-datepicker__day {
+    /* background-color: green; */
+    flex: 1 0 100%;
+    justify-content: space-between;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 7px 19px 7px 19px;
+  }
+  // 선택된 날짜 
+  .react-datepicker__day--selected,
+  .react-datepicker__day--keyboard-selected {
+    background: ${({ theme }) => theme.PALLETE.secondary.main};
+    color: white;
+    border-radius: 8px;
+  }
+`;
+
+S.ModalBody = styled.div`
+  flex: 1;
+  overflow-y: auto;
+`;
+
+S.FullWidthButton = styled.button`
+  width: 100%;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.PALLETE.secondary.dark};
+  color: ${({ theme }) => theme.PALLETE.white};
+  padding: 10px 20px;
+  border-radius: 15px;
+  border: none;
+  font-weight: bold;
+  margin-top: auto;
+`;
+
+S.ScheduleContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  /* padding: 30px 0 0 0; */
+`;
+
+S.ModalHeader = styled.div`
+  ${flexSpaceBetween};
+  width: 100%;
+  padding: ${({ theme }) => theme.SPACING[20]};
+`;
+
+S.ModalTitleInput = styled.input`
+  border: none;
+  outline: none;
+  font-size: ${({ theme }) => theme.FONT_SIZE.body3};
+  font-weight: ${({ theme }) => theme.FONT_WEIGHT.semiBold};
+  flex: 1;
+  background: transparent;
+`;
+
+S.InputGroupContainer = styled.div`
+  ${flexRow};
+  margin-top: ${({ theme }) => theme.SPACING[20]};
+  margin-bottom: ${({ theme }) => theme.SPACING[20]};
+`;
+
+S.InputGroup = styled.div`
+  flex: 1;
+  background: ${({ theme }) => theme.PALLETE.background.gray100};
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+`;
+
+S.Input = styled.input`
+  border: none;
+  background: transparent;
+  flex: 1;
+  font-size: ${({ theme }) => theme.FONT_SIZE.caption2};
+  outline: none;
+`;
+
+S.InputSpan = styled.span`
+  margin: 0 5px;
+  font-size: ${({ theme }) => theme.FONT_SIZE.caption2};
+  color: ${({ theme }) => theme.PALLETE.text.sub2};
+`;
+
+S.FriendsSelect = styled.div`
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: ${({ theme }) => theme.SPACING[10]} 0;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+S.FriendAvatar = styled.img`
+  flex: 0 0 auto;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-right: 10px;
+  cursor: pointer;
+  object-fit: cover;
+  border: 5px solid transparent;
+  transition: border 0.2s;
+
+  &.selected {
+    border: 4px solid ${({ theme }) => theme.PALLETE.secondary.main};
+  }
+
+  &:hover {
+    filter: brightness(0.85);
+  }
+`;
 
 export default S;

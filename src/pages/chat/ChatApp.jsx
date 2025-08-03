@@ -134,9 +134,9 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
       <S.ChatAppHeader>
         <S.ChatAppHeaderLeft>
           <S.ChatAppAvatar src={activeChat.avatar} alt={activeChat.name} />
-          <Text.Body2 fontWeight="700" color="#000" style={{ margin: 0 }}>
+          <Text.Body3 fontWeight="600" color="#000" style={{ margin: 0 }}>
             {activeChat.name}
-          </Text.Body2>
+          </Text.Body3>
         </S.ChatAppHeaderLeft>
 
         <S.ChatAppHeaderActions>

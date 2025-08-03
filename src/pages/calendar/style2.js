@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { flexRow, flexSpaceBetween } from '../../styles/common';
+import { flexColumn, flexRow, flexSpaceBetween } from '../../styles/common';
 import { spacingProps } from "../../styles/spacingProps";
 import theme from "../../styles/theme";
 
@@ -38,7 +38,7 @@ S.Main = styled.div`
   border-radius: 20px;
 `;
 
-// miniCalendar
+// -----------------MiniCalendar---------------------
 S.MiniCalendar = styled.div`
   background-color: ${theme.PALLETE.white};
   border-radius: 20px;
@@ -51,6 +51,54 @@ S.MiniCalendarDate = styled.div`
   border-radius: 4px;
   cursor: pointer;
   text-align: center;
+`;
+
+S.CalendarContainer = styled.div`
+  width: 100%;
+  background-color: ${({ theme }) => theme.PALLETE.white};
+`;
+
+S.DatePickerWrapper = styled.div`
+  .react-datepicker {
+    width: 100% !important;
+    background-color: ${({ theme }) => theme.PALLETE.white} !important;
+    border: none !important;
+    font-family: 'Pretendard', sans-serif;
+  }
+
+  .react-datepicker__header {
+    background-color: ${({ theme }) => theme.PALLETE.white} !important;
+    border-bottom: none !important;
+  }
+
+  .react-datepicker__month {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+  }
+
+  .react-datepicker__day-names {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-top: ${({ theme }) => theme.SPACING[10]};
+  }
+
+  .react-datepicker__day {
+    flex: 1 0 14%;
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--keyboard-selected {
+    background-color: ${({ theme }) => theme.PALLETE.secondary.main} !important;
+    color: ${({ theme }) => theme.PALLETE.white} !important;
+    border-radius: 8px;
+  }
+
+  .react-datepicker__day--today {
+    font-weight: ${({ theme }) => theme.FONT_WEIGHT.bold};
+  }
 `;
 
 // -----------------ComingSchedule, CompletedSchedule-----------------
@@ -83,17 +131,16 @@ S.ScheduleItem = styled.div`
 `;
 
 S.ScheduleText = styled.div`
-  display: flex;
-  flex-direction: column;
+  ${flexColumn};
 `;
 
 S.ScheduleLabel = styled.div`
-  font-size: ${theme.FONT_SIZE.caption4};
+  font-size: ${theme.FONT_SIZE.caption5};
   color: ${theme.PALLETE.text.sub2};
 `;
 
 S.ScheduleTitle = styled.div`
-  font-size: ${theme.FONT_SIZE.caption1};
+  font-size: ${theme.FONT_SIZE.caption2};
   font-weight: ${theme.FONT_WEIGHT.semiBold};
 `;
 
