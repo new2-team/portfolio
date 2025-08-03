@@ -1,88 +1,40 @@
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPaw } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import S from './style.js';
 
-const friends = [
-  { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
-  { id: 2, name: 'Melody', avatar: "/assets/img/chat/melody.png" },
-  { id: 3, name: 'Coco', avatar: "/assets/img/chat/coco.png" },
-  { id: 4, name: 'Choco', avatar: "/assets/img/chat/choco.png" },
-  { id: 5, name: 'Jude', avatar: "/assets/img/chat/jude.png" },
-];
 
-const ChatList = ({ chats, onSelectChat, onAddChat }) => {
-  const [selectedFriends, setSelectedFriends] = useState([]);
-
-  const toggleSelectFriend = (friend) => {
-    if (selectedFriends.includes(friend)) {
-      setSelectedFriends(selectedFriends.filter(f => f !== friend));
-    } else {
-      setSelectedFriends([...selectedFriends, friend]);
-    }
-  };
-
-  const handleAddSelectedChats = () => {
-    if (selectedFriends.length === 0) return;
-
-    const newChat = {
-      id: Date.now(), // unique id
-      name: selectedFriends.map(f => f.name).join(', '),
-      avatar: selectedFriends[0].avatar,
-      members: selectedFriends.map(f => ({
-        id: f.id,
-        name: f.name,
-        avatar: f.avatar
-      })),
-      lastComment: '',
-      unreadCount: 0, // 기본값 추가
-    };
-
-    onAddChat(newChat);
-    setSelectedFriends([]);
-  };
+const ChatList = ({ chats, onSelectChat, selectedChat }) => {
+  // chats: prop로 chatting에서 전체 chat 객체 리스트 받음
+  // onSelectChat: ChatList에서 선택한 채팅방 Chatting에 알려주는 함수
+  // selectChat: ChatList에서 선택한 채팅방의 정보를 담고 있는 객체
 
   return (
-    <div className="chat-list-container">
-      <h3>멍친구랑 채팅하기</h3>
+    <S.ChatListContainer p={20} m={20}>
+      <S.TitleContainer>
+        <FontAwesomeIcon icon={faPaw} style={{ fontSize: '25px' }} />
+        <S.ChatTitle>매칭된 친구와 채팅을 시작해보세요!</S.ChatTitle>
+      </S.TitleContainer>
 
-      <div className="friend-flatlist-container">
-        <div className="friend-flatlist">
-          <div
-            className="friend-item add-button"
-            onClick={handleAddSelectedChats}
+      <S.ChatList>
+        {chats.map((chat) => (
+          <S.ChatListItem
+            key={chat.id}
+            onClick={() => onSelectChat(chat)}
+            className={selectedChat?.id === chat.id ? 'selected' : ''}
           >
-            <FontAwesomeIcon icon={faUserPlus} size="lg"/>
-          </div>
-          {friends.map(friend => (
-            <div
-              key={friend.id}
-              className={`friend-item ${selectedFriends.includes(friend) ? 'selected' : ''}`}
-              onClick={() => toggleSelectFriend(friend)}
-            >
-              <img src={friend.avatar} alt={friend.name} className="friend-avatar" />
-              <div style={{ fontSize: '12px' }}>{friend.name}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="chat-list">
-        {chats.map(chat => (
-          <div key={chat.id} className="chat-list-item" onClick={() => onSelectChat(chat)}>
-            <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
-            
-            <div className="chat-info">
-              <div className="chat-name">{chat.name}</div>
-              <div className="chat-last">{chat.lastComment}</div>
-            </div>
-
-            {/* {(chat.unreadCount && chat.unreadCount > 0) && ( */}
-              <span className="unread-badge">2</span>
-            {/* // )} */}
-          </div>
+            <S.ChatAvatar src={chat.avatar} alt={chat.name} />
+            <S.ChatInfo>
+              <S.ChatName>{chat.name}</S.ChatName>
+              <S.ChatLast>{chat.lastComment}</S.ChatLast>
+            </S.ChatInfo>
+            <S.ChatRead>
+              <S.ChatLastTime>{chat.lastMessageAt}</S.ChatLastTime>
+              {chat.unreadCount > 0 && <S.UnreadBadge>{chat.unreadCount}</S.UnreadBadge>}
+            </S.ChatRead>
+          </S.ChatListItem>
         ))}
-      </div>
-    </div>
+      </S.ChatList>
+    </S.ChatListContainer>
   );
 };
 

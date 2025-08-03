@@ -1,10 +1,18 @@
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
+import S from './style.js';
 
 
-const ScheduleAlert = () => {
+const ScheduleAlert = ({ chat }) => {
   const [activeTab, setActiveTab] = useState('schedule');
+  // const [name, setname] = useState(chat.name);
+
+  const activeChat = chat || {
+    id: 0,
+    name: '',
+    avatar: '/assets/img/chat/dogEmptyProfile.png',
+  };
 
   const schedules = [
     { id: 1, title: 'Taking a walk by the Han River' },
@@ -27,53 +35,50 @@ const ScheduleAlert = () => {
   ];
 
   return (
-    <div className="schedule-alert">
-      <div className="profile-section">
-        <img src="/assets/img/chat/soul.png" alt="Soul" className="profile-avatar" />
-        <div className="profile-name">Soul</div>
-      </div>
+    <S.ScheduleAlert>
+      <S.ScheduleProfileSection>
+        <S.ScheduleProfileAvatar src={activeChat.avatar} alt={activeChat.name} />
+        <S.ScheduleProfileName>{activeChat.name}</S.ScheduleProfileName>
+      </S.ScheduleProfileSection>
 
-      <div className="tabs">
-        <button
+      <S.ScheduleTabs>
+        <S.ScheduleTabButton
           className={activeTab === 'schedule' ? 'active' : ''}
           onClick={() => setActiveTab('schedule')}
         >
           일정
-        </button>
-        <button
+        </S.ScheduleTabButton>
+        <S.ScheduleTabButton
           className={activeTab === 'images' ? 'active' : ''}
           onClick={() => setActiveTab('images')}
         >
           이미지
-        </button>
-      </div> 
+        </S.ScheduleTabButton>
+      </S.ScheduleTabs>
 
       {activeTab === 'schedule' ? (
-        <div className="schedule-list">
-          {schedules.map(s => (
-            <div key={s.id} className="schedule-item">
-              <FontAwesomeIcon icon={faCircleCheck} className="schedule-icon" />
-              <div className="schedule-text">
-                <div className="schedule-label">예정된 일정</div>
-                <div className="schedule-title">{s.title}</div>
-              </div>
-              <div className="schedule-divider"></div>
-            </div>
+        <S.ScheduleList>
+          {schedules.map((s) => (
+            <S.ScheduleItem key={s.id}>
+              <S.ScheduleIcon>
+                <FontAwesomeIcon icon={faCircleCheck} />
+              </S.ScheduleIcon>
+              <S.ScheduleText>
+                <S.ScheduleLabel>예정된 일정</S.ScheduleLabel>
+                <S.ScheduleTitle>{s.title}</S.ScheduleTitle>
+              </S.ScheduleText>
+              <S.ScheduleDivider />
+            </S.ScheduleItem>
           ))}
-        </div>
+        </S.ScheduleList>
       ) : (
-        <div className="image-gallery">
-          {images.map(img => (
-            <img
-              key={img.id}
-              src={img.src}
-              alt={img.alt}
-              className="gallery-img"
-            />
+        <S.ScheduleImageGallery>
+          {images.map((img) => (
+            <S.ScheduleGalleryImg key={img.id} src={img.src} alt={img.alt} />
           ))}
-        </div>
+        </S.ScheduleImageGallery>
       )}
-    </div>
+    </S.ScheduleAlert>
   );
 };
 

@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import { flexRow, flexSpaceBetween } from '../../styles/common';
 import { spacingProps } from "../../styles/spacingProps";
-import theme from '../../styles/theme';
+import theme from "../../styles/theme";
 
 const S = {};
 
@@ -10,7 +10,7 @@ S.Container = styled.div`
   display: flex;
   flex-direction: row;
   height: 90vh;
-  background-color: #D2D4D4;
+  background-color: ${({ theme }) => theme.PALLETE.line[300]};
 `;
 
 S.Sidebar = styled.div`
