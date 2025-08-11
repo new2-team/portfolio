@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+<<<<<<< HEAD
 import S from '../textArea/style';
+=======
+>>>>>>> c713d9182b8edde71a3b711a202cba5cedeed180
 
 
 const TextArea = ({placeholder, maxChars, value, onChange}) => {

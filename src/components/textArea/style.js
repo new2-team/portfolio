@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> c713d9182b8edde71a3b711a202cba5cedeed180
 import styled, { css } from "styled-components";
 
 const S = {}

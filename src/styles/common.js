@@ -1,5 +1,6 @@
 import { css } from "styled-components";
 
+
 export const flexCenter = css`
   display: flex;
   justify-content: center;
@@ -41,3 +42,6 @@ export const container = css`
   box-sizing: border-box;
   background-color: ${({ backgroundColor = "#fff" }) => backgroundColor};
 `;
+
+
+
