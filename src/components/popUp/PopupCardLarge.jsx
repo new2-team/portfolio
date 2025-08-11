@@ -32,7 +32,7 @@ const PopupCardLarge = ({
         )}
 
         {subText && (
-          <Text.Caption4
+          <Text.Caption2
             color="#585858"
             mt="20"
             style={{
@@ -42,7 +42,7 @@ const PopupCardLarge = ({
             }}
           >
             {subText}
-          </Text.Caption4>
+          </Text.Caption2>
         )}
 
         <S.ButtonGroup $count={actions.length} mt="50">

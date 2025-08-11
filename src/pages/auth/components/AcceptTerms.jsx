@@ -1,46 +1,58 @@
 import React, { useState } from 'react';
-import RadioWithLabel from '../../components/radio/RadioWithLabel';
-import Container from '../../components/layout/Container';
-import S from './style';
-import Text from '../../components/text/size';
-import CheckboxWithLabel from '../../components/checkbox/CheckboxWithLabel';
-import { ThemeProvider } from 'styled-components';
-import BasicButton from '../../components/button/BasicButton';
+import { useNavigate } from 'react-router-dom';
+import RadioWithLabel from '../../../components/radio/RadioWithLabel';
+import S from '../style';
+import Text from '../../../components/text/size';
+import CheckboxWithLabel from '../../../components/checkbox/CheckboxWithLabel';
+import BasicButton from '../../../components/button/BasicButton';
+import PopupCardLarge from '../../../components/popUp/PopupCardLarge';
+import { useCheckGroup } from '../../../hooks/useCheckGroup';
+import SocialTabWrapper from './SocialTabWrapper';
 
-//이용약관 동의 페이지
+// 이용약관 동의 페이지
 const AcceptTerms = () => {
-    const [allAgreed, setAllAgreed] = useState(false);
-    const [termsAgreed, setTermsAgreed] = useState(false);
-    const [privacyAgreed, setPrivacyAgreed] = useState(false);
+    const navigate = useNavigate();
+    const [showAlert, setShowAlert] = useState(false);
+    
+    // 필수 약관 동의 그룹 (useCheckGroup 활용)
+    const {
+        checks: termsChecks,
+        allChecked: allTermsChecked,
+        setAll: setAllTerms,
+        setOne: setOneTerm
+    } = useCheckGroup(["terms", "privacy"]);
 
-    // 전체 동의 클릭 시
-    const handleAllAgree = () => {
-        const next = !allAgreed;
-        setAllAgreed(next);
-        setTermsAgreed(next);
-        setPrivacyAgreed(next);
+    // 마케팅 동의 그룹 (useCheckGroup 활용)
+    const {
+        checks: marketingChecks,
+        allChecked: allMarketingChecked,
+        setAll: setAllMarketing,
+        setOne: setOneMarketing
+    } = useCheckGroup(["sms", "email", "push"]);
+
+    // 확인 버튼 클릭 시 처리
+    const handleConfirm = () => {
+        if (allTermsChecked) {
+            navigate('/sign-up/info');
+        } else {
+            setShowAlert(true);
+        }
     };
 
-    // 개별 동의 클릭 시
-    const handleTermsAgree = () => {
-        const next = !termsAgreed;
-        setTermsAgreed(next);
-        setAllAgreed(next && privacyAgreed);
-    };
-    const handlePrivacyAgree = () => {
-        const next = !privacyAgreed;
-        setPrivacyAgreed(next);
-        setAllAgreed(termsAgreed && next);
+    // 알럿 닫기
+    const handleCloseAlert = () => {
+        setShowAlert(false);
     };
 
     return (
-        <Container>
+        <>
             <S.AllAgreeWrapper>
+                {/* 전체 동의: 모든 필수 약관이 체크되면 true, 아니면 false */}
                 <RadioWithLabel
                     size="L"
                     label="약관 전체 동의"
-                    checked={allAgreed}
-                    onChange={handleAllAgree}
+                    checked={allTermsChecked}
+                    onChange={() => setAllTerms(!allTermsChecked)}
                 />
             </S.AllAgreeWrapper>
 
@@ -49,8 +61,8 @@ const AcceptTerms = () => {
                     <RadioWithLabel
                         size="M"
                         label={<><S.RequiredText>(필수)</S.RequiredText> 홈페이지 이용약관 *</>}
-                        checked={termsAgreed}
-                        onChange={handleTermsAgree}
+                        checked={termsChecks.terms}
+                        onChange={() => setOneTerm("terms", !termsChecks.terms)}
                     />
                     <S.TermsBox>
                         <Text.Body3 fontWeight="700" mb="20">제 1장 (총 칙)</Text.Body3>
@@ -74,8 +86,8 @@ const AcceptTerms = () => {
                     <RadioWithLabel
                         size="M"
                         label={<><S.RequiredText>(필수)</S.RequiredText> 개인정보 수집 및 이용 동의 *</>}
-                        checked={privacyAgreed}
-                        onChange={handlePrivacyAgree}
+                        checked={termsChecks.privacy}
+                        onChange={() => setOneTerm("privacy", !termsChecks.privacy)}
                     />
                     <S.TermsBox>
                         <S.TermsTextBox>
@@ -95,7 +107,12 @@ const AcceptTerms = () => {
                 </S.TermsBoxWrapper>
 
                 <S.TermsBoxWrapper>
-                    <RadioWithLabel size="M" label="(선택) 마케팅 전체 동의" />
+                    {/* 마케팅 전체 동의: 모든 마케팅 체크가 true면 true, 아니면 false */}
+                    <CheckboxWithLabel
+                        label="마케팅 전체 동의"
+                        checked={allMarketingChecked}
+                        onChange={() => setAllMarketing(!allMarketingChecked)}
+                    />
                     <S.TermsBox>
                         <S.TermsTextBox>
                             <S.TermsList>
@@ -105,9 +122,21 @@ const AcceptTerms = () => {
                         </S.TermsTextBox>
                     </S.TermsBox>
                     <S.CheckboxWrapper>
-                        <CheckboxWithLabel label="SMS / LMS / MMS 수신 동의" />
-                        <CheckboxWithLabel label="E-mail 수신 동의" />
-                        <CheckboxWithLabel label="알림톡 수신 동의" />
+                        <CheckboxWithLabel
+                            label="SMS / LMS / MMS 수신 동의"
+                            checked={marketingChecks.sms}
+                            onChange={() => setOneMarketing("sms", !marketingChecks.sms)}
+                        />
+                        <CheckboxWithLabel
+                            label="E-mail 수신 동의"
+                            checked={marketingChecks.email}
+                            onChange={() => setOneMarketing("email", !marketingChecks.email)}
+                        />
+                        <CheckboxWithLabel
+                            label="알림톡 수신 동의"
+                            checked={marketingChecks.push}
+                            onChange={() => setOneMarketing("push", !marketingChecks.push)}
+                        />
                     </S.CheckboxWrapper>
                 </S.TermsBoxWrapper>
             </S.TermsWrapper>
@@ -129,12 +158,34 @@ const AcceptTerms = () => {
 
 
             <S.TermsButtonWrapper>
-                <BasicButton basicButton="medium" variant="filled">확인</BasicButton>
+                <BasicButton 
+                    basicButton="medium" 
+                    variant="filled"
+                    onClick={handleConfirm}
+                >
+                    확인
+                </BasicButton>
             </S.TermsButtonWrapper>
-       
 
-            
-        </Container>
+            {/* 알럿 팝업 */}
+            {showAlert && (
+                <PopupCardLarge
+                    title="약관 동의 필요"
+                    description="필수 약관에 동의해주세요."
+                    actions={[
+                        {
+                            label: "확인",
+                            onClick: handleCloseAlert,
+                            type: "filled"
+                        }
+                    ]}
+                    onClose={handleCloseAlert}
+                />
+            )}
+        </>
+
+
+
     );
 };
 

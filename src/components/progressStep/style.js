@@ -6,7 +6,7 @@ const S = {};
 S.ProgressStepWrapper = styled.div`
  ${flexColumnCenter};
   width: 100%;
-  margin-top: 120px;
+  margin-top: 200px;
 `;
 
 S.StepWrapper = styled.div`

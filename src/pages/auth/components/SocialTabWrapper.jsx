@@ -1,5 +1,5 @@
 import React from 'react'
-import S from './style'
+import S from '../style'
 import KakaoTab from './KakaoTab'
 import NaverTab from './NaverTab'
 

@@ -25,7 +25,7 @@ const ProgressStep = ({ steps, activeStep }) => {
               </S.StepLabel>
             </S.StepBox>
             {i < steps.length - 1 && (
-              <S.StepDot active={activeStep > i}>
+              <S.StepDot active={activeStep >= i}>
                 <span /><span /><span /><span />
               </S.StepDot>
             )}

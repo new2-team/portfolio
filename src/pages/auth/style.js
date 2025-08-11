@@ -1,10 +1,14 @@
 import styled from "styled-components";
 import { spacingProps } from "../../styles/spacingProps";
-import { flexCenter, flexColumn, flexColumnCenter, flexSpaceBetween } from "../../styles/common";
+import { flexCenter, flexColumn, flexColumnCenter, flexSpaceBetween} from "../../styles/common";
 import Text from "../../components/text/size";
+
 
 const S = {};
 
+// =========================
+// 로그인 페이지 스타일
+// =========================
 S.LoginWrapper = styled.div`
   width: 600px;
   margin: auto;
@@ -57,6 +61,9 @@ S.PasswordText = styled.div`
   }
 `;
 
+// =========================
+// 약관동의(이용약관) 페이지 스타일
+// =========================
 S.AllAgreeWrapper = styled.div`
   ${flexCenter};
   justify-content: flex-end;
@@ -134,7 +141,6 @@ S.CheckboxWrapper = styled.div`
   gap: 0 20px;
 `;
 
-
 S.NoticeWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -161,7 +167,9 @@ S.TermsButtonWrapper = styled.div`
   margin-bottom: 300px;
 `;
 
-
+// =========================
+// 소셜 로그인/탭 스타일 (약관동의 1단계에서만 사용)
+// =========================
 S.SocialLogin = styled.div`
   margin-top: 80px;
 `;
@@ -251,5 +259,244 @@ S.RequiredText = styled.span`
   font-weight: 600;
 `;
 
+// =========================
+// 회원정보 입력 페이지 스타일
+// =========================
+S.SignUpInfoWrapper = styled.div`
+  ${flexColumn};
+  gap: 40px 0;
+  margin-top: 150px;
+
+  /* Autofill 스타일 오버라이드 */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: inherit !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* Firefox autofill 스타일 */
+  input:-moz-autofill,
+  input:-moz-autofill:focus {
+    background-color: white !important;
+    color: inherit !important;
+  }
+`;
+
+S.SignUpInfoInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  p {
+    min-width: 300px;
+  }
+`;
+
+S.InputButtonWrapper = styled.div`
+  width: 100%; 
+  flex: 1;
+  position: relative;
+  ${spacingProps}
+
+  button {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  p {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  img {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+`;
+
+S.EmailWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%; 
+  position: relative;
+  ${spacingProps}
+
+  > * {
+    flex: 1;
+    min-width: 0; 
+  }
+
+  > *:first-child,
+  > *:last-child {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > *:nth-child(2) { /* @ 기호 */
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+
+  > *:nth-child(3) { /* 셀렉트박스 */
+    flex: 1;
+    min-width: 0;
+  }
+
+  > *:nth-child(4) { /* 직접입력 필드 */
+    flex: 1;
+    min-width: 0;
+  }
+`;
+
+S.ConfirmButtonWrapper = styled.div`
+  ${flexCenter};
+  margin-top: 200px;
+  margin-bottom: 300px;
+`;
+
+S.ConfirmMessage = styled.div`
+  color: ${({ theme }) => theme.PALLETE.text.error};
+  font-size: 16px;
+  margin-top: 8px;
+  padding-left: 0;
+  text-align: left;
+`;
+
+S.InputErrorWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+S.BirthdayWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+  width: 100%;
+
+  div {
+    flex: 1;
+  }
+`;
+
+// =========================
+// 회원가입 완료 페이지 스타일
+// =========================
+S.SignUpCompleteWrapper = styled.div`
+  ${flexColumnCenter};
+  gap: 40px 0;
+  margin: 126px 0;
+  text-align: center;
+`;
+
+S.CompleteIcon = styled.div`
+  width: 200px;
+  height: 200px;
+  background-color: ${({ theme }) => theme.PALLETE.primary.main};
+  border-radius: 50%;
+  ${flexCenter};
+
+  img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+  }
+`;
+
+S.CompleteTitle = styled.div`
+  margin-top: 100px;
+`;
+
+S.CompleteButtonWrapper = styled.div`
+  ${flexCenter};
+  gap: 20px;
+  margin-top: 100px;
+`;
+
+// =========================
+// 프로필 등록 페이지 스타일
+// =========================
+S.SignUpProfileWrapper = styled.div`
+  ${flexColumn};
+  gap: 40px 0;
+  margin-top: 150px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+S.ProfileSection = styled.div`
+  ${flexColumn};
+  gap: 40px 0;
+`;
+
+S.ProfileImageSection = styled.div`
+  ${flexColumn};
+  gap: 20px 0;
+  align-items: center;
+`;
+
+S.ImageUploadArea = styled.div`
+  ${flexColumn};
+  gap: 20px 0;
+  align-items: center;
+`;
+
+S.PlaceholderImage = styled.div`
+  width: 100px;
+  height: 100px;
+  border: 2px dashed #ccc;
+  border-radius: 50%;
+  ${flexCenter};
+  color: #999;
+  font-size: 14px;
+`;
+
+S.ProfileInfoSection = styled.div`
+  ${flexColumn};
+  gap: 30px 0;
+`;
+
+S.InputGroup = styled.div`
+  ${flexColumn};
+  gap: 12px 0;
+`;
+
+S.InterestGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+`;
+
+S.InterestItem = styled.div`
+  padding: 12px 16px;
+  border: 1px solid ${({ selected, theme }) => selected ? theme.PALLETE.primary.main : '#ddd'};
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  background-color: ${({ selected, theme }) => selected ? theme.PALLETE.primary.main : 'white'};
+  color: ${({ selected, theme }) => selected ? 'white' : '#333'};
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.PALLETE.primary.main};
+  }
+`;
+
+S.ButtonSection = styled.div`
+  ${flexCenter};
+  margin-top: 60px;
+`;
 
 export default S;
