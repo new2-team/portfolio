@@ -45,32 +45,32 @@ const S = {}
   padding: 0 30px;
  `
 
-//  S.CalendarWrapper = styled.div`
-//   ${flexColumn}
-//   width: 664px;
-//   height: 1302px;
-//   gap: 28px;
-//  `
-//  S.Calendar = styled.div`
-//   width: 664px;
-//   height: 474px;
-//   border-radius: 24px;
-//   box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
-//  `
+ S.CalendarWrapper = styled.div`
+  ${flexColumn}
+  width: 664px;
+  height: 1302px;
+  gap: 28px;
+ `
+ S.Calendar = styled.div`
+  width: 664px;
+  height: 474px;
+  border-radius: 24px;
+  box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
+ `
 
-//  S.Plan = styled.div`
-//   width: 664px;
-//   height: 386px;
-//   border-radius: 24px;
-//   box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
-// `
+ S.Plan = styled.div`
+  width: 664px;
+  height: 386px;
+  border-radius: 24px;
+  box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
+`
 
-//  S.review = styled.div`
-//   width: 664px;
-//   height: 386px;
-//   border-radius: 24px;
-//   box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
-// `
+ S.Review = styled.div`
+  width: 664px;
+  height: 386px;
+  border-radius: 24px;
+  box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
+`
 
  S.Chat = styled.div`
   width: 686px;
