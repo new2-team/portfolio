@@ -6,7 +6,7 @@ import BasicInput from '../../components/input/BasicInput';
 import { getMonth, getYear } from 'date-fns';
 
 
-const StyledDatePicker = styled(DatePicker)`
+const StyledDatePicker = styled.div`
   .react-datepicker {
     width: 350px ;
     height: 400px ;
@@ -54,7 +54,7 @@ const StyledDatePicker = styled(DatePicker)`
         />);
     })
 
-const DatePickerSingle = (({ selected, onChange, ...props }, ref) => {
+const DatePickerSingle = forwardRef(({ selected, onChange, ...props }, ref) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 const currentYear = getYear(new Date());
 const years = Array.from(
@@ -76,13 +76,15 @@ const years = Array.from(
     "December",
   ];
 
-    const handleDateChange = (date) => {
+  const handleDateChange = (date) => {
         setSelectedDate(date);
         if (onchange) onchange(date); // 부모 컴포넌트로 전달
-    };
+  };
+
   return (
     <StyledDatePicker
         ref={ref}
+        customInput={<CustomInput />}
       renderCustomHeader={({
         date,
         changeYear,
@@ -134,9 +136,11 @@ const years = Array.from(
       selected={selectedDate}
       setSelectedDate={setSelectedDate}
       onChange={handleDateChange}
-      customInput={<CustomInput />} // 팀 공용 컴포넌트를 그대로 사용
+      // customInput={<CustomInput />} // 팀 공용 컴포넌트를 그대로 사용
       
     />
+    
   );
+  
 });
 export default DatePickerSingle;

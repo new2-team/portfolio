@@ -14,7 +14,7 @@ import Checkbox from '../../components/checkbox/Checkbox';
 import DatePickerSingle from './DatePickerSingle';
 
 
-const AddProfile = ({ onProfileComplete }) => {
+const AddProfile = () => {
     
     const calendarRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -132,6 +132,7 @@ const AddProfile = ({ onProfileComplete }) => {
         );
     };
 
+
     const handleSearchAddress = () => {
         new window.daum.Postcode({
         oncomplete: function (data) {
@@ -193,6 +194,10 @@ const AddProfile = ({ onProfileComplete }) => {
         }
     }
 
+    const handleInputClick = () => {
+        calendarRef.current.setOpen(true);
+        console.log(calendarRef.current)
+    };
 
     const handleGenderClick = (gender) => {
         setForm({...form, gender});
@@ -266,14 +271,7 @@ const AddProfile = ({ onProfileComplete }) => {
 
         // 모든 유효성 검사 통과
         console.log("폼 유효! 제출데이터");
-        
-        // onProfileComplete prop이 있으면 호출 (회원가입 플로우)
-        if (onProfileComplete) {
-          onProfileComplete(form);
-        } else {
-          // 기존 로직 (프로필 수정 등)
-          console.log("기존 프로필 수정 로직");
-        }
+        // 다음 단계로 이동하는 로직mergedData
     
         };
 
@@ -320,13 +318,24 @@ const AddProfile = ({ onProfileComplete }) => {
                 </S.inputinline>
                 <S.InputReguler>
                     <S.CaptionTitlewrap>생년월일</S.CaptionTitlewrap>
-                    <S.InputButtonWrapper>
+                        <BasicInput 
+                        label="생년월일"
+                        required
+                        // onClick={onclick}
+                        onClick={handleInputClick}
+                        />
+                        <img src="/assets/icons/calendar.svg" 
+                            width={30} height={30} alt="캘린더" 
+                            onClick={() => calendarRef.current?.setFocus()
+                            }
+                            style={{marginRight:"10px", cursor: "pointer"}} 
+                        />
                         <Controller 
                             name="birthDate" 
                             control={control}
                             rules={{ required: "생년월일을 선택해주세요" }}
                             render={({ field }) => ( 
-                            <DatePickerSingle
+                                <DatePickerSingle
                                 ref={calendarRef}
                                 selectedDate={selectedDate}
                                 setSelectedDate={setSelectedDate}
@@ -336,23 +345,18 @@ const AddProfile = ({ onProfileComplete }) => {
                                     setSelectedDate(date);
                                     setForm({...form, birthDate: date})
                                 }} 
+                                placeholderText="YYYY-MM-DD"
                                 // customInput={<CustomInput/>}
                                 // dateFormat="yyyy-MM-dd"
                                 // renderCu
-                                    />
-                                    // <DatePicker
-                                    // // display='block'
-                                    
-                                    // placeholderText="YYYY-MM-DD"
+                                />
+                                // <DatePicker
+                                // // display='block'
+                                
                                 // />
                             )}
-                        />
-                        <img src="/assets/icons/calendar.svg" width={30} height={30} alt="캘린더" 
-                            onClick={() => calendarRef.current?.setFocus()
-                            }
-                            style={{ position: "absolute", cursor: "pointer", marginLeft: "8px" }} />
+                        /> 
                             
-                    </S.InputButtonWrapper>
                     <ErrorMessage
                         show={hasSubmitted && validationErrors.birthDate}
                         message={validationErrors.birthDate}  
