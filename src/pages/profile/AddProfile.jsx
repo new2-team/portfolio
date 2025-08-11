@@ -132,6 +132,7 @@ const AddProfile = () => {
         );
     };
 
+
     const handleSearchAddress = () => {
         new window.daum.Postcode({
         oncomplete: function (data) {
@@ -193,6 +194,10 @@ const AddProfile = () => {
         }
     }
 
+    const handleInputClick = () => {
+        calendarRef.current.setOpen(true);
+        console.log(calendarRef.current)
+    };
 
     const handleGenderClick = (gender) => {
         setForm({...form, gender});
@@ -313,13 +318,24 @@ const AddProfile = () => {
                 </S.inputinline>
                 <S.InputReguler>
                     <S.CaptionTitlewrap>생년월일</S.CaptionTitlewrap>
-                    <S.InputButtonWrapper>
+                        <BasicInput 
+                        label="생년월일"
+                        required
+                        // onClick={onclick}
+                        onClick={handleInputClick}
+                        />
+                        <img src="/assets/icons/calendar.svg" 
+                            width={30} height={30} alt="캘린더" 
+                            onClick={() => calendarRef.current?.setFocus()
+                            }
+                            style={{marginRight:"10px", cursor: "pointer"}} 
+                        />
                         <Controller 
                             name="birthDate" 
                             control={control}
                             rules={{ required: "생년월일을 선택해주세요" }}
                             render={({ field }) => ( 
-                            <DatePickerSingle
+                                <DatePickerSingle
                                 ref={calendarRef}
                                 selectedDate={selectedDate}
                                 setSelectedDate={setSelectedDate}
@@ -329,23 +345,18 @@ const AddProfile = () => {
                                     setSelectedDate(date);
                                     setForm({...form, birthDate: date})
                                 }} 
+                                placeholderText="YYYY-MM-DD"
                                 // customInput={<CustomInput/>}
                                 // dateFormat="yyyy-MM-dd"
                                 // renderCu
-                                    />
-                                    // <DatePicker
-                                    // // display='block'
-                                    
-                                    // placeholderText="YYYY-MM-DD"
+                                />
+                                // <DatePicker
+                                // // display='block'
+                                
                                 // />
                             )}
-                            /> 
-                        <img src="/assets/icons/calendar.svg" width={30} height={30} alt="캘린더" 
-                            onClick={() => calendarRef.current?.setFocus()
-                            }
-                            style={{ position: "absolute", cursor: "pointer", marginLeft: "8px" }} />
+                        /> 
                             
-                    </S.InputButtonWrapper>
                     <ErrorMessage
                         show={hasSubmitted && validationErrors.birthDate}
                         message={validationErrors.birthDate}  

@@ -42,6 +42,16 @@ S.NamekgWrap = styled.div`
     box-sizing: border-box;
 `
 
+S.healthprofile = styled.div`
+    margin-top: auto;
+    height: min-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 20px/ 2);
+    box-sizing: border-box;
+`
+
 S.InputReguler = styled.div`
     display: flex;
     flex-direction: column;
