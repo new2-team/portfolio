@@ -16,7 +16,18 @@ const PasswordInput = (props) => {
           {...props}
         />
         {visible ? (
-          <S.EyeOn onClick={toggleVisible} />
+          <img 
+            src="/assets/icons/eye-on.svg" 
+            alt="비밀번호 보기" 
+            onClick={toggleVisible}
+            style={{
+              position: 'absolute',
+              right: '24px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              cursor: 'pointer'
+            }}
+          />
         ) : (
           <S.EyeOff onClick={toggleVisible} />
         )}
