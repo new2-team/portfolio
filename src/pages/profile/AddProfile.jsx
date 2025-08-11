@@ -14,7 +14,7 @@ import Checkbox from '../../components/checkbox/Checkbox';
 import DatePickerSingle from './DatePickerSingle';
 
 
-const AddProfile = () => {
+const AddProfile = ({ onProfileComplete }) => {
     
     const calendarRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -266,7 +266,14 @@ const AddProfile = () => {
 
         // 모든 유효성 검사 통과
         console.log("폼 유효! 제출데이터");
-        // 다음 단계로 이동하는 로직mergedData
+        
+        // onProfileComplete prop이 있으면 호출 (회원가입 플로우)
+        if (onProfileComplete) {
+          onProfileComplete(form);
+        } else {
+          // 기존 로직 (프로필 수정 등)
+          console.log("기존 프로필 수정 로직");
+        }
     
         };
 
@@ -339,7 +346,7 @@ const AddProfile = () => {
                                     // placeholderText="YYYY-MM-DD"
                                 // />
                             )}
-                            /> 
+                        />
                         <img src="/assets/icons/calendar.svg" width={30} height={30} alt="캘린더" 
                             onClick={() => calendarRef.current?.setFocus()
                             }
