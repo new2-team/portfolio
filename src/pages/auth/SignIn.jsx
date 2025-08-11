@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setUser, setUserStatus } from '../../modules/user';
+import { setUser, setUserStatus } from '../../components/modules/user';
 import Container from '../../components/layout/Container';
 import Text from '../../components/text/size';
 import BasicInput from '../../components/input/BasicInput';
@@ -33,20 +33,44 @@ const SignIn = () => {
 
   // 로그인 버튼 클릭 시 실행되는 함수
   const handleLogin = async () => {
-    // 실제로는 서버에 로그인 요청을 보내야 함 (여기선 예시)
-    // 예시: 로그인 성공 시 사용자 정보
-    const mockUser = { id, name: '홍길동', email: 'test@example.com' };
-    // 로그인 성공 시 리덕스에 사용자 정보와 로그인 상태 저장
-    dispatch(setUser(mockUser));
-    dispatch(setUserStatus(true));
-    // 아이디 기억하기 체크 시 localStorage 저장 예시
-    if (rememberId) {
-      localStorage.setItem('rememberedId', id);
-    } else {
-      localStorage.removeItem('rememberedId');
+    try {
+      // 로그인 API 호출
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: id,
+          password: pw,
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '로그인에 실패했습니다.');
+      }
+
+      const result = await response.json();
+      console.log('로그인 성공:', result);
+
+      // 로그인 성공 시 리덕스에 사용자 정보와 로그인 상태 저장
+      dispatch(setUser(result.user));
+      dispatch(setUserStatus(true));
+      
+      // 아이디 기억하기 체크 시 localStorage 저장
+      if (rememberId) {
+        localStorage.setItem('rememberedId', id);
+      } else {
+        localStorage.removeItem('rememberedId');
+      }
+      
+      // 메인 페이지로 이동
+      navigate('/main');
+    } catch (error) {
+      console.error('로그인 오류:', error);
+      alert(error.message);
     }
-    // 메인 페이지 등으로 이동
-    navigate('/main');
   };
 
   return (
