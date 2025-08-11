@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import S from '../textArea/style';
 
 
-const TextArea = ({placeholder, maxChars}) => {
+const TextArea = ({placeholder, maxChars, value, onChange}) => {
 
   const [text, setText] = useState('');
 

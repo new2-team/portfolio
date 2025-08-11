@@ -3,16 +3,17 @@ import SupportMenuComponent from './SupportMenuComponent';
 import S from './style';
 import BasicInput from '../../components/input/BasicInput';
 import BasicButton from '../../components/button/BasicButton';
-import Radio from '../../components/radio/Radio';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStarOfLife } from '@fortawesome/free-solid-svg-icons';
-import SelectBox from '../../components/selectBox/SelectBox';
 import FileUpload from '../../components/fileUpload/FileUpload';
 import TextArea from '../../components/textArea/TextArea';
+import { useRadioGroup } from '../../hooks/useRadioGroup';
+import RadioWithLabel from '../../components/radio/RadioWithLabel';
+import { Link } from 'react-router-dom';
 
 const Inquiry = () => {
-
-      const [showPopup, setShowPopup] = useState(false);
+    
+    const [selected, handleChange] = useRadioGroup();
 
     return (
         <S.InquiryWrapper>
@@ -28,7 +29,7 @@ const Inquiry = () => {
                 </div>
             </div>
             <S.InquiryBodyWrapper>
-               <S.InquiryNameWrapper>
+               {/* <S.InquiryNameWrapper>
                    <S.InquiryCategory>
                      이름&nbsp;
                     <FontAwesomeIcon icon={faStarOfLife} style={{color: "#cf4b05", fontSize: "10px"}} />
@@ -77,17 +78,17 @@ const Inquiry = () => {
                         ]} />
                     </S.EmailSelectBox>
                    </S.InputsWrapper>
-               </S.InquiryEmailWrapper>
+               </S.InquiryEmailWrapper> */}
                <S.InquiryQuestionCategoryWrapper>
                    <S.InquiryCategory>
                     문의유형&nbsp;
                     <FontAwesomeIcon icon={faStarOfLife} style={{color: "#cf4b05", fontSize: "10px"}} />
                    </S.InquiryCategory>
                    <S.RadiosWrapper>
-                    <Radio size='M' name={"category"} /><p>회원정보</p>
-                    <Radio size='M' name={"category"} /><p>서비스</p>
-                    <Radio size='M' name={"category"} /><p>상품</p>
-                    <Radio size='M' name={"category"} /><p>기타</p>
+                    <RadioWithLabel checked={selected === "a"} onChange={() => handleChange("a")} label="회원정보" />
+                    <RadioWithLabel checked={selected === "b"} onChange={() => handleChange("b")} label="서비스" />
+                    <RadioWithLabel checked={selected === "c"} onChange={() => handleChange("c")} label="상품" />
+                    <RadioWithLabel checked={selected === "d"} onChange={() => handleChange("d")} label="기타" />
                    </S.RadiosWrapper>
                </S.InquiryQuestionCategoryWrapper>
                <S.InquiryQuestionTitleWrapper>
@@ -96,7 +97,7 @@ const Inquiry = () => {
                     <FontAwesomeIcon icon={faStarOfLife} style={{color: "#cf4b05", fontSize: "10px"}} />
                    </S.InquiryCategory>
                    <S.InputsWrapper>
-                    <BasicInput placeholder="제목을 입력하세요" />
+                    <BasicInput placeholder="제목을 입력하세요" maxlength="35" />
                    </S.InputsWrapper>
                </S.InquiryQuestionTitleWrapper>
                <S.InquiryQuestionBodyWrapper>
@@ -122,17 +123,17 @@ const Inquiry = () => {
                          <BasicButton children={"찾아보기"} basicButton={"superSmall"} variant={"filled"} /> */}
                          <FileUpload/>
                         </S.FileInputButton>
-                            <p>*파일은 최대 3 개 까지 등록이 가능하며, 용량은 총 50MB 이하로 첨부하여 주시기 바랍니다. <br/>
+                            <p>*파일은 1 개만 등록이 가능하며, 용량은 총 50MB 이하로 첨부하여 주시기 바랍니다. <br/>
                              첨부 가능한 파일 확장자 : jpg,jpeg,gif,png,zip,doc,ppt,pptx,xls,xlsx,pdf,hwp</p>
                        </S.FileWrapper>
                </S.InquiryFileWrapper>
             </S.InquiryBodyWrapper>
-         <S.InquiryButtonWrapper>
-            <div>
-             <BasicButton children={"취소"} variant={"gray"} basicButton={"medium"} />
-             <BasicButton children={"저장"} variant={"default"} basicButton={"medium"} />
-            </div>
-         </S.InquiryButtonWrapper>
+             <Link to="/support/inquiry-list" >
+                <S.InquiryButtonWrapper>
+                    <BasicButton children={"취소"} variant={"gray"} basicButton={"medium"} />
+                    <BasicButton children={"저장"} variant={"default"} basicButton={"medium"} />
+                </S.InquiryButtonWrapper>
+             </Link>
         </S.InquiryWrapper>
     );
 };

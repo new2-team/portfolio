@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 const S = {}
 
  S.TextAreaWrapper = styled.div`
-position: relative;
+ position: relative;
  width: 100%;
  height: 100%;
 `
