@@ -3,6 +3,8 @@ import S from './style';
 import BasicInput from '../../components/input/BasicInput';
 import BasicButton from '../../components/button/BasicButton';
 import PopupCardLarge from '../../components/popUp/PopupCardLarge';
+import TextArea from '../../components/textArea/TextArea';
+import CommunityTextAreaComponent from './CommunityTextAreaComponent';
 
 
 
@@ -31,16 +33,30 @@ const CommunityInputComponent = ({post, setPost}) => {
           <img src="/assets/img/profile3.jpg" alt="dogProfile" />
         </S.TextBoxLeftWrapper>
           <S.TextBoxInputWrapper>
-            <S.TitleInput  type="text" placeholder='제목을 입력해주세요' value={newPost.title}
+            <S.TitleInputWrapper>              
+              <CommunityTextAreaComponent placeholder={'제목을 입력해주세요'} maxChars={20} value={newPost.title}
+                onChange={(e) => {
+                setNewPost({...newPost, title: e.target.value})
+                }}
+              />
+            </S.TitleInputWrapper>
+            {/* <S.TitleInput  type="text" placeholder='제목을 입력해주세요' value={newPost.title}
             onChange={(e) => {
               setNewPost({...newPost, title: e.target.value})
-            }} maxLength={20}/>
+            }} maxLength={20}/> */}
             <br />
             <S.TBButton>
-              <S.ContentInput type="text" placeholder='내용을 입력해주세요' value={newPost.content}
-              onChange={(e) => {
-                setNewPost({...newPost, content: e.target.value})
-              }} maxLength={500} />
+              <S.ContentInputWrapper>
+                <CommunityTextAreaComponent placeholder='내용을 입력해주세요' value={newPost.content}
+                  onChange={(e) => {
+                  setNewPost({...newPost, content: e.target.value})}}
+                  maxChars={500}
+                />
+                {/* <S.ContentInput type="text" placeholder='내용을 입력해주세요' value={newPost.content}
+                onChange={(e) => {
+                  setNewPost({...newPost, content: e.target.value})
+                }} maxLength={500} /> */}
+              </S.ContentInputWrapper>
               <S.TBBWrapper>
                 <button className='imgUpload' type='submit'>
                   사진

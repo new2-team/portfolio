@@ -1,8 +1,8 @@
 
 // 사용 예시:
-//   const [selected, handleChange] = useRadioGroup();
-//   <RadioWithLabel checked={selected === "a"} onChange={() => handleChange("a")} label="A" />
-//   <RadioWithLabel checked={selected === "b"} onChange={() => handleChange("b")} label="B" />
+  // const [selected, handleChange] = useRadioGroup();
+  // <RadioWithLabel checked={selected === "a"} onChange={() => handleChange("a")} label="A" />
+  // <RadioWithLabel checked={selected === "b"} onChange={() => handleChange("b")} label="B" />
 
 import { useState } from "react";
 

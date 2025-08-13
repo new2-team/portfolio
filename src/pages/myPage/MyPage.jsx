@@ -14,15 +14,20 @@ const MyPage = () => {
         <S.Wrapper>
             <S.FirstWrapper>
                 <S.Profile>
-                    
+                    프로필
                 </S.Profile>
                 <S.Friends>
                     <Friends/>
                 </S.Friends>
             </S.FirstWrapper>
             <S.SecondWrapper>
+                <S.CalendarWrapper>
+                    <S.Calendar />
+                    <S.Plan />
+                    <S.Review />
+                </S.CalendarWrapper>
                 <S.Chat>
-                    <ChattingWidget/>
+                    채팅
                 </S.Chat>
             </S.SecondWrapper>
 

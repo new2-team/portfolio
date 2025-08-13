@@ -64,7 +64,6 @@ const FileUploade = () => {
       {fileName && <S.DeleteButton onClick={handleDelete}>삭제</S.DeleteButton>}
 
       <S.UploadButton htmlFor="upload">찾아보기</S.UploadButton>
-
     </S.Wrapper>
   );
 }

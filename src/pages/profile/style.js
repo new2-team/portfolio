@@ -68,7 +68,7 @@ S.InputReguler = styled.div`
     width: 100%;
     position: relative;
     ${spacingProps}
-    svg{
+    img{
         position: absolute;
         right: 24px;
         top: 65%;
@@ -100,7 +100,7 @@ S.InputButtonWrapper = styled.div`
         cursor: pointer;
     }
     
-    svg {
+    img {
         position: absolute;
         right: 24px;
         top: 50%;

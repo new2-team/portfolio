@@ -29,6 +29,19 @@ const getTime = (time) => {
 const [isLargeOpenComment, setIsLargeOpenComment] = useState(false)
 const [isLargeOpenText, setIsLargeOpenText] = useState(false)
 const [showConfirm, setShowConfirm] = useState(() => () => {})
+
+// 댓글 수
+const getTotalCommentCount = (commentList) => {
+  if (!Array.isArray(commentList)) return 0;
+  let count = 0;
+  commentList.forEach((comment) => {
+    count +=1;
+    if(Array.isArray(comment.replies)) {
+      count += comment.replies.length
+    }
+  })
+  return count;
+}
   
 
 return (  
@@ -52,14 +65,16 @@ return (
             <S.TRTitle>{postItem.title}</S.TRTitle>
             <S.HCTBWrapper>
               {!isOpen && (<S.HeartCommentTop>
-                  <S.HeartButton onClick={()=> handleLike(postItem.id)} type='button'>
-                    <img src="/assets/icons/heart.svg" width={24} height={24} alt="좋아요" />
+                  <S.HeartButton onClick={()=> handleLike(postItem.id)} type='button'
+                    $liked={postItem.liked}  
+                  >
+                    <img src={postItem.liked ? "/assets/icons/heart-click.svg" : "/assets/icons/heart.svg"}  alt="좋아요" />
                   </S.HeartButton>
                   <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
                   <S.CommentButton type='submit'>
-                    <img src="/assets/icons/chat.svg" width={24} height={24} alt="댓글" />
+                    <img src="/assets/icons/chat.svg" alt="댓글" />
                   </S.CommentButton>
-                  <S.HeartCommentCount>{postItem.commentList.length}</S.HeartCommentCount>
+                  <S.HeartCommentCount>{getTotalCommentCount(postItem.commentList)}</S.HeartCommentCount>
               </S.HeartCommentTop>)}
               <S.ArrowButton onClick={() => togglePost(postItem.id)}>{isOpen ? <img src="/assets/icons/arrow-up.svg" width={24} height={24} alt="열림" />:<img src="/assets/icons/arrow-down.svg" width={24} height={24} alt="닫힘" />}</S.ArrowButton>
             </S.HCTBWrapper>
@@ -75,13 +90,13 @@ return (
             <S.HeartLine>
               <S.HeartComment>
                 <S.HeartButton onClick={()=> handleLike(postItem.id)} type='submit'>
-                  <img src="/assets/icons/heart.svg" width={24} height={24} alt="좋아요" />
+                  <img src={postItem.liked ? "/assets/icons/heart-click.svg" : "/assets/icons/heart.svg"} width={24} height={24} alt="좋아요" />
                 </S.HeartButton>
                 <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
                 <S.CommentButton type='submit'>
                   <img src="/assets/icons/chat.svg" width={24} height={24} alt="댓글" />
                 </S.CommentButton>
-                <S.HeartCommentCount>{postItem.commentList.length}</S.HeartCommentCount>
+                <S.HeartCommentCount>{getTotalCommentCount(postItem.commentList)}</S.HeartCommentCount>
               </S.HeartComment>
               <S.DeleteButton className='DeleteText' 
               onClick={() => {
