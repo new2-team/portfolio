@@ -26,7 +26,15 @@ S.inputinline = styled.div`
     display: flex;
     width: 100%;
     box-sizing: border-box;
+    margin-top: 23px;
 `
+
+S.inputinlinehealth = styled.div`
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+`
+
 S.CaptionTitlewrap = styled.div`
     width: 100%;
     height: 25px;
@@ -56,6 +64,7 @@ S.InputReguler = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 23px;
     width: 100%;
     position: relative;
     ${spacingProps}
