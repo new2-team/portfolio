@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import RadioWithLabel from '../../../components/radio/RadioWithLabel';
 import S from '../style';
 import Text from '../../../components/text/size';
 import CheckboxWithLabel from '../../../components/checkbox/CheckboxWithLabel';
 import BasicButton from '../../../components/button/BasicButton';
+import PopupCardLarge from '../../../components/popUp/PopupCardLarge';
 import { useCheckGroup } from '../../../hooks/useCheckGroup';
 import SocialTabWrapper from './SocialTabWrapper';
 
 // 이용약관 동의 페이지
 const AcceptTerms = () => {
+    const navigate = useNavigate();
+    const [showAlert, setShowAlert] = useState(false);
+    
     // 필수 약관 동의 그룹 (useCheckGroup 활용)
     const {
         checks: termsChecks,
@@ -24,6 +29,20 @@ const AcceptTerms = () => {
         setAll: setAllMarketing,
         setOne: setOneMarketing
     } = useCheckGroup(["sms", "email", "push"]);
+
+    // 확인 버튼 클릭 시 처리
+    const handleConfirm = () => {
+        if (allTermsChecked) {
+            navigate('/sign-up/info');
+        } else {
+            setShowAlert(true);
+        }
+    };
+
+    // 알럿 닫기
+    const handleCloseAlert = () => {
+        setShowAlert(false);
+    };
 
     return (
         <>
@@ -139,8 +158,30 @@ const AcceptTerms = () => {
 
 
             <S.TermsButtonWrapper>
-                <BasicButton basicButton="medium" variant="filled">확인</BasicButton>
+                <BasicButton 
+                    basicButton="medium" 
+                    variant="filled"
+                    onClick={handleConfirm}
+                >
+                    확인
+                </BasicButton>
             </S.TermsButtonWrapper>
+
+            {/* 알럿 팝업 */}
+            {showAlert && (
+                <PopupCardLarge
+                    title="약관 동의 필요"
+                    description="필수 약관에 동의해주세요."
+                    actions={[
+                        {
+                            label: "확인",
+                            onClick: handleCloseAlert,
+                            type: "filled"
+                        }
+                    ]}
+                    onClose={handleCloseAlert}
+                />
+            )}
         </>
 
 

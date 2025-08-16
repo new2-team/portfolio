@@ -19,6 +19,8 @@ import Inquiry from "../pages/support/Inquiry";
 import DbtiQuestion from "../pages/dbti/DbtiQuestion";
 import DbtiResult from "../pages/dbti/DbtiResult";
 import Main from "../pages/main/Main";
+import InquiryList from "../pages/support/InquiryList";
+import InquiryDetail from "../pages/support/InquiryDetail";
 
 const router = createBrowserRouter([
   {
@@ -75,6 +77,8 @@ const router = createBrowserRouter([
         children: [
           { path: "faq", element: <Faq /> },
           { path: "customer-inquiry", element: <Inquiry /> },
+          { path: "inquiry-list", element: <InquiryList />},
+          { path: "inquiry-detail", element: <InquiryDetail />},
         ],
       },
     ],

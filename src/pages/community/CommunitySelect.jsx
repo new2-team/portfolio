@@ -4,15 +4,15 @@ import SelectBox from '../../components/selectBox/SelectBox';
 import S from './style';
 
 const CommunitySelect = () => {
+  const [activeFilter, setActiveFilter] = useState("최신순");
+
+  const handleFilterClick = (filterName) => {
+    setActiveFilter(filterName)
+  }
+
   return (
     <>
       <S.Search>
-        {/* <S.SearchSelect id="searchSel">
-          <option value="">전체</option>
-          <option value="op2">내용</option>
-          <option value="op3">제목</option>
-          <option value="op4">작성자</option>
-        </S.SearchSelect> */}
         <SelectBox 
         options={["전체","내용","제목","작성자"]} placeholder='전체'/>
         <S.SearchInput>
@@ -21,10 +21,22 @@ const CommunitySelect = () => {
         </S.SearchInput>
         </S.Search>
         <S.Filter>
-          <S.FilterNew>최신순</S.FilterNew>
-          <S.FilterHot>인기순</S.FilterHot>
-          <S.FilterMy>내가 쓴 게시글</S.FilterMy>
-          <S.FilterFriend>내 친구가 쓴 게시글</S.FilterFriend>
+          <S.FilterNew 
+            $active={activeFilter === "최신순"}
+            onClick={() => handleFilterClick("최신순")}
+          >최신순</S.FilterNew>
+          <S.FilterHot
+            $active={activeFilter === "인기순"}
+            onClick={() => handleFilterClick("인기순")}
+          >인기순</S.FilterHot>
+          <S.FilterMy
+            $active={activeFilter === "내가 쓴 게시글"}
+            onClick={() => handleFilterClick("내가 쓴 게시글")}
+          >내가 쓴 게시글</S.FilterMy>
+          <S.FilterFriend
+            $active={activeFilter === "내 친구가 쓴 게시글"}
+            onClick={() => handleFilterClick("내 친구가 쓴 게시글")}
+          >내 친구가 쓴 게시글</S.FilterFriend>
         </S.Filter>
     </>
   );

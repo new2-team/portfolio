@@ -1,6 +1,5 @@
 import styled, { css } from "styled-components";
 import BasicInput from "../../components/input/BasicInput";
-import Checkbox from "../../components/checkbox/Checkbox";
 
 const S = {}
 
@@ -11,7 +10,8 @@ S.FaqWrapper = styled.div`
 
 S.InquiryWrapper = styled.div`
   width: 100%;
-  height: 1920px;
+  height: fit-content;
+  padding-bottom: 128px;
 `
 
 
@@ -52,7 +52,7 @@ S.InquiryButton = styled.button`
   `
 
 
-// faq
+// faq ===========================================================================================================
 
 S.FAQTitle = styled.div`
   display: flex;
@@ -64,12 +64,13 @@ S.FAQTitle = styled.div`
 
 
 S.AccordionWrapper = styled.div`
+  width: 1440px;
   margin-bottom: 175px;
   border-top: 3px solid #CF4B05;
 `
 
 
-// inquiry
+// inquiry ===========================================================================================================
 S.InquiryTitle = styled.div`
   margin-top: 83px;
   display: flex;
@@ -100,7 +101,7 @@ S.InquiryBodyWrapper = styled.div`
  flex-direction: column;
  align-items: center;
  width: 100%;
- height: 897px;
+ height: fit-content;
  margin-top: 117px;
  gap: 42px;
 `
@@ -120,7 +121,7 @@ S.InquiryNameWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 64px;
+ height: 72px;
 `
 
 S.NameInput = styled.div`
@@ -132,9 +133,9 @@ S.NameInput = styled.div`
 
 S.InquiryPhoneWrapper = styled.div`
  display: flex;
- align-items: center;
+ align-items: center;   
  width: 960px;
- height: 64px;
+ height: 72px;
 `
 
 S.SelectPhonStart = styled.div`
@@ -153,7 +154,7 @@ S.InquiryEmailWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 64px;
+ height: 672px;
 `
 
 S.Email = styled.p`
@@ -172,7 +173,7 @@ S.InquiryQuestionCategoryWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 64px;
+ height: 72px;
 `
 
 S.RadiosWrapper = styled.div`
@@ -195,7 +196,7 @@ S.InquiryQuestionTitleWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 64px;
+ height: 72px;
 `
 
 // 내용
@@ -234,7 +235,7 @@ S.InquiryFileWrapper = styled.div`
  display: flex;
  align-items: center;
  width: 960px;
- height: 112px;
+ height: 114px;
 `
 
 S.FileWrapper = styled.div`
@@ -253,7 +254,7 @@ p{
 
 S.FileInputButton = styled.div`
  display: flex;
- height: 64px;
+ height: 72px;
 `
 
 S.FileInput = styled.div`
@@ -277,14 +278,170 @@ S.InquiryButtonWrapper = styled.div`
  align-items: center;
  width: 100%;
  height: 412px;
+ gap: 60px;
+`
 
- div{
-  display: flex;
-  justify-content: center;
-  gap: 60px;
+// inquiry list ===========================================================================================================
+
+
+S.ListWrapper = styled.div`
+  width: 1440px;
+  margin-bottom: 175px;
+  border-top: 3px solid #CF4B05;
+`
+
+S.RadioInputWrapper = styled.div`
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+ width: 1440px;
+ padding-top: 132px;
+ gap: 974px;
+`
+
+S.SerachInput = styled.div`
+ width: 340px;
+ height: 46px;
+ margin-right: auto;
+ flex: 0 0 auto;
+
+ input{
+  position: relative;
+  height: 46px;
+ }
+
+ button{
+  position: absolute;
+  border-radius: 8px;
+  right: 4px;
  }
 `
 
+
+// inquiry detail ========================================================================
+
+S.InquiryContentWrapper = styled.div`
+ display: flex;
+ flex-direction: column;
+ width: 1440px;
+ height: fit-content;
+ /* padding: 0 24px; */
+ border-bottom: solid 2px #cccccc;
+`
+
+S.ProfileDateWrapper = styled.div`
+ display: flex;
+ width: 1440px;
+ height: 126px;
+ gap: 1054px;
+`
+
+S.AuthorProfileWrapper = styled.div`
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ width: 224px;
+ gap: 30px;
+`
+
+S.Profile = styled.img`
+ width: 64px;
+ height: 64px;
+ border-radius: 50%;
+`
+
+S.AuthorName = styled.p`
+ font-size: ${({ theme }) => theme.FONT_SIZE.body1 };
+`
+
+S.DateWrapper = styled.div`
+ display: flex;
+ justify-content: right;
+ align-items: center;
+ width: 138px;
+ font-size: ${({ theme }) => theme.FONT_SIZE.body3 };
+`
+
+S.InquiryTitile = styled.div`
+ width: 1440px;
+ height: 74px;
+ padding-left: 120px;
+ font-size: ${({ theme }) => theme.FONT_SIZE.h6 };
+`
+
+S.InquiryContent = styled.div`
+ width: 1440px;
+ height: fit-content;
+ padding: 0 24px 0 120px;
+ font-size: ${({ theme }) => theme.FONT_SIZE.body2 };
+`
+
+S.FileLinkWrapper = styled.div`
+ display: flex;
+ justify-content: right;
+ align-items: end;
+ width: 100%;
+ height: 186px;
+ padding: 0 24px 56px 0;
+ font-size: ${({ theme }) => theme.FONT_SIZE.button2 };
+`
+
+S. InquiryReplyWapper = styled.div`
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+ width: 1440px;
+ height: fit-content;
+ padding: 0 24px 0 122px;
+`
+
+S.ReplyProfileDateWrapper = styled.div`
+ display: flex;
+ align-items: center;
+ width: 100%;
+ height: 126px;
+ gap: 776px;
+`
+
+S.ReplyProfileWrapper = styled.div`
+ display: flex;
+ align-items: center;
+ width: 380px;
+ height: 100%;
+ gap: 30px;
+`
+
+S.ReplyContent = styled.div`
+ width: 100%;
+ height: fit-content;
+ padding-left: 152px;
+ font-size: ${({ theme }) => theme.FONT_SIZE.body2 };
+`
+
+S.TextAreaWrapper = styled.div`
+ position: relative;
+ width: 100%;
+ height: 346px;
+ padding-top: 106px;
+`
+
+S.Replybutton = styled.button`
+ position: absolute;
+ width: 36px;
+ height: 36px;
+ background-color: white;
+ top:120px;
+ right: 14px;
+`
+
+S.ButtonToList = styled.div`
+ display: flex;
+ justify-content: center;
+ align-items: end;
+ width: 100%;
+ height: 360px;
+`
 
 
 
