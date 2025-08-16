@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { flexCenter, flexColumnCenter } from "../../styles/common";
+import { flexCenter, flexColumn, flexColumnCenter } from "../../styles/common";
 import { spacingProps } from "../../styles/spacingProps";
 
 const S = {};
@@ -26,13 +26,25 @@ S.inputinline = styled.div`
     display: flex;
     width: 100%;
     box-sizing: border-box;
-    margin-top: 23px;
+    margin-top: 50px;
+    justify-content: space-between;
+`
+
+S.inputinlineImg = styled.div`
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 30px;
+    justify-content: space-between;
+    gap: 40px;
 `
 
 S.inputinlinehealth = styled.div`
     display: flex;
     width: 100%;
     box-sizing: border-box;
+    justify-content: space-between;
+    gap: 40px;
 `
 
 S.CaptionTitlewrap = styled.div`
@@ -43,11 +55,9 @@ S.CaptionTitlewrap = styled.div`
 `
 
 S.NamekgWrap = styled.div`
-    display: flex;
-    flex-direction: column;
+    width: 100%;
+    ${flexColumn};
     align-items: center;
-    width: calc(100% - 20px/ 2);
-    box-sizing: border-box;
 `
 
 S.healthprofile = styled.div`
@@ -71,7 +81,7 @@ S.InputReguler = styled.div`
     img{
         position: absolute;
         right: 24px;
-        top: 65%;
+        top: 50%;
         transform: translateY(-50%);
         cursor: pointer;
         }
@@ -113,15 +123,30 @@ S.Label = styled.label`
         display: block; //이미지를 클릭하는 크기 and label 은 크기가 없는 인라인태그라서 block으로 바꿔줘야 widt, height가 들어감
     `;
 
-S.Profile = styled.img`
-    display: block;
-    position: relative;
-    width: 350px;
-    height: 350px;
-    background-color: #d9d9d9; //기본색깔임
+
+S.ProfileWrap = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 300px;
+    background-color:#fff5ec;
     overflow: hidden; //사진이 넘치지 못하게
     border-radius: 50%; //둥굴게
+    padding: 30px;
+    margin-top: 60px;
+    cursor: pointer;
+`
+
+
+S.Profile = styled.img`
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 `;
+
+
 
 S.Content = styled.div`
     width: 300px;
@@ -138,11 +163,7 @@ S.RadioWrapper = styled.div`
 
 S.radioselect = styled.img`
     display: flex;
-    position: relative;
     width: 100%;
-    max-width: 250px;
-    height: 250px;
-    /* background-color: #d9d9d9; //기본색깔임 */
     border-radius: 11%; //둥굴게
 `;
 

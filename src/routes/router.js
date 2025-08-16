@@ -42,6 +42,7 @@ const router = createBrowserRouter([
       // 프로필 관련
       {
         path: "profile",
+        element: <SignUpLayout />, 
         children: [
           { path: "add", element: <AddProfile /> },
           { path: "add-health", element: <AddHealthProfile /> },

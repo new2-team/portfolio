@@ -4,6 +4,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../../components/layout/footer/Footer";
 import Header from "../../components/layout/header/Header";
 import Wrapper from "../../components/layout/Wrapper";
+import ScrollToTop from "../../components/ScrollToTop";
 
 const Layout = () => {
   const location = useLocation();
@@ -12,6 +13,7 @@ const Layout = () => {
 
   return (
     <div>
+      <ScrollToTop />
       <Header isLoggedIn={true} />
       <Wrapper>
         <Outlet />

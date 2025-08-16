@@ -100,6 +100,26 @@ const GlobalStyle = createGlobalStyle`
         text-decoration: none;
         color: inherit;
     }
+    
+    /* 자동완성 배경색 제거 */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px white inset !important;
+        -webkit-text-fill-color: inherit !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+    
+    /* 모든 브라우저용 자동완성 스타일 */
+    input[type="text"]:autofill,
+    input[type="email"]:autofill,
+    input[type="password"]:autofill,
+    input[type="tel"]:autofill,
+    input[type="number"]:autofill {
+        background-color: white !important;
+        color: inherit !important;
+    }
 `;
 
 export default GlobalStyle;

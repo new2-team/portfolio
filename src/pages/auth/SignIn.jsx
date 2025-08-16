@@ -35,7 +35,7 @@ const SignIn = () => {
   const handleLogin = async () => {
     try {
       // 로그인 API 호출
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/api/login`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
