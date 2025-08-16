@@ -1,14 +1,16 @@
 import { faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import S from './style2';
 
-const Schedule = ({ eventId, selectedDate }) => {
-
+const Schedule = ({ eventId, selectedDate, scheduleId }) => {
+  // const user_Id = useSelector(s => s.user.currentUser?.user_Id);
+  // const user_Id = '6895c4d407695ea93734389a'
+  const [user_Id, setUserId] = useState('6895c4d407695ea93734389a')
   const [date, setDate] = useState(selectedDate); // props에서 받은날짜
   const [schedule, setSchedule] = useState({}); // 일정객체를 통째로 등록
   const [title, setTitle] = useState(''); // 일정 제목
@@ -34,6 +36,21 @@ const Schedule = ({ eventId, selectedDate }) => {
     setValue(e.target.value)
   }
 
+  // ✅ 추가: 훅 사용
+  // const {
+  //   loading: mutating,
+  //   error: mutateError,
+  //   createScheduleSafe,
+  //   putSchedule,
+  //   deleteSchedule,
+  // } = useScheduleApi();
+
+  // useEffect(() => {
+  //   // eventId로 조회해서 setSchedule() 할 자리 (지금은 dummy)
+  //   setSchedule({});
+  // }, [eventId]);
+
+
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleLocationChange = (e) => setLocation(e.target.value);
@@ -42,16 +59,16 @@ const Schedule = ({ eventId, selectedDate }) => {
   // useEFfect해서 api 일정 조회를 연동하기
   // useEffect해서 친구목록을 api로 가지고 오고 setFriends로 연결
 
-  useEffect(() => {
-    const dummy = {};
-    // const dummy = {
-    //   title: '한강 산책 모임',
-    //   date: '8월 3일 (토)',
-    //   startTime: '18:00',
-    //   location: '여의나루역 2번 출구 앞',
-    // };
-    setSchedule(dummy);
-  }, [eventId]);
+  // useEffect(() => {
+  //   const dummy = {};
+  //   // const dummy = {
+  //   //   title: '한강 산책 모임',
+  //   //   date: '8월 3일 (토)',
+  //   //   startTime: '18:00',
+  //   //   location: '여의나루역 2번 출구 앞',
+  //   // };
+  //   setSchedule(dummy);
+  // }, [eventId]);
 
   const handleSelectFriend = (friend) => {
     if (schedule.title) {
@@ -94,7 +111,8 @@ const Schedule = ({ eventId, selectedDate }) => {
         title : title,
         date: date,
         time: startTime,
-        place: location,
+        location: location,
+        // user_id: user_Id,
         // friend_id: selectedFriends,
       })
     })
@@ -110,15 +128,40 @@ const Schedule = ({ eventId, selectedDate }) => {
       })
       .catch(console.error)
   };
-
+  
   // 수정버튼 - api 일정 수정 
   const handleEdit = async () => {
+    // try {
+    //   const res = await putSchedule({
+    //     user_id: user_Id,
+    //     schedule_id: scheduleId, // 수정할 일정 id
+    //     title,
+    //     date: date ? date.toISOString() : null,
+    //     time: startTime ? startTime.toISOString() : null,
+    //     place: location,
+    //   });
+    //   console.log("updated:", res);
+    //   alert(res.message ?? "일정이 수정되었습니다.");
+    //   // (선택) refetch()
+    // } catch (e) {
+    //   console.error(e);
+    //   alert("수정 실패");
+    // }
 
   }
 
   // 삭제버튼 - api 일정 삭제
   const handleDelete = async () => {
-    
+    //  if (!window.confirm("정말 삭제하시겠어요?")) return;
+    // try {
+    //   const res = await deleteSchedule({ user_id: user_Id, schedule_id: scheduleId });
+    //   console.log("deleted:", res);
+    //   alert(res.message ?? "일정이 삭제되었습니다.");
+    //   // (선택) refetch()
+    // } catch (e) {
+    //   console.error(e);
+    //   alert("삭제 실패");
+    // }
   }
 
   return (

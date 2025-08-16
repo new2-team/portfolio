@@ -14,6 +14,7 @@ const MiniCalendar = ({ onDateClick }) => {
     onDateClick(formatted);
   };
 
+
   return (
     <S.MiniCalendar mt={10} mr={0} mb={10} ml={10}
                         pt={10} pr={0} pb={0} pl={0}

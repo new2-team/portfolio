@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import ChatApp from './ChatApp';
 import ChatList from './ChatList';
-import './Chatting.css';
 import ScheduleAlert from './ScheduleAlert.jsx';
 import S from './style.js';
 

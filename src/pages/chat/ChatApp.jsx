@@ -2,7 +2,6 @@ import { faClock, faEllipsisVertical, faPaperclip, faPaperPlane } from '@fortawe
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import Text from '../../components/text/size.js';
-import './Chatting.css';
 import ScheduleModal from './ScheduleModal.jsx';
 import S from './style.js';
 

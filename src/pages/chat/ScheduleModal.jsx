@@ -8,7 +8,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import BasicButton from "../../components/button/BasicButton";
-import './Chatting.css';
 import S from './style';
 
 const ScheduleModal = ({ 
