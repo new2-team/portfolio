@@ -9,20 +9,23 @@ const AuthProvider = ({ children }) => {
   // 토큰 유효성 검사
   useEffect(() => {
     const token = localStorage.getItem('jwt_token');
+    const userName = localStorage.getItem('userName');
+    const user_id = localStorage.getItem('user_id');
+    
     if (token) {
+      // JWT 토큰이 있으면 토큰 검증
       const isAuthenticate = async () => {
         try {
           const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/jwt`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
-            },
+              'Content-Type': 'application/json'
+            }
           });
 
           if (response.ok) {
-            const getAuthenticateUserData = await response.json();
-            const { user, message } = getAuthenticateUserData;
-            
+            const { message, user } = await response.json();
             if (user) {
               dispatch(setUser(user));
               dispatch(setUserStatus(true));
@@ -47,8 +50,19 @@ const AuthProvider = ({ children }) => {
       };
 
       isAuthenticate();
+    } else if (userName && user_id) {
+      // JWT 토큰이 없어도 회원가입 완료 상태라면 로그인 상태로 복원
+      console.log('회원가입 완료 상태 감지 - 로그인 상태 복원');
+      dispatch(setUser({
+        user_id: user_id,
+        name: userName,
+        email: null,
+        profileImage: localStorage.getItem('profileImage') || null
+      }));
+      dispatch(setUserStatus(true));
+      setIsLoading(false);
     } else {
-      // 토큰이 없으면 로그아웃 상태로 변경
+      // JWT 토큰이 없으면 로그아웃 상태로 변경
       dispatch(setUserStatus(false));
       setIsLoading(false); // 로딩 완료
     }

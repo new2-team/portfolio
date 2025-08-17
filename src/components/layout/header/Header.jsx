@@ -35,15 +35,32 @@ const Header = ({ isLoggedIn, user }) => {
 
   // 프로필 이미지 경로 결정 함수
   const getProfileImageSrc = () => {
+    console.log('=== Header 프로필 이미지 확인 ===');
+    console.log('user:', user);
+    console.log('user?.profileImage:', user?.profileImage);
+    console.log('user?.dogProfile?.profileImage:', user?.dogProfile?.profileImage);
+    
+    // 1순위: Redux의 user.profileImage
+    if (user?.profileImage) {
+      console.log('Redux에서 프로필 이미지 사용:', user.profileImage);
+      return user.profileImage;
+    }
+    
+    // 2순위: 백엔드에서 받은 dogProfile.profileImage
     if (user?.dogProfile?.profileImage) {
       // 백엔드에서 받은 전체 URL인 경우
       if (user.dogProfile.profileImage.startsWith('http')) {
+        console.log('백엔드 dogProfile에서 프로필 이미지 사용:', user.dogProfile.profileImage);
         return user.dogProfile.profileImage;
       }
       // 상대 경로인 경우 백엔드 URL과 결합
-      return `${process.env.REACT_APP_BACKEND_URL}${user.dogProfile.profileImage}`;
+      const fullUrl = `${process.env.REACT_APP_BACKEND_URL}${user.dogProfile.profileImage}`;
+      console.log('백엔드 dogProfile에서 프로필 이미지 사용 (상대경로):', fullUrl);
+      return fullUrl;
     }
+    
     // 기본 이미지
+    console.log('기본 이미지 사용');
     return "/assets/img/sample-profile.png";
   };
 

@@ -18,7 +18,7 @@ const AddProfile = ({ onProfileComplete }) => {
     const location = useLocation();
     
     // React Hook Form 설정
-    const { register, handleSubmit, control, setValue, watch, formState: { isSubmitting } } = useForm({ 
+    const { register, handleSubmit, control, setValue, watch, getValues, formState: { isSubmitting, errors } } = useForm({ 
         mode: "onChange" 
     });
     
@@ -29,9 +29,11 @@ const AddProfile = ({ onProfileComplete }) => {
     // 선택 상태 관리
     const [selectedCharactor, setSelectedCharactor] = useState(1);
     const [selectedFavorite, setSelectedFavorite] = useState([1]);
-    const [selectedCautions, setSelectedCautions] = useState([]); // 선택사항이므로 빈 배열
+    const [selectedCautions, setSelectedCautions] = useState([1]); // 필수사항이므로 기본값 [1]
     const [selectedDate, setSelectedDate] = useState(null);
     const [imageSrc, setImageSrc] = useState('');
+    const [selectedImageFile, setSelectedImageFile] = useState(null); // 이미지 파일 상태 추가
+    const [isUploading, setIsUploading] = useState(false);
     
     // 검증 상태
     const [validationErrors, setValidationErrors] = useState({});
@@ -42,9 +44,13 @@ const AddProfile = ({ onProfileComplete }) => {
         if (!isEditMode) {
             // 신규 등록 시 기본값 설정
             setValue("charactor", 1);
-            setValue("favorites", 1);
-            setValue("cautions", []); // 선택사항이므로 빈 배열
+            setValue("favorites", [1]);
+            setValue("cautions", [1]); // 필수사항이므로 기본값 [1]
             setValue("gender", "male");
+            
+            // 상태 동기화
+            setSelectedFavorite([1]);
+            setSelectedCautions([1]);
         }
     }, [isEditMode, setValue]);
 
@@ -63,15 +69,50 @@ const AddProfile = ({ onProfileComplete }) => {
         }).open();
     };
 
-    // 이미지 선택
-    const handleImageChange = (e) => {
+    // 이미지 선택 및 업로드
+    const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImageSrc(reader.result);
-            };
-            reader.readAsDataURL(file);
+            // 파일 크기 체크 (5MB 제한)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('이미지 파일 크기는 5MB 이하여야 합니다.');
+                return;
+            }
+
+            setIsUploading(true);
+            
+            try {
+                // FormData 생성 (백엔드에 맞게 'profileImage' 키 사용)
+                const formData = new FormData();
+                formData.append('profileImage', file);
+                
+                // 백엔드에 이미지 업로드 (올바른 경로 사용)
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/images/profile`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    // 백엔드에서 반환된 이미지 URL 사용
+                    const imageUrl = result.imageUrl;
+                    setImageSrc(imageUrl);
+                    console.log('이미지 업로드 성공:', imageUrl);
+                } else {
+                    throw new Error('이미지 업로드 실패');
+                }
+            } catch (error) {
+                console.error('이미지 업로드 오류:', error);
+                alert('이미지 업로드 중 오류가 발생했습니다.');
+                // 업로드 실패 시 로컬 미리보기만
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImageSrc(reader.result);
+                };
+                reader.readAsDataURL(file);
+            } finally {
+                setIsUploading(false);
+            }
         }
     };
 
@@ -109,8 +150,113 @@ const AddProfile = ({ onProfileComplete }) => {
     };
 
     // 폼 제출
-    const handleFormSubmit = (data) => {
+    const handleFormSubmit = async (data) => {
+        console.log('=== handleFormSubmit 함수 호출됨 ===');
+        console.log('받은 데이터:', data);
+        console.log('selectedDate:', selectedDate);
+        console.log('selectedCharactor:', selectedCharactor);
+        console.log('selectedFavorite:', selectedFavorite);
+        console.log('selectedCautions:', selectedCautions);
+        console.log('폼 에러:', errors);
+        
         setHasSubmitted(true);
+        
+        // 카테고리별 필수 입력값 검증
+        const missingCategories = [];
+        
+        // 1. 기본정보 카테고리 검증
+        const basicInfoMissing = [];
+        console.log('=== 기본정보 검증 ===');
+        console.log('data.name:', data.name);
+        console.log('data.weight:', data.weight);
+        console.log('data.birthDate:', data.birthDate);
+        console.log('selectedDate:', selectedDate);
+        console.log('data.gender:', data.gender);
+        console.log('data.address:', data.address);
+        console.log('data.breed:', data.breed);
+        
+        if (!data.name || data.name.trim() === '') {
+            basicInfoMissing.push('멍멍이 이름');
+        }
+        if (!data.weight || data.weight.trim() === '') {
+            basicInfoMissing.push('몸무게');
+        }
+        if (!data.birthDate && !selectedDate) {
+            basicInfoMissing.push('생년월일');
+        }
+        if (!data.gender) {
+            basicInfoMissing.push('성별');
+        }
+        if (!data.address || data.address.trim() === '') {
+            basicInfoMissing.push('주소');
+        }
+        if (!data.breed) {
+            basicInfoMissing.push('품종');
+        }
+        
+        if (basicInfoMissing.length > 0) {
+            missingCategories.push('기본정보');
+            console.log('기본정보 누락:', basicInfoMissing);
+        }
+        
+        // 2. 프로필 카드정보 카테고리 검증
+        const profileCardMissing = [];
+        console.log('=== 프로필 카드정보 검증 ===');
+        console.log('data.nickname:', data.nickname);
+        console.log('data.favoriteSnack:', data.favoriteSnack);
+        console.log('data.walkingCourse:', data.walkingCourse);
+        console.log('data.messageToFriend:', data.messageToFriend);
+        
+        if (!data.nickname || data.nickname.trim() === '') {
+            profileCardMissing.push('별명');
+        }
+        if (!data.favoriteSnack || data.favoriteSnack.trim() === '') {
+            profileCardMissing.push('좋아하는 간식');
+        }
+        if (!data.walkingCourse || data.walkingCourse.trim() === '') {
+            profileCardMissing.push('산책 코스');
+        }
+        if (!data.messageToFriend || data.messageToFriend.trim() === '') {
+            profileCardMissing.push('친구에게 한마디');
+        }
+        
+        if (profileCardMissing.length > 0) {
+            missingCategories.push('프로필 카드정보');
+            console.log('프로필 카드정보 누락:', profileCardMissing);
+        }
+        
+        // 3. 기타 정보 카테고리 검증
+        const otherInfoMissing = [];
+        console.log('=== 기타 정보 검증 ===');
+        console.log('selectedCharactor:', selectedCharactor);
+        console.log('selectedFavorite:', selectedFavorite);
+        console.log('selectedCautions:', selectedCautions);
+        
+        if (!selectedCharactor) {
+            otherInfoMissing.push('성격');
+        }
+        if (!selectedFavorite || selectedFavorite.length === 0) {
+            otherInfoMissing.push('좋아하는 것');
+        }
+        if (!selectedCautions || selectedCautions.length === 0) {
+            otherInfoMissing.push('주의해주세요');
+        }
+        
+        if (otherInfoMissing.length > 0) {
+            missingCategories.push('기타 정보');
+            console.log('기타 정보 누락:', otherInfoMissing);
+        }
+        
+        console.log('누락된 카테고리들:', missingCategories);
+        
+        // 필수 입력값이 누락된 경우
+        if (missingCategories.length > 0) {
+            alert(`다음 카테고리의 필수 항목이 누락되었습니다:\n\n${missingCategories.join('\n')}`);
+            return;
+        }
+        
+        // 모든 검증 통과
+        console.log('프로필 등록 제출 데이터:', data);
         
         // 숫자를 실제 타이틀로 변환하는 함수
         const getCharactorTitle = (id) => {
@@ -147,13 +293,31 @@ const AddProfile = ({ onProfileComplete }) => {
         const profileData = {
             ...data,
             charactor: getCharactorTitle(data.charactor || selectedCharactor),
-            favorites: (data.favorites || selectedFavorite).map(getFavoriteTitle).filter(Boolean),
-            cautions: (data.cautions || selectedCautions).map(getCautionTitle).filter(Boolean),
+            favorites: (selectedFavorite || [1]).map(getFavoriteTitle).filter(Boolean),
+            cautions: (selectedCautions || [1]).map(getCautionTitle).filter(Boolean),
             gender: data.gender || 'male',
-            imageSrc: imageSrc
+            profileImage: imageSrc, // 이미지 URL 또는 base64 데이터
         };
         
-        console.log('전송할 프로필 데이터:', profileData);
+        console.log('=== 프로필 데이터 변환 확인 ===');
+        console.log('selectedFavorite (원본):', selectedFavorite);
+        console.log('selectedCautions (원본):', selectedCautions);
+        console.log('favorites (변환됨):', profileData.favorites);
+        console.log('cautions (변환됨):', profileData.cautions);
+        
+        // 이미지 파일이 있으면 FormData로 처리
+        if (selectedImageFile) {
+            const formData = new FormData();
+            
+            // 이미지 파일 추가
+            formData.append('profileImage', selectedImageFile);
+            
+            // 나머지 데이터는 JSON으로 변환하여 추가
+            const { profilePhoto, ...textData } = profileData;
+            formData.append('data', JSON.stringify(textData));
+            
+            console.log('FormData로 전송:', formData);
+        }
         
         if (onProfileComplete) {
             onProfileComplete(profileData);
@@ -187,11 +351,13 @@ const AddProfile = ({ onProfileComplete }) => {
                     <BasicInput 
                         type="text" 
                         placeholder="멍이의 이름을 입력해주세요"
-                        {...register("name", { required: true })}
+                        {...register("name", { 
+                            required: "멍멍이 이름을 입력해주세요" 
+                        })}
                     />
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.name}
-                        message={validationErrors.name}   
+                        show={hasSubmitted && errors.name}
+                        message={errors.name?.message}   
                     />
                 </S.NamekgWrap>
                 <S.NamekgWrap>
@@ -201,12 +367,14 @@ const AddProfile = ({ onProfileComplete }) => {
                         <BasicInput 
                             type="text" 
                             placeholder=""
-                            {...register("weight", { required: true })}
+                            {...register("weight", { 
+                                required: "몸무게를 입력해주세요" 
+                            })}
                         /> 
                     </S.InputButtonWrapper>
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.weight}
-                        message={validationErrors.weight}  
+                        show={hasSubmitted && errors.weight}
+                        message={errors.weight?.message}  
                     />
                 </S.NamekgWrap>
             </S.inputinline>
@@ -245,8 +413,8 @@ const AddProfile = ({ onProfileComplete }) => {
                     /> 
                 </div>
                 <ErrorMessage
-                    show={hasSubmitted && validationErrors.birthDate}
-                    message={validationErrors.birthDate}  
+                    show={hasSubmitted && errors.birthDate}
+                    message={errors.birthDate?.message}  
                 />
             </S.InputReguler>
 
@@ -281,8 +449,8 @@ const AddProfile = ({ onProfileComplete }) => {
                     })}
                 />
                 <ErrorMessage
-                    show={hasSubmitted && validationErrors.gender}
-                    message={validationErrors.gender}  
+                    show={hasSubmitted && errors.gender}
+                    message={errors.gender?.message}  
                 />
             </S.InputReguler>
 
@@ -312,8 +480,8 @@ const AddProfile = ({ onProfileComplete }) => {
                     />
                 </div>
                 <ErrorMessage
-                    show={hasSubmitted && validationErrors.address}
-                    message={validationErrors.address}  
+                    show={hasSubmitted && errors.address}
+                    message={errors.address?.message}  
                 />
             </S.InputReguler>
 
@@ -344,8 +512,8 @@ const AddProfile = ({ onProfileComplete }) => {
                     </S.InputButtonWrapper>
                 )}
                 <ErrorMessage
-                    show={hasSubmitted && validationErrors.breed}
-                    message={validationErrors.breed}  
+                    show={hasSubmitted && errors.breed}
+                    message={errors.breed?.message}  
                 />
             </S.InputReguler>
 
@@ -365,7 +533,7 @@ const AddProfile = ({ onProfileComplete }) => {
                     </S.CaptionTitlewrap>
                     <S.ProfileWrap onClick={() => fileInputRef.current.click()}>
                         <S.Profile 
-                            src={imageSrc || "/assets/img/progile/camera.png"} 
+                            src={imageSrc || "/assets/img/progile/camera.svg"} 
                         />
                     </S.ProfileWrap>
                     <BasicButton
@@ -373,8 +541,9 @@ const AddProfile = ({ onProfileComplete }) => {
                         variant="filled"
                         style={{marginTop:"60px" , }}
                         onClick={() => fileInputRef.current.click()}
+                        disabled={isUploading}
                     >
-                        사진 등록하기
+                        {isUploading ? '업로드 중...' : '사진 등록하기'}
                     </BasicButton>
                   
                     <input
@@ -385,8 +554,8 @@ const AddProfile = ({ onProfileComplete }) => {
                         onChange={handleImageChange}
                     />
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.profilePhoto}
-                        message={validationErrors.profilePhoto}  
+                        show={hasSubmitted && errors.profilePhoto}
+                        message={errors.profilePhoto?.message}  
                     />
                 </S.NamekgWrap>
                 
@@ -400,8 +569,8 @@ const AddProfile = ({ onProfileComplete }) => {
                         style={{marginTop:"20px"}}
                     />
                     <ErrorMessage 
-                        show={hasSubmitted && validationErrors.nickname}
-                        message={validationErrors.nickname}  
+                        show={hasSubmitted && errors.nickname}
+                        message={errors.nickname?.message}  
                     />
                     
                     <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>좋아하는 간식</S.CaptionTitlewrap>
@@ -412,8 +581,8 @@ const AddProfile = ({ onProfileComplete }) => {
                         style={{marginTop:"20px"}}
                     />
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.favoriteSnack}
-                        message={validationErrors.favoriteSnack}  
+                        show={hasSubmitted && errors.favoriteSnack}
+                        message={errors.favoriteSnack?.message}  
                     />
                     
                     <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>좋아하는 산책코스</S.CaptionTitlewrap>
@@ -424,8 +593,8 @@ const AddProfile = ({ onProfileComplete }) => {
                         style={{marginTop:"20px"}}
                     />
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.walkingCourse}
-                        message={validationErrors.walkingCourse}  
+                        show={hasSubmitted && errors.walkingCourse}
+                        message={errors.walkingCourse?.message}  
                     />
                     
                     <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>새 친구에게 한마디!</S.CaptionTitlewrap>
@@ -446,8 +615,8 @@ const AddProfile = ({ onProfileComplete }) => {
                         {watch("messageToFriend")?.length || 0}/15
                     </div>
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.messageToFriend}
-                        message={validationErrors.messageToFriend}  
+                        show={hasSubmitted && errors.messageToFriend}
+                        message={errors.messageToFriend?.message}  
                     />
                 </S.NamekgWrap>                
             </S.inputinline>
@@ -549,7 +718,7 @@ const AddProfile = ({ onProfileComplete }) => {
                 </S.CaptionTitlewrap>
             </S.inputinline>
 
-                        <S.inputinlineImg>
+            <S.inputinlineImg>
                 <S.NamekgWrap onClick={() => selectCautions(1)}>
                     <S.radioselect src='/assets/img/progile/Caution/touch.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>만지는 거 싫어!<br/></Text.Body2>
@@ -606,15 +775,21 @@ const AddProfile = ({ onProfileComplete }) => {
             </S.inputinline>
 
             {/* 제출 버튼 */}
-            <S.InputReguler onSubmit={handleFormSubmit} style={{marginTop:"182px"}}>
+            <S.InputReguler style={{marginTop:"182px"}}>
                 <BasicButton 
                     basicButton="superSmall" 
                     variant="filled"
                     style={{width:"200px", cursor:'pointer'}}
-                    onClick={handleSubmit(handleFormSubmit)}
-                    type='submit'
-                    disabled={isSubmitting}>
-                    다음
+                    onClick={() => {
+                        console.log('버튼 클릭됨!');
+                        // 폼 데이터 수동으로 가져오기
+                        const formData = getValues();
+                        console.log('폼 데이터:', formData);
+                        handleFormSubmit(formData);
+                    }}
+                    type='button'
+                    disabled={isSubmitting || isUploading}>
+                    {isUploading ? '업로드 중...' : '다음'}
                 </BasicButton>
             </S.InputReguler>
         </div>

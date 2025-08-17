@@ -1,15 +1,27 @@
-import React, { useRef, useState, useEffect } from 'react';
-import Container from '../../components/layout/Container';
-import S from './style';
-import Text from '../../components/text/size';
+import React, { useState, useEffect, useRef } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser, setUserStatus } from '../../modules/user';
+import dayjs from 'dayjs';
+import Checkbox from '../../components/checkbox/Checkbox';
 import BasicButton from '../../components/button/BasicButton';
 import BasicInput from '../../components/input/BasicInput';
-import Radio from '../../components/radio/Radio';
-import Checkbox from '../../components/checkbox/Checkbox';
-import { Controller, useForm } from 'react-hook-form';
-import dayjs from 'dayjs';
+import Text from '../../components/text/size';
+import S from './style';
 import DatePickerSingle from './DatePickerSingle';
-import { useLocation, useNavigate } from 'react-router-dom';
+
+// 증상 타이틀 변환 함수
+const getSymptomTitle = (id) => {
+    switch(id) {
+        case 1: return "가려움증";
+        case 2: return "피부 발진";
+        case 3: return "소화불량";
+        case 4: return "눈 충혈";
+        case 5: return "귀 염증";
+        default: return "";
+    }
+};
 
 const AddHealthProfile = () => {
     const { register, formState: {isSubmitting, errors} , control, setValue, getValues } = useForm({ mode: "onChange" });
@@ -18,9 +30,12 @@ const AddHealthProfile = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [vaccination, setVaccination] = useState(['DHPP']); 
     const [selectedSymptoms, setSelectedSymptoms] = useState([]); // 빈 배열로 시작 (기본값 없음)
+    const [selectedFavorites, setSelectedFavorites] = useState([1]); // 좋아하는 것들 다중선택 (기본값: 1번 선택)
+    const [selectedCautions, setSelectedCautions] = useState([1]); // 주의사항 다중선택 (기본값: 1번 선택)
 
     const location = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const isEditMode = location.state?.mode === 'edit';
     const userData = location.state?.userData || {};
 
@@ -31,6 +46,8 @@ const AddHealthProfile = () => {
         lastDay : isEditMode ? userData.lastDay || '' : '',
         Cause : isEditMode ? userData.Cause || '' : '',
         Symptom : isEditMode ? userData.Symptom || '' : '',
+        favorites : isEditMode ? userData.favorites || [1] : [1], // 기본값: 1번 선택
+        cautions : isEditMode ? userData.cautions || [1] : [1], // 기본값: 1번 선택
     });
     
     const [validationErrors, setValidationErrors] = useState({});
@@ -42,10 +59,14 @@ const AddHealthProfile = () => {
             // 신규 등록 시 기본값 설정
             setForm(prev => ({
                 ...prev,
-                vaccine: ['DHPP']
+                vaccine: ['DHPP'],
+                favorites: [1],
+                cautions: [1]
             }));
             // vaccination 상태도 동기화
             setVaccination(['DHPP']);
+            setSelectedFavorites([1]);
+            setSelectedCautions([1]);
         }
     }, [isEditMode]);
 
@@ -120,6 +141,30 @@ const AddHealthProfile = () => {
         });
     };
 
+    // 좋아하는 것들 선택 (다중선택)
+    const selectFavorite = (id) => {
+        setSelectedFavorites((prev) => {
+            const updated = prev.includes(id) 
+                ? prev.filter((v) => v !== id) 
+                : [...prev, id];
+            setForm({...form, favorites: updated});
+            setValue("favorites", updated, {shouldValidate: true});
+            return updated;
+        });
+    };
+
+    // 주의사항 선택 (다중선택)
+    const selectCaution = (id) => {
+        setSelectedCautions((prev) => {
+            const updated = prev.includes(id) 
+                ? prev.filter((v) => v !== id) 
+                : [...prev, id];
+            setForm({...form, cautions: updated});
+            setValue("cautions", updated, {shouldValidate: true});
+            return updated;
+        });
+    };
+
     const handleFormSubmit = async () => {  // data 파라미터 제거
         setHasSubmitted(true);
         
@@ -129,14 +174,24 @@ const AddHealthProfile = () => {
         // vaccination 상태와 form 상태를 통합하여 최종 데이터 생성
         const finalData = {
             ...currentFormData,
-            vaccine: vaccination.length > 0 ? vaccination : form.vaccine,
+            vaccine: Array.isArray(vaccination) && vaccination.length > 0 ? vaccination : (Array.isArray(form.vaccine) ? form.vaccine : ['DHPP']),
             hospital: currentFormData.hospital || form.hospital,
             visit: currentFormData.visit || form.visit,
             lastDay: currentFormData.lastDay || form.lastDay,
             Cause: currentFormData.Cause || form.Cause,
-            Symptom: currentFormData.Symptom || form.Symptom || (selectedSymptoms.length > 0 ? selectedSymptoms[selectedSymptoms.length - 1] : undefined)
+            Symptom: currentFormData.Symptom || form.Symptom || (selectedSymptoms.length > 0 ? selectedSymptoms : []),
+            favorites: Array.isArray(currentFormData.favorites) && currentFormData.favorites.length > 0 ? currentFormData.favorites : 
+                     (Array.isArray(form.favorites) && form.favorites.length > 0 ? form.favorites : 
+                     (Array.isArray(selectedFavorites) && selectedFavorites.length > 0 ? selectedFavorites : [1])),
+            cautions: Array.isArray(currentFormData.cautions) && currentFormData.cautions.length > 0 ? currentFormData.cautions : 
+                     (Array.isArray(form.cautions) && form.cautions.length > 0 ? form.cautions : 
+                     (Array.isArray(selectedCautions) && selectedCautions.length > 0 ? selectedCautions : [1]))
         };
         
+        console.log("=== finalData 생성 확인 ===");
+        console.log("vaccination:", vaccination);
+        console.log("form.vaccine:", form.vaccine);
+        console.log("finalData.vaccine:", finalData.vaccine);
         console.log("최종 제출 데이터:", finalData);
         
         const errors = validateAllFields(finalData);
@@ -180,48 +235,62 @@ const AddHealthProfile = () => {
                     return;
                 }
                 
-                // 숫자를 실제 타이틀로 변환하는 함수
-                const getVaccineTitle = (type) => {
-                    switch(type) {
-                        case "DHPP": return "종합 백신(DHPP or DHPPL)";
-                        case "obedient": return "광견병 백신";
-                        case "none": return "접종 이력 없음";
-                        default: return type;
-                    }
-                };
-
-                const getSymptomTitle = (id) => {
-                    switch(id) {
-                        case 1: return "가려움증 (간지러움)";
-                        case 2: return "피부 발진 및 붉어짐 (피부 문제)";
-                        case 3: return "눈물 흘림 및 눈 주위 가려움 (눈 염증)";
-                        case 4: return "귀 염증 (외이염)";
-                        case 5: return "소화문제 (설사, 구토 등)";
-                        default: return "";
-                    }
-                };
-
-                const finalRegistrationData = {
-                    // 1,2단계 데이터
-                    ...tempUserData,
-                    // 3단계 건강정보 데이터
+                // 간단하게 필요한 데이터만 전송
+                const simpleData = {
+                    user_id: tempUserData.user_id,
+                    password: tempUserData.password,
+                    name: tempUserData.name,
+                    tel: tempUserData.tel,
+                    birth: tempUserData.birth,
+                    email: tempUserData.email,
+                    ad_yn: tempUserData.ad_yn,
+                    pri_yn: tempUserData.pri_yn,
+                    type: tempUserData.type,
+                    // 강아지 프로필 (이미지 경로만)
+                    dogProfile: {
+                        name: tempUserData.dogProfile?.name,
+                        weight: tempUserData.dogProfile?.weight,
+                        birthDate: tempUserData.dogProfile?.birthDate,
+                        gender: tempUserData.dogProfile?.gender,
+                        address: tempUserData.dogProfile?.address,
+                        breed: tempUserData.dogProfile?.breed,
+                        custombreed: tempUserData.dogProfile?.custombreed,
+                        nickname: tempUserData.dogProfile?.nickname,
+                        favoriteSnack: tempUserData.dogProfile?.favoriteSnack,
+                        walkingCourse: tempUserData.dogProfile?.walkingCourse,
+                        messageToFriend: tempUserData.dogProfile?.messageToFriend,
+                        charactor: tempUserData.dogProfile?.charactor,
+                        favorites: tempUserData.dogProfile?.favorites || [1], // 실제 선택된 값들 사용
+                        cautions: tempUserData.dogProfile?.cautions || [1],  // 실제 선택된 값들 사용
+                        neutralization: tempUserData.dogProfile?.neutralization,
+                        profileImage: tempUserData.dogProfile?.profileImage || null // 이미지 경로만
+                    },
+                    // 건강정보
                     healthProfile: {
-                        vaccine: finalData.vaccine.map(getVaccineTitle),
-                        hospital: finalData.hospital,
-                        visitCycle: finalData.visit,
-                        lastVisit: finalData.lastDay,
-                        allergyCause: finalData.Cause,
-                        allergySymptom: finalData.Symptom ? getSymptomTitle(finalData.Symptom) : undefined
+                        vaccine: ['DHPP'],
+                        hospital: finalData.hospital || '',
+                        visitCycle: finalData.visit || '',
+                        lastVisit: finalData.lastDay || null,
+                        allergyCause: finalData.Cause || '',
+                        allergySymptom: (finalData.Symptom || []).map(getSymptomTitle).filter(Boolean)
                     }
                 };
 
+                console.log('간단한 데이터로 전송:');
+                console.log('프로필 이미지 경로:', simpleData.dogProfile.profileImage);
+                console.log('favorites (선택된 값들):', simpleData.dogProfile.favorites);
+                console.log('cautions (선택된 값들):', simpleData.dogProfile.cautions);
+                console.log('allergySymptom (원본):', finalData.Symptom);
+                console.log('allergySymptom (변환됨):', simpleData.healthProfile.allergySymptom);
+                console.log('데이터 크기:', JSON.stringify(simpleData).length, 'bytes');
+                
                 // 최종 단계: 모든 정보를 한번에 DB에 저장
                 const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/complete-registration`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(finalRegistrationData)
+                    body: JSON.stringify(simpleData)
                 });
 
                 if (!response.ok) {
@@ -232,7 +301,39 @@ const AddHealthProfile = () => {
                 const result = await response.json();
                 console.log('회원가입 완료 성공:', result);
                 
-                // 회원가입 완료! localStorage 정리
+                // 사용자 이름을 localStorage에 저장 (SignUpComplete에서 사용)
+                if (tempUserData.userName || tempUserData.name) {
+                    const nameToSave = tempUserData.userName || tempUserData.name;
+                    localStorage.setItem('userName', nameToSave);
+                    console.log('userName localStorage에 저장됨:', nameToSave);
+                }
+                
+                // Redux에 로그인 상태와 사용자 정보 설정 (헤더 변경용)
+                dispatch(setUser({
+                    user_id: tempUserData.user_id,
+                    name: tempUserData.userName || tempUserData.name,
+                    email: tempUserData.email,
+                    profileImage: tempUserData.dogProfile?.profileImage || null
+                }));
+                dispatch(setUserStatus(true));
+                
+                // 프로필 이미지 경로를 localStorage에 저장 (새로고침 시 복원용)
+                if (tempUserData.dogProfile?.profileImage) {
+                    localStorage.setItem('profileImage', tempUserData.dogProfile.profileImage);
+                    console.log('프로필 이미지 경로 localStorage에 저장됨:', tempUserData.dogProfile.profileImage);
+                } else {
+                    console.log('프로필 이미지 경로가 없음:', tempUserData.dogProfile?.profileImage);
+                }
+                
+                console.log('=== 프로필 이미지 저장 확인 ===');
+                console.log('tempUserData.dogProfile:', tempUserData.dogProfile);
+                console.log('localStorage profileImage:', localStorage.getItem('profileImage'));
+                
+                // user_id도 localStorage에 저장 (새로고침 시 로그인 상태 유지용)
+                localStorage.setItem('user_id', tempUserData.user_id);
+                console.log('user_id localStorage에 저장됨:', tempUserData.user_id);
+                
+                // 회원가입 완료! localStorage 정리 (프로필 이미지는 유지)
                 localStorage.removeItem('tempUserData');
                 
                 // 회원가입 완료 페이지로 이동
