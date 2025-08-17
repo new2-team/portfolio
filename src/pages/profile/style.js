@@ -133,9 +133,9 @@ S.ProfileWrap = styled.div`
     background-color:#fff5ec;
     overflow: hidden; //사진이 넘치지 못하게
     border-radius: 50%; //둥굴게
-    padding: 30px;
     margin-top: 60px;
     cursor: pointer;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 `
 
 
@@ -143,7 +143,7 @@ S.Profile = styled.img`
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
 `;
 
 

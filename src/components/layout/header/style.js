@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { flexCenter, flexRow, flexSpaceBetween } from "../../../styles/common";
+import Text from "../../text/size";
+import { Link } from "react-router-dom";
 
 const S = {};
 
@@ -8,6 +10,7 @@ S.HeaderWrapper = styled.header`
   background: #fff5ec;
   padding: 20px 240px;
   position: fixed;
+  min-height: 100px;
   top: 0;
   width: 100%;
   z-index: 999;
@@ -15,19 +18,35 @@ S.HeaderWrapper = styled.header`
 
 S.LogoWrapper = styled.div`
   ${flexCenter}
-  img {
+
+  a {
     width: 183px;
     height: 60px;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 `;
 
 S.Menu = styled.nav`
   ${flexCenter};
-  gap: 0 75px;
+  gap: 0 50px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+`;
+
+S.MenuLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: #cf4b05;
+  }
 `;
 
 S.RightMenu = styled.div`
@@ -49,7 +68,7 @@ S.ProfileImg = styled.img`
   height: 60px;
   border-radius: 50%;
   object-fit: cover;
-  margin-left: 42px;
+  margin-left: 40px;
   border: 2px solid #cf4b05;
 `;
 
@@ -75,6 +94,31 @@ S.BadgeCount = styled.span`
   font-size: 15px;
   font-weight: 600;
   border-radius: 50%;
+`;
+
+S.ProfileSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+`;
+
+S.LogoutButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  ${Text.Body3} {
+    color: #666;
+    font-size: 12px;
+  }
 `;
 
 export default S;

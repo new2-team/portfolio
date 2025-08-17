@@ -2,6 +2,7 @@ import React from "react";
 import S from "./style";
 import Text from "../../components/text/size";
 import BasicButton from "../../components/button/BasicButton";
+import { Link } from "react-router-dom";
 
 // 4단계: 회원가입 완료 페이지
 const SignUpComplete = () => {
@@ -20,13 +21,18 @@ const SignUpComplete = () => {
                 </S.CompleteTitle>
 
             <S.CompleteButtonWrapper>
-            <BasicButton basicButton="medium" variant="filled">
-              MBTI 검사
-            </BasicButton>
 
-            <BasicButton basicButton="medium" variant="default">
-              홈으로 이동
-            </BasicButton>
+            <Link to="/dbti-question">
+                <BasicButton basicButton="medium" variant="filled">
+                    MBTI 검사
+                </BasicButton>
+            </Link>
+
+            <Link to="/main">
+              <BasicButton basicButton="medium" variant="default">
+                홈으로 이동
+              </BasicButton>
+            </Link>
             </S.CompleteButtonWrapper>
             
             </S.SignUpCompleteWrapper>  
