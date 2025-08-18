@@ -196,6 +196,12 @@ S.Icon = styled.div`
   width: 44px; 
   height: 44px;
 
+  a{
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
   img{
     width: 100%;
     height: 100%;

@@ -113,7 +113,7 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
         time: startTime,
         location: location,
         // user_id: user_Id,
-        // friend_id: selectedFriends,
+        // chat_id: selectedFriends,
       })
     })
     .then((res) => {
@@ -131,24 +131,35 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
   
   // 수정버튼 - api 일정 수정 
   const handleEdit = async () => {
-    // try {
-    //   const res = await putSchedule({
-    //     user_id: user_Id,
-    //     schedule_id: scheduleId, // 수정할 일정 id
-    //     title,
-    //     date: date ? date.toISOString() : null,
-    //     time: startTime ? startTime.toISOString() : null,
-    //     place: location,
-    //   });
-    //   console.log("updated:", res);
-    //   alert(res.message ?? "일정이 수정되었습니다.");
-    //   // (선택) refetch()
-    // } catch (e) {
-    //   console.error(e);
-    //   alert("수정 실패");
-    // }
+    try {
+      const res = await fetch('http://localhost:8000/calendar/api/put-schedules', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user_Id,
+          schedule_id: scheduleId,
+          schedule: {
+            title,
+            date: date ? date.toISOString() : null,
+            time: startTime ? startTime.toISOString() : null,
+            place: location,
+          },
+        }),
+      });
 
-  }
+      if (!res.ok) throw new Error("Response Fetching Error");
+      const result = await res.json();
+      console.log("updated:", result);
+      alert(result.message ?? "일정이 수정되었습니다.");
+      // TODO: refetch()
+    } catch (e) {
+      console.error(e);
+      alert("수정 실패");
+    }
+  };
+
 
   // 삭제버튼 - api 일정 삭제
   const handleDelete = async () => {

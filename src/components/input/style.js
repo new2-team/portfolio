@@ -51,6 +51,22 @@ S.Input = styled.input`
   &:not(:focus):not(:placeholder-shown) {
     border-color: ${({ theme }) => theme.PALLETE.text.main};
   }
+  
+  /* 자동완성 배경색 제거 */
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px ${({ theme }) => theme.PALLETE.background.white} inset !important;
+    -webkit-text-fill-color: inherit !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+  
+  /* 모든 브라우저용 자동완성 스타일 */
+  &:autofill {
+    background-color: ${({ theme }) => theme.PALLETE.background.white} !important;
+    color: inherit !important;
+  }
 `;
 
 S.InputWrapper = styled.div`

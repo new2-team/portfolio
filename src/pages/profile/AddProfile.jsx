@@ -1,324 +1,444 @@
-import React, { useEffect, useImperativeHandle, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import BasicButton from '../../components/button/BasicButton';
 import S from './style';
 import Text from '../../components/text/size';
 import BasicInput from '../../components/input/BasicInput';
-import Container from '../../components/layout/Container';
 import SelectBox from "../../components/selectBox/SelectBox";
 import { Controller, useForm } from 'react-hook-form';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { useRef } from "react";
 import Radio from '../../components/radio/Radio';
 import Checkbox from '../../components/checkbox/Checkbox';
 import DatePickerSingle from './DatePickerSingle';
 import dayjs from 'dayjs';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
-
-const AddProfile = () => {
-    
+const AddProfile = ({ onProfileComplete }) => {
     const calendarRef = useRef(null);
     const fileInputRef = useRef(null);
-    const { register, handleSubmit, formState: {isSubmitting}, control, setValue, getValues } = useForm({ mode: "onChange" });
-    const [selectedCharactor, setSelectedCharactor] = useState(1);
-    const [selectedFavorite, setSelectedFavorite] = useState([1]);
-    const [selectedCautions, setSelectedCautions] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [thumbnail, setThumbnail] = useState(null); //상태 수정을 위한 경로
     const location = useLocation();
     const navigate = useNavigate();
-
+    
+    // Redux에서 사용자 정보 가져오기
+    const currentUser = useSelector(state => state.user.currentUser);
+    
+    // React Hook Form 설정
+    const { register, handleSubmit, control, setValue, watch, getValues, formState: { isSubmitting, errors } } = useForm({ 
+        mode: "onChange" 
+    });
+    
+    // 편집 모드 확인
     const isEditMode = location.state?.mode === 'edit';
     const userData = location.state?.userData || {};
-
-    const [form, setForm] = useState({
-        name: isEditMode ? userData.name || '' : '',
-        weight: isEditMode ? userData.weight || '' : '',
-        birthDate: isEditMode ? userData.birthDate || '' : '',
-        gender: isEditMode ? userData.gender || '' : 'male',
-        breed: isEditMode ? userData.breed || '' : '',
-        custombreed: isEditMode ? userData.custombreed || '' : '',
-        address: isEditMode ? userData.address || '' : '',
-        neutralization: isEditMode ? userData.neutralization || '' : '',
-        imageSrc: isEditMode ? userData.imageSrc || '' : '',
-        nickname: isEditMode ? userData.nickname || '' : '',
-        favoriteSnack: isEditMode ? userData.favoriteSnack || '' : '',
-        walkingCourse: isEditMode ? userData.walkingCourse || '' : '',
-        messageToFriend: isEditMode ? userData.messageToFriend || '' : '',
-        charactor: isEditMode ? userData.charactor || '' : '',
-        favorites: isEditMode ? userData.favorites || '' : '',
-        cautions: isEditMode ? userData.cautions || '' : '',
-    });
-    const [validationErrors, setValidationErrors] = useState({}); // isValid: false
+    
+    // 선택 상태 관리
+    const [selectedCharactor, setSelectedCharactor] = useState(1);
+    const [selectedFavorite, setSelectedFavorite] = useState([1]);
+    const [selectedCautions, setSelectedCautions] = useState([1]); // 필수사항이므로 기본값 [1]
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [imageSrc, setImageSrc] = useState('');
+    const [selectedImageFile, setSelectedImageFile] = useState(null); // 이미지 파일 상태 추가
+    const [isUploading, setIsUploading] = useState(false);
+    
+    // 검증 상태
+    const [validationErrors, setValidationErrors] = useState({});
     const [hasSubmitted, setHasSubmitted] = useState(false);
 
-         // 기본정보 유효성 검사 (formData와 form 상태 모두 확인)
-    const validateAllFields = (formData) => {
-        const errors = {};
-
-        // 검증할 필드 목록
-        const fieldChecks = [
-            { key: "name",           value: formData.name || form.name,                 message: "이름을 입력해주세요." },
-            { key: "weight",         value: formData.weight || form.weight,             message: "몸무게를 입력해주세요." },
-            { key: "birthDate",      value: formData.birthDate || form.birthDate,       message: "생년월일을 입력해주세요." },
-            { key: "gender",         value: formData.gender || form.gender,             message: "성별을 선택해주세요." },
-            { key: "address",        value: form.address,                               message: "주소를 검색해주세요." },
-            { key: "breed",          value: form.breed,                                 message: "품종을 선택해주세요." },
-            { key: "profilePhoto",   value: form.imageSrc,                              message: "프로필 사진을 등록해주세요." },
-            { key: "nickname",       value: formData.nickname || form.nickname,         message: "별명을 입력해주세요." },
-            { key: "favoriteSnack",  value: formData.favoriteSnack || form.favoriteSnack, message: "좋아하는 간식을 입력해주세요." },
-            { key: "walkingCourse",  value: formData.walkingCourse || form.walkingCourse, message: "좋아하는 산책코스를 입력해주세요." },
-            { key: "messageToFriend", value: formData.messageToFriend || form.messageToFriend, message: "새 친구에게 한마디를 입력해주세요." },
-            { key: "Charactor",      value: formData.Charactor || form.charactor,       message: "우리 멍이의 성격을 선택해주세요" },
-            { key: "Favorit",        value: formData.favorites || form.favorites,       message: "우리 멍이가 좋아하는 것을 선택해주세요" },
-        ];
-
-    // 반복 처리 (빈 값이면 에러 추가)
-    fieldChecks.forEach(({ key, value, message }) => {
-        const isEmpty = value === undefined || value === null || 
-                       (typeof value === "string" && value.trim() === "");
-        if (isEmpty) {
-            errors[key] = message;
+    // 초기값 설정
+    useEffect(() => {
+        if (!isEditMode) {
+            // 신규 등록 시 기본값 설정
+            setValue("charactor", 1);
+            setValue("favorites", [1]);
+            setValue("cautions", [1]); // 필수사항이므로 기본값 [1]
+            setValue("gender", "male");
+            
+            // 소셜 로그인 사용자의 경우 기본 정보 설정
+            if (currentUser) {
+                // 사용자 이름이 있으면 설정
+                if (currentUser.name) {
+                    setValue("ownerName", currentUser.name);
+                }
+                
+                // 이메일이 있으면 설정
+                if (currentUser.email) {
+                    setValue("email", currentUser.email);
+                }
+                
+                // 프로필 이미지가 있으면 설정
+                if (currentUser.profileImage) {
+                    setImageSrc(currentUser.profileImage);
+                }
+            }
+            
+            // 상태 동기화
+            setSelectedFavorite([1]);
+            setSelectedCautions([1]);
         }
-    });
+    }, [isEditMode, setValue, currentUser]);
 
-    console.log("검증 중인 데이터:", { formData, form, errors }); // 디버깅용
-    return errors;
-};
-
-// 에러 메시지 컴포넌트
-const ErrorMessage = ({ show, message }) => {
-    if (!show) return null;
-    return (
-        <div style={{ textAlign: "center" }}>
-            <span style={{ color: "#f74c26" }}>{message}</span>
-        </div>
-    );
-};
-
-
-
-    const handleSearchAddress = () => {
-        new window.daum.Postcode({
-        oncomplete: function (data) {
-            setForm({...form, address: data.roadAddress});// 선택된 도로명 주소 설정
-        },
-        }).open();
-    };
-    
-
-    const BREEDS = ["말티푸", "시츄", "골든리트리버", "푸들", "보더콜리", "비숑프리제",
-        "포메라니안", "닥스훈트", "치와와", "요크셔테리어", "이탈리안 그레이하운드", "퍼그",
-         "기타" 
+    // 품종 옵션
+    const BREEDS = [
+        "말티푸", "시츄", "골든리트리버", "푸들", "보더콜리", "비숑프리제",
+        "포메라니안", "닥스훈트", "치와와", "요크셔테리어", "이탈리안 그레이하운드", "퍼그", "기타"
     ];
 
-
-    //이미지선택
-    const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if(file){ 
-        const reader = new FileReader()
-        reader.onloadend = () => {
-            setForm({...form, imageSrc: reader.result})
-        }
-
-        reader.readAsDataURL(file)
-    }}
-
-    const handleClick = () => {
-        fileInputRef.current.click();
+    // 주소 검색
+    const handleSearchAddress = () => {
+        new window.daum.Postcode({
+            oncomplete: function (data) {
+                setValue("address", data.roadAddress);
+            },
+        }).open();
     };
 
-    const handleThumbnailUpload = async () => {
-    //이미지 처리할 땐 데이터 용량을 알지 못하기 때문에 비동기로 처리한다.
-        if(!thumbnail){
-            alert("파일을 선택해주세요.")
-            return;
+    // 이미지 선택 및 업로드
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // 파일 크기 체크 (5MB 제한)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('이미지 파일 크기는 5MB 이하여야 합니다.');
+                return;
+            }
+
+            setIsUploading(true);
+            
+            try {
+                // FormData 생성 (백엔드에 맞게 'profileImage' 키 사용)
+                const formData = new FormData();
+                formData.append('profileImage', file);
+                
+                // 백엔드에 이미지 업로드 (올바른 경로 사용)
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/images/profile`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    // 백엔드에서 반환된 이미지 URL 사용
+                    const imageUrl = result.imageUrl;
+                    setImageSrc(imageUrl);
+                    console.log('이미지 업로드 성공:', imageUrl);
+                } else {
+                    throw new Error('이미지 업로드 실패');
+                }
+            } catch (error) {
+                console.error('이미지 업로드 오류:', error);
+                alert('이미지 업로드 중 오류가 발생했습니다.');
+                // 업로드 실패 시 로컬 미리보기만
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImageSrc(reader.result);
+                };
+                reader.readAsDataURL(file);
+            } finally {
+                setIsUploading(false);
+            }
         }
-
-        const formData = new FormData();
-        formData.append("thumbnail", thumbnail)
-
-        try {
-            const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/images/thumbnail', { //뒤에는 경로를 만들어줬음
-                method : 'POST', //옵션객체 열었음/ 추가하는 거니까 post 아니면 업데이트,수정이면 put으로 보내도됨
-                headers : { //로그인된 사용자만 가능하니까(토큰있는 사용자) 토큰을 같이 보냄
-                    "Authorization" : `Bearer ${localStorage.getItem("jwtToken")}`
-                },//Authorization: 허가 ,, Bearer 토큰 값을 알려주는 거임
-                body : formData //백엔드에서 받으니까 처림됨
-            })
-
-            if(!response.ok){ alert("이미지 업로드 실패!"); return;}
-
-            const data = await response.json()
-            console.log(data)
-
-        } catch (error) {
-            console.log("handleThumbnailUpload error")
-            console.error(error)            
-        }
-    }
-
-    const handleInputClick = () => {
-        calendarRef.current.setOpen(true);
-        console.log(calendarRef.current)
     };
 
+    // 성별 선택
     const handleGenderClick = (gender) => {
-        setForm({...form, gender});
-        setValue('gender', gender, { shouldValidate: true }); // 유효성 검사도 동시에 트리거
+        setValue('gender', gender, { shouldValidate: true });
     };
 
+    // 성격 선택
     const selectCharactor = (id) => {
-        console.log("선택된 값", id)
         setSelectedCharactor(id);
-        setForm({...form, charactor: id});
-        setValue("charactor", id, {shouldValidate: true});
-        console.log("setValue 후 form 값", getValues("charactor"))
+        setValue("charactor", id, { shouldValidate: true });
     };
 
+    // 좋아하는 것 선택 (다중선택)
     const selectFavorite = (id) => {
-        console.log("선택된 값", id)
         setSelectedFavorite((prev) => {
             const updated = prev.includes(id) 
-            ? prev.filter((v) => v !== id) : [...prev, id]
-
-            setForm({...form, favorites: updated});
-            setValue("favorite", updated, {shouldValidate: true});
-            console.log("filter 후 ", updated)
+                ? prev.filter((v) => v !== id) 
+                : [...prev, id];
+            setValue("favorites", updated, { shouldValidate: true });
             return updated;
-    })};
-
-    const selectCautions = (id) => {
-        console.log("선택된 값", id)
-        setSelectedCautions((prev) => {
-            const updated = prev.includes(id) 
-            ? prev.filter((v) => v !== id) : [...prev, id]
-
-            setForm({...form, cautions: updated});
-            setValue("cautions", updated, {shouldValidate: true});
-            console.log("filter 후 ", updated)
-            return updated
         });
     };
 
-    const isFormValid = () => Object.keys(validateAllFields(form)).length === 0;
-
-    // 입력값 변경 핸들러 (예시)
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
+    // 주의할 점 선택 (다중선택)
+    const selectCautions = (id) => {
+        setSelectedCautions((prev) => {
+            const updated = prev.includes(id) 
+                ? prev.filter((v) => v !== id) 
+                : [...prev, id];
+            setValue("cautions", updated, { shouldValidate: true });
+            return updated;
+        });
     };
 
-
-    const handleFormSubmit = (data) => {
-        setHasSubmitted(true);
-        const errors = validateAllFields(form);
-        setValidationErrors(errors);
+    // 폼 제출
+    const handleFormSubmit = async (data) => {
+        console.log('=== handleFormSubmit 함수 호출됨 ===');
+        console.log('받은 데이터:', data);
+        console.log('selectedDate:', selectedDate);
+        console.log('selectedCharactor:', selectedCharactor);
+        console.log('selectedFavorite:', selectedFavorite);
+        console.log('selectedCautions:', selectedCautions);
+        console.log('폼 에러:', errors);
         
-        if (Object.keys(errors).length > 0) {
-            const requiredSections = [];
-            
-            // 기본정보 체크
-            if (errors.name || errors.weight || errors.birthDate || errors.gender || errors.address || errors.breed) {
-                requiredSections.push('기본정보');
-            }
-            
-            // 프로필 카드 체크
-            if (errors.profilePhoto || errors.nickname || errors.favoriteSnack || errors.walkingCourse || errors.messageToFriend) {
-                requiredSections.push('프로필 카드 정보');
-            }
-            
-            // 필수 기타정보 체크
-            if (errors.Charactor || errors.Favorit) {
-                requiredSections.push('기타 정보');
-            }
-            
-            if (requiredSections.length > 0) {
-                alert(`다음 섹션을 완성해주세요: ${requiredSections.join(', ')}`);
-                
-            } else {
-                alert('필수 항목을 모두 완성해주세요😄');
-            }
+        setHasSubmitted(true);
+        
+        // 카테고리별 필수 입력값 검증
+        const missingCategories = [];
+        
+        // 1. 기본정보 카테고리 검증
+        const basicInfoMissing = [];
+        console.log('=== 기본정보 검증 ===');
+        console.log('data.name:', data.name);
+        console.log('data.weight:', data.weight);
+        console.log('data.birthDate:', data.birthDate);
+        console.log('selectedDate:', selectedDate);
+        console.log('data.gender:', data.gender);
+        console.log('data.address:', data.address);
+        console.log('data.breed:', data.breed);
+        
+        if (!data.name || data.name.trim() === '') {
+            basicInfoMissing.push('멍멍이 이름');
+        }
+        if (!data.weight || data.weight.trim() === '') {
+            basicInfoMissing.push('몸무게');
+        }
+        if (!data.birthDate && !selectedDate) {
+            basicInfoMissing.push('생년월일');
+        }
+        if (!data.gender) {
+            basicInfoMissing.push('성별');
+        }
+        if (!data.address || data.address.trim() === '') {
+            basicInfoMissing.push('주소');
+        }
+        if (!data.breed) {
+            basicInfoMissing.push('품종');
+        }
+        
+        if (basicInfoMissing.length > 0) {
+            missingCategories.push('기본정보');
+            console.log('기본정보 누락:', basicInfoMissing);
+        }
+        
+        // 2. 프로필 카드정보 카테고리 검증
+        const profileCardMissing = [];
+        console.log('=== 프로필 카드정보 검증 ===');
+        console.log('data.nickname:', data.nickname);
+        console.log('data.favoriteSnack:', data.favoriteSnack);
+        console.log('data.walkingCourse:', data.walkingCourse);
+        console.log('data.messageToFriend:', data.messageToFriend);
+        
+        if (!data.nickname || data.nickname.trim() === '') {
+            profileCardMissing.push('별명');
+        }
+        if (!data.favoriteSnack || data.favoriteSnack.trim() === '') {
+            profileCardMissing.push('좋아하는 간식');
+        }
+        if (!data.walkingCourse || data.walkingCourse.trim() === '') {
+            profileCardMissing.push('산책 코스');
+        }
+        if (!data.messageToFriend || data.messageToFriend.trim() === '') {
+            profileCardMissing.push('친구에게 한마디');
+        }
+        
+        if (profileCardMissing.length > 0) {
+            missingCategories.push('프로필 카드정보');
+            console.log('프로필 카드정보 누락:', profileCardMissing);
+        }
+        
+        // 3. 기타 정보 카테고리 검증
+        const otherInfoMissing = [];
+        console.log('=== 기타 정보 검증 ===');
+        console.log('selectedCharactor:', selectedCharactor);
+        console.log('selectedFavorite:', selectedFavorite);
+        console.log('selectedCautions:', selectedCautions);
+        
+        if (!selectedCharactor) {
+            otherInfoMissing.push('성격');
+        }
+        if (!selectedFavorite || selectedFavorite.length === 0) {
+            otherInfoMissing.push('좋아하는 것');
+        }
+        if (!selectedCautions || selectedCautions.length === 0) {
+            otherInfoMissing.push('주의해주세요');
+        }
+        
+        if (otherInfoMissing.length > 0) {
+            missingCategories.push('기타 정보');
+            console.log('기타 정보 누락:', otherInfoMissing);
+        }
+        
+        console.log('누락된 카테고리들:', missingCategories);
+        
+        // 필수 입력값이 누락된 경우
+        if (missingCategories.length > 0) {
+            alert(`다음 카테고리의 필수 항목이 누락되었습니다:\n\n${missingCategories.join('\n')}`);
             return;
-            }
-
-        // 모든 유효성 검사 통과
-            console.log("폼 유효! 제출데이터");
-
-            if (isEditMode) {
-            // 수정 모드일 때 처리 (예: 수정 API 호출 등)
-            console.log("수정 모드 - 프로필 수정 로직 실행");
-            // 수정 작업 완료 후 다음 페이지 이동 or 목록 페이지 등
-            navigate('/profile/edit-complete'); // 예시 경로
-            } else {
-            // 신규 등록 모드일 때 처리
-            console.log("등록 모드 - 신규 프로필 등록 로직 실행");
-            navigate('/profile/add-health'); // 등록 후 다음 단계 페이지
+        }
+        
+        // 모든 검증 통과
+        console.log('프로필 등록 제출 데이터:', data);
+        
+        // 숫자를 실제 타이틀로 변환하는 함수
+        const getCharactorTitle = (id) => {
+            switch(id) {
+                case 1: return "나는 개인싸! (누구와도 잘 지내요)";
+                case 2: return "나를 따르라! (가만히 있지 못해요!)";
+                case 3: return "나랑만 있어줘... (애착형이고 애교가 많아요)";
+                case 4: return "조금 조심스럽개! (수줍음이 많아요)";
+                default: return "";
             }
         };
 
+        const getFavoriteTitle = (id) => {
+            switch(id) {
+                case 1: return "간식이 좋아 (육포, 개껌, 치즈...)";
+                case 2: return "산책이 짱! (산책 없이 못살아!)";
+                case 3: return "쉬는 게 최고 (힐링이 최고다 멍!)";
+                case 4: return "애카 가자! (친구들이 제일 좋아!)";
+                default: return "";
+            }
+        };
+
+        const getCautionTitle = (id) => {
+            switch(id) {
+                case 1: return "만지는 거 싫어! (나는 예민해요)";
+                case 2: return "친구 무서워요 (나를 보호해주세요)";
+                case 3: return "알러지가 있어요 (다 먹을 수 없어요😢)";
+                case 4: return "소리에 놀라요 (나는 소리에 민감해요!)";
+                default: return "";
+            }
+        };
+        
+        // 기본값 설정 및 타이틀로 변환
+        const profileData = {
+            ...data,
+            charactor: getCharactorTitle(data.charactor || selectedCharactor),
+            favorites: (selectedFavorite || [1]).map(getFavoriteTitle).filter(Boolean),
+            cautions: (selectedCautions || [1]).map(getCautionTitle).filter(Boolean),
+            gender: data.gender || 'male',
+            profileImage: imageSrc, // 이미지 URL 또는 base64 데이터
+        };
+        
+        console.log('=== 프로필 데이터 변환 확인 ===');
+        console.log('selectedFavorite (원본):', selectedFavorite);
+        console.log('selectedCautions (원본):', selectedCautions);
+        console.log('favorites (변환됨):', profileData.favorites);
+        console.log('cautions (변환됨):', profileData.cautions);
+        
+        // 이미지 파일이 있으면 FormData로 처리
+        if (selectedImageFile) {
+            const formData = new FormData();
+            
+            // 이미지 파일 추가
+            formData.append('profileImage', selectedImageFile);
+            
+            // 나머지 데이터는 JSON으로 변환하여 추가
+            const { profilePhoto, ...textData } = profileData;
+            formData.append('data', JSON.stringify(textData));
+            
+            console.log('FormData로 전송:', formData);
+        }
+        
+        if (onProfileComplete) {
+            onProfileComplete(profileData);
+        }
+        
+        // 소셜 로그인 사용자인지 확인 (토큰이 있으면 소셜 로그인)
+        const isSocialLogin = localStorage.getItem('jwt_token');
+        
+        if (isSocialLogin) {
+            // 소셜 로그인 사용자: 건강정보 등록 페이지로 이동
+            navigate('/profile/add-health', { 
+                state: { 
+                    profileData: profileData,
+                    isSocialLogin: true 
+                } 
+            });
+        } else {
+            // 일반 회원가입: 회원가입 완료 페이지로 이동
+            navigate('/sign-up/complete', { 
+                state: { 
+                    profileData: profileData 
+                } 
+            });
+        }
+    };
+
+    // 에러 메시지 컴포넌트
+    const ErrorMessage = ({ show, message }) => {
+        if (!show) return null;
+        return (
+            <div style={{ textAlign: "center" }}>
+                <span style={{ color: "#f74c26" }}>{message}</span>
+            </div>
+        );
+    };
 
     return (
         <div style={{marginTop:"195px",marginBottom:"550px"}}>
+            {/* 기본정보 섹션 */}
             <S.TitleWrap> 
                 <Text.Body1>
                     <span style={{ color: '#CE5347', fontWeight: 'bold'}}>*&nbsp;</span>
-                    <S.highlight style={{ fontWeight: 'bold'}}>기본정보</S.highlight>
+                    <S.highlight style={{ fontWeight: 'bold', fontSize: '30px'}}>기본정보</S.highlight>
                 </Text.Body1>
             </S.TitleWrap>
+            
+            {/* 이름과 몸무게 */}
             <S.inputinline>
                 <S.NamekgWrap style={{marginRight:'30px'}}>
-                    <S.CaptionTitlewrap >내 이름은,</S.CaptionTitlewrap>
+                    <S.CaptionTitlewrap>내 이름은,</S.CaptionTitlewrap>
                     <BasicInput 
-                    type="text" 
-                    placeholder="멍이의 이름을 입력해주세요"
-                    {...register("name", {
-                        required: true, 
-                        onChange: (e) => setForm({...form, name: e.target.value})})}
+                        type="text" 
+                        placeholder="멍이의 이름을 입력해주세요"
+                        {...register("name", { 
+                            required: "멍멍이 이름을 입력해주세요" 
+                        })}
                     />
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.name}
-                        message={validationErrors.name}   
+                        show={hasSubmitted && errors.name}
+                        message={errors.name?.message}   
                     />
                 </S.NamekgWrap>
-                <S.NamekgWrap >
+                <S.NamekgWrap>
                     <S.CaptionTitlewrap>몸무게</S.CaptionTitlewrap>
-                    <S.InputButtonWrapper >
+                    <S.InputButtonWrapper>
                         <Text.Body3>kg</Text.Body3>
-                        <BasicInput s type="text" placeholder=""
-                        {...register("weight", {
-                            required: true,
-                            onChange: (e) => setForm({...form, weight: e.target.value})})}
+                        <BasicInput 
+                            type="text" 
+                            placeholder=""
+                            {...register("weight", { 
+                                required: "몸무게를 입력해주세요" 
+                            })}
                         /> 
                     </S.InputButtonWrapper>
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.weight}
-                        message={validationErrors.weight}  
+                        show={hasSubmitted && errors.weight}
+                        message={errors.weight?.message}  
                     />
                 </S.NamekgWrap>
             </S.inputinline>
+
+            {/* 생년월일 */}
             <S.InputReguler style={{position:'relative'}}>
                 <S.CaptionTitlewrap>생년월일</S.CaptionTitlewrap>
                 <div style={{position:'relative', width:'100%'}}>
                     <BasicInput
-                    value={selectedDate ? dayjs(selectedDate).format("YYYY-MM-DD") : ""}
-                    placeholder="생년월일을 입력해주세요"
-                    required
-                    onClick={() => calendarRef.current?.setFocus()}
+                        defaultValue={selectedDate ? dayjs(selectedDate).format("YYYY-MM-DD") : ""}
+                        placeholder="생년월일을 입력해주세요"
+                        required
+                        readOnly
+                        onClick={() => calendarRef.current?.setFocus()}
                     />
-                    <img src="/assets/icons/calendar.svg" 
+                    <img 
+                        src="/assets/icons/calendar.svg" 
                         width={30} height={30} alt="캘린더" 
-                        onClick={() => calendarRef.current?.setFocus()
-                        }
-                        style={{
-                            right:"10px", 
-                            top:"50%", 
-                            transform:"translateY(-50%)", 
-                            cursor: "pointer", 
-                            position:'absolute'
-                        }} 
+                        onClick={() => calendarRef.current?.setFocus()}
+    
                     />
                     <Controller 
                         name="birthDate" 
@@ -326,56 +446,62 @@ const ErrorMessage = ({ show, message }) => {
                         rules={{ required: "생년월일을 선택해주세요" }}
                         render={({ field }) => ( 
                             <DatePickerSingle 
-                            ref={calendarRef} 
-                            selected={field.value} 
-                            onChange={(date) => {
-                                setSelectedDate(date);
-                                setForm(prev => ({...prev, birthDate: date}))
-                            }}/>
+                                ref={calendarRef} 
+                                selected={field.value} 
+                                onChange={(date) => {
+                                    setSelectedDate(date);
+                                    setValue("birthDate", date);
+                                }}
+                            />
                         )}
                     /> 
                 </div>
                 <ErrorMessage
-                    show={hasSubmitted && validationErrors.birthDate}
-                    message={validationErrors.birthDate}  
+                    show={hasSubmitted && errors.birthDate}
+                    message={errors.birthDate?.message}  
                 />
             </S.InputReguler>
+
+            {/* 성별 */}
             <S.InputReguler>
                 <S.CaptionTitlewrap>성별</S.CaptionTitlewrap>
-                <S.inputinline>
+                <S.inputinline style={{marginTop:"0"}}>
                     <S.NamekgWrap style={{marginRight:"30px"}}>
                         <BasicButton 
-                        basicButton="superSmall" 
-                        variant={form.gender === "male" ? "filled" : "default"}
-                        style={{width:"100%"}}
-                        onClick={() => handleGenderClick('male')}>
+                            basicButton="small" 
+                            variant={watch("gender") === "male" ? "filled" : "default"}
+                            style={{width:"100%"}}
+                            onClick={() => handleGenderClick('male')}>
                             남
                         </BasicButton>
                     </S.NamekgWrap>
                     <S.NamekgWrap>
                         <BasicButton
-                        basicButton="superSmall" 
-                        variant={form.gender === "female" ? "filled" : "default"}
-                        style={{width:"100%"}}
-                        onClick={() => handleGenderClick('female')}>                                
-                        여
+                            basicButton="small" 
+                            variant={watch("gender") === "female" ? "filled" : "default"}
+                            style={{width:"100%"}}
+                            onClick={() => handleGenderClick('female')}>                                
+                            여
                         </BasicButton>
                     </S.NamekgWrap>
                 </S.inputinline>
                 <input
                     type='hidden'
-                    {...register("gender", {required:"성별을 선택해주세요.", 
+                    {...register("gender", {
+                        required:"성별을 선택해주세요.", 
                         validate: (value) => value === "male" || value === "female" || "성별을 선택해주세요."
                     })}
                 />
                 <ErrorMessage
-                    show={hasSubmitted && validationErrors.gender}
-                    message={validationErrors.gender}  
+                    show={hasSubmitted && errors.gender}
+                    message={errors.gender?.message}  
                 />
             </S.InputReguler>
-            <S.InputReguler >
+
+            {/* 주소 */}
+            <S.InputReguler>
                 <S.CaptionTitlewrap>주소</S.CaptionTitlewrap>
-                    <div 
+                <div 
                     onClick={handleSearchAddress} 
                     style={{
                         width:'100%',
@@ -383,83 +509,88 @@ const ErrorMessage = ({ show, message }) => {
                         alignItems: 'center',
                         position:'relative',
                         cursor:"pointer",
-                        }}>
+                    }}>
                     <BasicInput 
-                    type="text" 
-                    value={form.address}
-                    placeholder="도로명 주소를 검색하세요"
-                    readOnly
-                    {...register("address", {
-                        required: "주소를 검색해주세요"
-                    })}
+                        type="text" 
+                        value={watch("address") || ""}
+                        placeholder="도로명 주소를 검색하세요"
+                        readOnly
+                        {...register("address", { required: "주소를 검색해주세요" })}
                     />
                     <img 
-                    src="/assets/icons/search.svg" 
-                    width={30} height={30} 
-                    alt="검색" 
-                    style={{
-                        position:'absolute',
-                        right:'10px'}}/>
+                        src="/assets/icons/search.svg" 
+                        width={30} height={30} 
+                        alt="검색" 
+                    />
                 </div>
                 <ErrorMessage
-                    show={hasSubmitted && validationErrors.address}
-                    message={validationErrors.address}  
+                    show={hasSubmitted && errors.address}
+                    message={errors.address?.message}  
                 />
             </S.InputReguler>
-            <S.InputReguler >
+
+            {/* 품종 */}
+            <S.InputReguler>
                 <S.CaptionTitlewrap>품종</S.CaptionTitlewrap>
                 <S.InputButtonWrapper>
                     <SelectBox
                         options={BREEDS}
                         placeholder="강아지 품종을 선택하세요."
                         {...register("breed", {required: true})}
-                        onSelect={(v) => setForm({...form, breed: v})}
+                        onSelect={(v) => setValue("breed", v)}
                         style={{width:"100%", cursor:"pointer"}}
-                        />
+                    />
                 </S.InputButtonWrapper>
-                {form.breed  === "기타" && (
+                {watch("breed") === "기타" && (
                     <S.InputButtonWrapper style={{marginTop:"10px"}}>
                         <BasicInput
-                        type="text"
-                        placeholder="직접 입력해주세요"
-                            value={form.custombreed}
-                            onChange={(e) => setForm({...form, custombreed: e.target.value})}
+                            type="text"
+                            placeholder="직접 입력해주세요"
+                            {...register("custombreed")}
                             style={{
-                            width: "100%",
-                            height: "64px",
-                            padding: "20px 24px"
+                                width: "100%",
+                                height: "64px",
+                                padding: "20px 24px"
                             }}
                         />
                     </S.InputButtonWrapper>
                 )}
                 <ErrorMessage
-                    show={hasSubmitted && validationErrors.breed}
-                    message={validationErrors.breed}  
+                    show={hasSubmitted && errors.breed}
+                    message={errors.breed?.message}  
                 />
             </S.InputReguler>
 
             {/* 프로필 카드 섹션 */}
-            <S.TitleWrap style={{marginTop:"42px"}}> 
-                <Text.Body2>
+            <S.TitleWrap style={{marginTop:"100px"}}> 
+                <Text.Body1>
                     <span style={{ color: '#CE5347', fontWeight: 'bold'}}>*&nbsp;</span>
-                    <S.highlight style={{ fontWeight: 'bold'}}>프로필 카드 정보</S.highlight>
-                </Text.Body2>
+                    <S.highlight style={{ fontWeight: 'bold', fontSize: '30px'}}>프로필 카드 정보</S.highlight>
+                </Text.Body1>
             </S.TitleWrap>
-            <S.inputinline>
-                <S.NamekgWrap style={{display:"flex", justifyContent:"center"}} >
-                    <S.CaptionTitlewrap style={{position:"static", height:"auto", textAlign:"center"}}>
-                    대표 프로필 사진 <br/><br/>
-                    우리 멍이의 대표 프로필 사진을 등록해주세요.</S.CaptionTitlewrap>
-                    <S.Profile 
-                        src={form.imageSrc || "/assets/img/progile/camera.png"} 
-                        style={{marginTop:"30px", cursor:"pointer"}}
-                        onClick={handleClick}
-                        {...register("profilePhoto", {
-                        required: true,
-                        onChange: (e) => setForm({...form, profilePhoto: e.target.value})})}
-                    />
+            
+            <S.inputinline style={{gap:"50px"}}>
+                {/* 프로필 사진 */}
+                <S.NamekgWrap style={{display:"flex", justifyContent:"center"}}>
+                    <S.CaptionTitlewrap style={{textAlign:"center" , fontSize:"20px" , color:"#CE5347"}}>
+                        우리 멍이의 대표 프로필 사진을 등록해주세요!
+                    </S.CaptionTitlewrap>
+                    <S.ProfileWrap onClick={() => fileInputRef.current.click()}>
+                        <S.Profile 
+                            src={imageSrc || "/assets/img/progile/camera.svg"} 
+                        />
+                    </S.ProfileWrap>
+                    <BasicButton
+                        roundButton="small"
+                        variant="filled"
+                        style={{marginTop:"60px" , }}
+                        onClick={() => fileInputRef.current.click()}
+                        disabled={isUploading}
+                    >
+                        {isUploading ? '업로드 중...' : '사진 등록하기'}
+                    </BasicButton>
+                  
                     <input
-                        id="profile"
                         style={{ display: "none" }}
                         type="file"
                         accept="image/*"
@@ -467,216 +598,242 @@ const ErrorMessage = ({ show, message }) => {
                         onChange={handleImageChange}
                     />
                     <ErrorMessage
-                        show={hasSubmitted && validationErrors.profilePhoto}
-                        message={validationErrors.profilePhoto}  
+                        show={hasSubmitted && errors.profilePhoto}
+                        message={errors.profilePhoto?.message}  
                     />
                 </S.NamekgWrap>
-                    <S.NamekgWrap >
-                        <S.CaptionTitlewrap >별명</S.CaptionTitlewrap>
-                        <BasicInput 
-                            type="text" placeholder="간식요정"
-                        {...register("nickname", {
+                
+                {/* 프로필 정보 */}
+                <S.NamekgWrap>
+                    <S.CaptionTitlewrap>별명</S.CaptionTitlewrap>
+                    <BasicInput 
+                        type="text" 
+                        placeholder="간식요정"
+                        {...register("nickname", { required: true })}
+                        style={{marginTop:"20px"}}
+                    />
+                    <ErrorMessage 
+                        show={hasSubmitted && errors.nickname}
+                        message={errors.nickname?.message}  
+                    />
+                    
+                    <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>좋아하는 간식</S.CaptionTitlewrap>
+                    <BasicInput 
+                        type="text" 
+                        placeholder="육포, 치즈, 연어 ..."
+                        {...register("favoriteSnack", { required: true })}
+                        style={{marginTop:"20px"}}
+                    />
+                    <ErrorMessage
+                        show={hasSubmitted && errors.favoriteSnack}
+                        message={errors.favoriteSnack?.message}  
+                    />
+                    
+                    <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>좋아하는 산책코스</S.CaptionTitlewrap>
+                    <BasicInput 
+                        type="text" 
+                        placeholder="집 주변 공원"
+                        {...register("walkingCourse", { required: true })}
+                        style={{marginTop:"20px"}}
+                    />
+                    <ErrorMessage
+                        show={hasSubmitted && errors.walkingCourse}
+                        message={errors.walkingCourse?.message}  
+                    />
+                    
+                    <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>새 친구에게 한마디!</S.CaptionTitlewrap>
+                    <BasicInput 
+                        type="text" 
+                        placeholder="친구들과 뛰어 놀 준비 완료!"
+                        maxLength={15}
+                        {...register("messageToFriend", { 
                             required: true,
-                            onChange: (e) => setForm({...form, nickname: e.target.value})})}
-                        />
-                        <ErrorMessage 
-                            show={hasSubmitted && validationErrors.nickname}
-                            message={validationErrors.nickname}  
-                        />
-                        <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>좋아하는 간식</S.CaptionTitlewrap>
-                        <BasicInput 
-                            type="text" placeholder="육포, 치즈, 연어 ..."
-                        {...register("favoriteSnack", {
-                            required: true,
-                            onChange: (e) => setForm({...form, favoriteSnack: e.target.value})})}
-                        />
-                        <ErrorMessage
-                            show={hasSubmitted && validationErrors.favoriteSnack}
-                            message={validationErrors.favoriteSnack}  
-                        />
-                        <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>좋아하는 산책코스</S.CaptionTitlewrap>
-                        <BasicInput 
-                            type="text" placeholder="집 주변 공원"
-                        {...register("walkingCourse", {
-                            required: true,
-                            onChange: (e) => setForm({...form, walkingCourse: e.target.value})})}
-                        />
-                        <ErrorMessage
-                            show={hasSubmitted && validationErrors.walkingCourse}
-                            message={validationErrors.walkingCourse}  
-                        />
-                        <S.CaptionTitlewrap style={{margin:"70px 0 0 0"}}>새 친구에게 한마디!</S.CaptionTitlewrap>
-                        <BasicInput 
-                            style={{height:"100px"}} type="text" placeholder="친구들과 뛰어 놀 준비 완료!"
-                        {...register("messageToFriend", {
-                            required: true,
-                            onChange: (e) => setForm({...form, messageToFriend: e.target.value})})}
-                        />
-                        <ErrorMessage
-                            show={hasSubmitted && validationErrors.messageToFriend}
-                            message={validationErrors.messageToFriend}  
-                        />
-                    </S.NamekgWrap>                
+                            maxLength: {
+                                value: 15,
+                                message: "15글자 이내로 작성해주세요"
+                            }
+                        })}
+                        style={{marginTop:"20px"}}
+                    />
+                    <div style={{textAlign: "right", fontSize: "12px", color: "#666", marginTop: "5px"}}>
+                        {watch("messageToFriend")?.length || 0}/15
+                    </div>
+                    <ErrorMessage
+                        show={hasSubmitted && errors.messageToFriend}
+                        message={errors.messageToFriend?.message}  
+                    />
+                </S.NamekgWrap>                
             </S.inputinline>
-            <S.TitleWrap style={{marginTop:"42px"}}> 
+
+            {/* 기타 정보 섹션 */}
+            <S.TitleWrap style={{marginTop:"100px"}}> 
                 <Text.Body1>
                     <span style={{ color: '#CE5347', fontWeight: 'bold'}}>*&nbsp;</span>
-                    <S.highlight style={{ fontWeight: 'bold'}}>기타 정보</S.highlight>
+                    <S.highlight style={{ fontWeight: 'bold', fontSize: '30px'}}>기타 정보</S.highlight>
                 </Text.Body1>
             </S.TitleWrap>
-                    {/*  기타정보-강아지 성격 */}
-            <S.inputinline style={{display:'flex', alignItems:'flex-start'}}>
-                <span style={{ color: '#CE5347', fontWeight: 'bold'}}>*&nbsp;</span>
-                    <S.CaptionTitlewrap style={{width:'auto', marginRight:'10px'}}>우리 멍이의 성격은? </S.CaptionTitlewrap>
-                <ErrorMessage
-                    show={hasSubmitted && validationErrors.Charactor}
-                    message={validationErrors.Charactor}  
-                />
-            </S.inputinline>
+            
+            {/* 성격 선택 */}
             <S.inputinline>
-                <S.NamekgWrap style={{marginRight:'30px'}} 
-                        onClick={()=>selectCharactor(1)} selectedCharactor={selectedCharactor === 1}>
+                <S.CaptionTitlewrap style={{display:'flex', alignItems:'center'}}>
+                    <Text.Body3><span style={{color: '#CE5347', fontWeight: 'bold' , marginRight:"10px"}}>*</span>우리 멍이의 성격은?</Text.Body3>
+                    <span style={{ color: '#CE5347', fontSize:'16px' ,fontWeight: 'bold', marginLeft:'10px'}}>(단일선택)</span>
+                </S.CaptionTitlewrap>
+            </S.inputinline>
+            
+            <S.inputinlineImg>
+                <S.NamekgWrap onClick={()=>selectCharactor(1)}>
                     <S.radioselect src='/assets/img/progile/personality/popularity.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나는 개인싸!<br/></Text.Body2>
                     <Text.Body3>누구와도 잘 지내요</Text.Body3>
                     <Radio checked={selectedCharactor === 1} size="M" mt="20"/>
                 </S.NamekgWrap>
-                <S.NamekgWrap  style={{marginRight:'30px'}} onClick={()=>selectCharactor(2)} selectedCharactor={selectedCharactor === 2}>
+                <S.NamekgWrap onClick={()=>selectCharactor(2)}>
                     <S.radioselect src='/assets/img/progile/personality/leader.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나를 따르라!<br/></Text.Body2>
                     <Text.Body3>가만히 있지 못해요!</Text.Body3>
                     <Radio checked={selectedCharactor === 2} size="M" mt="20"/>
                 </S.NamekgWrap>
-                <S.NamekgWrap style={{marginRight:'30px'}} onClick={()=>selectCharactor(3)} selectedCharactor={selectedCharactor === 3}>
+                <S.NamekgWrap onClick={()=>selectCharactor(3)}>
                     <S.radioselect src='/assets/img/progile/personality/attractiveness.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>나랑만 있어줘...<br/></Text.Body2>
                     <Text.Body3>애착형이고 애교가 많아요</Text.Body3>
                     <Radio checked={selectedCharactor === 3} size="M" mt="20"/>
                 </S.NamekgWrap>
-                <S.NamekgWrap onClick={()=>selectCharactor(4)} selectedCharactor={selectedCharactor === 4}>
+                <S.NamekgWrap onClick={()=>selectCharactor(4)}>
                     <S.radioselect src='/assets/img/progile/personality/shy.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>조금 조심스럽개!<br/></Text.Body2>
                     <Text.Body3>수줍음이 많아요</Text.Body3>
                     <Radio checked={selectedCharactor === 4} size="M" mt="20"/>
                 </S.NamekgWrap>
-            </S.inputinline>
-                <input
-                    type='hidden'
-                    {...register("charactor", {
-                        required:"멍이의 성격을 선택해주세요", 
-                        validate: (value) => {
-                            const validOptions = [1, 2, 3, 4];
-                            return validOptions.includes(value) || "멍이의 성격을 선택해주세요"
-                    }})}
-                />
+            </S.inputinlineImg>
+            
+            <input
+                type='hidden'
+                {...register("charactor", {
+                    required:"멍이의 성격을 선택해주세요", 
+                    validate: (value) => {
+                        const validOptions = [1, 2, 3, 4];
+                        return validOptions.includes(value) || "멍이의 성격을 선택해주세요"
+                    }
+                })}
+            />
 
-            {/*  기타정보-강아지 취향 */}
-            <S.inputinline style={{display:'flex', alignItems:'flex-start'}}>
-                <span style={{ color: '#CE5347', fontWeight: 'bold'}}>*&nbsp;</span>
-                    <S.CaptionTitlewrap style={{width:'auto', marginRight:'10px'}}>우리 멍이가 좋아하는 것은?
-                        <span style={{ color: '#CE5347', fontSize:'small' ,fontWeight: 'normal'}}>&nbsp;&nbsp;다중선택가능</span></S.CaptionTitlewrap>
-                <ErrorMessage
-                    show={hasSubmitted && validationErrors.Favorit }
-                    message={validationErrors.Favorit }  
-                />
-            </S.inputinline>
+            {/* 좋아하는 것 선택 */}
             <S.inputinline>
-                <S.NamekgWrap onClick={() => selectFavorite(1)} selected={selectedFavorite.includes(1)} style={{marginRight:'30px'}}>
+                <S.CaptionTitlewrap style={{display:'flex', alignItems:'center'}}>
+                    <Text.Body3><span style={{color: '#CE5347', fontWeight: 'bold' , marginRight:"10px"}}>*</span>우리 멍이가 좋아하는 것은?</Text.Body3>
+                    <span style={{ color: '#CE5347', fontSize:'16px' ,fontWeight: 'bold', marginLeft:'10px'}}>(다중선택가능)</span>
+                </S.CaptionTitlewrap>
+            </S.inputinline>
+            
+            <S.inputinlineImg>
+                <S.NamekgWrap onClick={() => selectFavorite(1)}>
                     <S.radioselect src='/assets/img/progile/favoriteThing/snack.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>간식이 좋아<br/></Text.Body2>
                     <Text.Body3>육포, 개껌, 치즈...</Text.Body3>
                     <Checkbox checked={selectedFavorite.includes(1)} size="L" mt="20"/>
                 </S.NamekgWrap>
-                <S.NamekgWrap onClick={() => selectFavorite(2)} selected={selectedFavorite.includes(2)} style={{marginRight:'30px'}}>
+                <S.NamekgWrap onClick={() => selectFavorite(2)}>
                     <S.radioselect src='/assets/img/progile/favoriteThing/walk.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>산책이 짱!<br/></Text.Body2>
                     <Text.Body3>산책 없이 못살아!</Text.Body3>
                     <Checkbox checked={selectedFavorite.includes(2)} size="M" mt="20"/>
                 </S.NamekgWrap>
-                <S.NamekgWrap onClick={() => selectFavorite(3)} selected={selectedFavorite.includes(3)} style={{marginRight:'30px'}}>
+                <S.NamekgWrap onClick={() => selectFavorite(3)}>
                     <S.radioselect src='/assets/img/progile/favoriteThing/healing.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>쉬는 게 최고<br/></Text.Body2>
                     <Text.Body3>힐링이 최고다 멍!</Text.Body3>
                     <Checkbox checked={selectedFavorite.includes(3)} size="M" mt="20"/>
                 </S.NamekgWrap>
-                <S.NamekgWrap onClick={() => selectFavorite(4)} selected={selectedFavorite.includes(4)}>
+                <S.NamekgWrap onClick={() => selectFavorite(4)}>
                     <S.radioselect src='/assets/img/progile/favoriteThing/friend.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>애카 가자!<br/></Text.Body2>
                     <Text.Body3>친구들이 제일 좋아!</Text.Body3>
                     <Checkbox checked={selectedFavorite.includes(4)} size="M" mt="20"/>
                 </S.NamekgWrap>
+            </S.inputinlineImg>
+
+            {/* 주의할 점 선택 */}
+            <S.inputinline>
+                <S.CaptionTitlewrap style={{display:'flex', alignItems:'center'}}>
+                    <Text.Body3><span style={{color: '#CE5347', fontWeight: 'bold' , marginRight:"10px"}}>*</span>주의해 주세요!</Text.Body3>
+                    <span style={{ color: '#CE5347', fontSize:'16px' ,fontWeight: 'bold', marginLeft:'10px'}}>(다중선택가능)</span>
+                </S.CaptionTitlewrap>
             </S.inputinline>
 
-            {/* 기타정보-강아지 주의할 점 */}
-            <S.inputinline>
-                <S.CaptionTitlewrap>주의해 주세요!
-                    <span style={{ color: '#CE5347', fontSize:'small' ,fontWeight: 'normal'}}>&nbsp;&nbsp;다중선택가능</span></S.CaptionTitlewrap>
-            </S.inputinline>
-            <S.inputinline>
-                <S.NamekgWrap onClick={() => selectCautions(1)} selected={selectedCautions.includes(1)} style={{marginRight:'30px'}}>
+            <S.inputinlineImg>
+                <S.NamekgWrap onClick={() => selectCautions(1)}>
                     <S.radioselect src='/assets/img/progile/Caution/touch.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>만지는 거 싫어!<br/></Text.Body2>
                     <Text.Body3>나는 예민해요</Text.Body3>
                     <Checkbox checked={selectedCautions.includes(1)} size="M" mt="20"/>
                 </S.NamekgWrap>
-                <S.NamekgWrap onClick={() => selectCautions(2)} selected={selectedCautions.includes(2)} style={{marginRight:'30px'}}>
+                <S.NamekgWrap onClick={() => selectCautions(2)}>
                     <S.radioselect src='/assets/img/progile/Caution/bark.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>친구 무서워요<br/></Text.Body2>
                     <Text.Body3>나를 보호해주세요</Text.Body3>
                     <Checkbox checked={selectedCautions.includes(2)} size="M" mt="20"/>
                 </S.NamekgWrap>
-                <S.NamekgWrap onClick={() => selectCautions(3)} selected={selectedCautions.includes(3)} style={{marginRight:'30px'}}>
+                <S.NamekgWrap onClick={() => selectCautions(3)}>
                     <S.radioselect src='/assets/img/progile/Caution/Allergy.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>알러지가 있어요<br/></Text.Body2>
                     <Text.Body3>다 먹을 수 없어요😢</Text.Body3>
                     <Checkbox checked={selectedCautions.includes(3)} size="M" mt="20"/>
-                </S.NamekgWrap >
-                <S.NamekgWrap onClick={() => selectCautions(4)} selected={selectedCautions.includes(4)}>
+                </S.NamekgWrap>
+                <S.NamekgWrap onClick={() => selectCautions(4)}>
                     <S.radioselect src='/assets/img/progile/Caution/sound.png'></S.radioselect>
                     <Text.Body2 style={{textAlign:"center", margin:"10px 0 6px 0", fontWeight:"bold"}}>소리에 놀라요<br/></Text.Body2>
                     <Text.Body3>나는 소리에 민감해요!</Text.Body3>
                     <Checkbox checked={selectedCautions.includes(4)} size="M" mt="20"/>
                 </S.NamekgWrap>
-            </S.inputinline>
-            <S.CaptionTitlewrap>
+            </S.inputinlineImg>
+
+            {/* 선택 정보 - 중성화 */}
+            <S.CaptionTitlewrap style={{marginTop:"100px"}}>
                 <Text.Body1>
-                    <S.highlight style={{ fontWeight: 'bold'}}>선택 정보</S.highlight>
+                    <S.highlight style={{ fontWeight: 'bold'}}>중성화 여부</S.highlight>
+                    <span style={{ color: '#CE5347', fontSize:'16px' ,fontWeight: 'bold', marginLeft:'10px'}}>(선택사항)</span>
                 </Text.Body1>
             </S.CaptionTitlewrap>
-            <S.inputinline style={{marginTop:"24px"}}>
-                <S.Content>
-                    <Text.Body3>중성화 유무</Text.Body3>
-                </S.Content>
+            
+            <S.inputinline style={{display:"flex", alignItems:"center"}}>
                 <S.NamekgWrap style={{marginRight:'30px'}}>
                     <BasicButton 
-                        basicButton="superSmall" 
-                        variant={form.neutralization === "yes" ? "filled" : "default"}
+                        basicButton="small" 
+                        variant={watch("neutralization") === "yes" ? "filled" : "default"}
                         style={{width:"100%"}}
-                        onClick={() => setForm({...form, neutralization: 'yes'})}>
+                        onClick={() => setValue("neutralization", "yes")}>
                         유
                     </BasicButton>
                 </S.NamekgWrap>
                 <S.NamekgWrap>
                     <BasicButton 
-                        basicButton="superSmall" 
-                        variant={form.neutralization === "none" ? "filled" : "default"}
+                        basicButton="small" 
+                        variant={watch("neutralization") === "none" ? "filled" : "default"}
                         style={{width:"100%"}}
-                        onClick={() =>  setForm({...form, neutralization: 'none'})}>
+                        onClick={() => setValue("neutralization", "none")}>
                         무
                     </BasicButton>
                 </S.NamekgWrap>
             </S.inputinline>
-            <S.InputReguler onSubmit={handleFormSubmit} style={{marginTop:"182px"}}>
+
+            {/* 제출 버튼 */}
+            <S.InputReguler style={{marginTop:"182px"}}>
                 <BasicButton 
-                basicButton="superSmall" 
-                variant="filled"
-                style={{width:"200px",
-                    cursor:'pointer'
-                }}
-                onClick={handleFormSubmit}
-                type='submit'
-                disabled={isSubmitting}>
-                    다음
+                    basicButton="superSmall" 
+                    variant="filled"
+                    style={{width:"200px", cursor:'pointer'}}
+                    onClick={() => {
+                        console.log('버튼 클릭됨!');
+                        // 폼 데이터 수동으로 가져오기
+                        const formData = getValues();
+                        console.log('폼 데이터:', formData);
+                        handleFormSubmit(formData);
+                    }}
+                    type='button'
+                    disabled={isSubmitting || isUploading}>
+                    {isUploading ? '업로드 중...' : '다음'}
                 </BasicButton>
             </S.InputReguler>
         </div>

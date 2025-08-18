@@ -10,7 +10,7 @@ const Diary = ({ eventId }) => {
   const [image, setImage] = useState(null);
 
   // ✅ 예시: 기존에 저장된 데이터 (빈 객체 or 데이터 있는 객체)
-  const scheduleDiary = {}; 
+  // const scheduleDiary = {}; 
   // const scheduleDiary = { text: 
   //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
   //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
