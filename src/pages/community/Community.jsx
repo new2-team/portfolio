@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import S from './style';
 import CommunityInputContainer from './CommunityInputContainer';
 import CommunitySelect from './CommunitySelect';
@@ -11,19 +11,17 @@ import Header from '../../components/layout/header/Header';
 
 
 const Community = () => {
-  
+  const [activeFilter, setActiveFilter] = useState("최신순")
 
   return (
     < >
       <S.Background >
         <S.Wrapper>
-          <CommunitySelect/>
-          <CommunityInputContainer/>
-          <CommunityNoText/>
+          <CommunitySelect activeFilter={activeFilter} onChange={setActiveFilter}/>
+          <CommunityInputContainer activeFilter={activeFilter}/>
+          
           <S.MoreTextButton roundButton="medium" variant="filled">더보기</S.MoreTextButton>
-          {/* <S.MoreTextBoxWrapper>
-            <S.MoreTextBox>더보기</S.MoreTextBox>
-          </S.MoreTextBoxWrapper> */}
+
         </S.Wrapper>
       </S.Background>
     </>

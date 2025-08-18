@@ -110,7 +110,6 @@ S.Bottom = styled.div`
   gap: ${({ theme }) => theme.SPACING['40']};
 `;
 
-// Share section
 S.Share = styled.div`
   display: flex;
   flex-direction: column;
@@ -119,13 +118,37 @@ S.Share = styled.div`
     ${spacingProps};
     font-size: ${({ theme }) => theme.FONT_SIZE['body2']};
     color: ${({ theme }) => theme.PALLETE.primary.main};
+    margin-bottom: 24px;
+    margin-left: 40px;  /* 오른쪽으로 20px 이동 */
   }
 
   .share-icons {
+    padding: 0%;
     display: flex;
     gap: ${({ theme }) => theme.SPACING['16']};
   }
+
+  .share-btn {
+    border: 1px solid ${({ theme }) => theme.PALLETE.background.gray200};
+    border-radius: 12px;
+    background: #fff;
+    padding: ${({ theme }) => theme.SPACING['8']};
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .06s ease, box-shadow .2s ease;
+  }
+  .share-btn:hover { box-shadow: 0 4px 12px rgba(0,0,0,.06); }
+  .share-btn:active { transform: translateY(1px); }
+  .share-btn img {
+    width: 50px;
+    height: 50px;
+    border-radius: 24px;
+    display: block;
+  }
 `;
+
 
 // Navigation buttons
 S.Nav = styled.div`
@@ -134,12 +157,12 @@ S.Nav = styled.div`
   gap: ${({ theme }) => theme.SPACING['12']};
 `;
 
-// Footer section
-S.Footer = styled.footer`
-  text-align: center;
-  padding: ${({ theme }) => theme.SPACING['24']} 0;
-  font-size: ${({ theme }) => theme.FONT_SIZE['caption']};
-  color: ${({ theme }) => theme.PALLETE.text.disabled.strong};
-`;
+// // Footer section
+// S.Footer = styled.footer`
+//   text-align: center;
+//   padding: ${({ theme }) => theme.SPACING['24']} 0;
+//   font-size: ${({ theme }) => theme.FONT_SIZE['caption']};
+//   color: ${({ theme }) => theme.PALLETE.text.disabled.strong};
+// `;
 
 export default S;

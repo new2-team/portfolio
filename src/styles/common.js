@@ -43,5 +43,13 @@ export const container = css`
   background-color: ${({ backgroundColor = "#fff" }) => backgroundColor};
 `;
 
+export const SignUpContainerStyles = css`
+  width: 100%;
+  padding: 0 480px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background-color: ${({ backgroundColor = "#fff" }) => backgroundColor};
+`;
+
 
 

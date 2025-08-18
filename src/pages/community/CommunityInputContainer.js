@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import CommunityInputComponent from './CommunityInputComponent';
 import CommunityInputResultComponent from './CommunityInputResultComponent';
+import CommunityNoText from './CommunityNoText';
 
-const CommunityInputContainer = () => {
+const CommunityInputContainer = ({activeFilter}) => {
   const [post,setPost] = useState([])
   const [openPost, setOpenPost] = useState([])
   const togglePost = (i) => {
@@ -101,6 +102,33 @@ const CommunityInputContainer = () => {
     }))
   }
 
+  //필터
+  const filteredPost = useMemo(() => {
+    let arr = [...post];
+
+    switch (activeFilter){
+      case "최신순":
+        arr.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+      
+      case "인기순":
+        arr.sort((a,b) => (b.likeCount || 0) - (a.likeCount || 0));
+        break;
+
+      case "내가 쓴 게시글": //로그인 유저 id 생긴 후 구현
+        arr = arr.filter(() => false);
+        break;
+        
+
+      case "내 친구가 쓴 게시글": //로그인 후 구현
+        arr = arr.filter(() => false);
+        break;
+      
+      default:
+        break;
+    }
+    return arr;
+  }, [post, activeFilter])
 
   
  
@@ -109,14 +137,14 @@ const CommunityInputContainer = () => {
       <CommunityInputComponent post={post} setPost={setPost}
       countComment={countComment} setCountComment={setCountComment}
         />
-      {post.length > 0 ? 
-      <CommunityInputResultComponent post={post} openPost={openPost} togglePost={togglePost} handleLike={handleLike}
+      {filteredPost.length > 0 ? 
+      <CommunityInputResultComponent post={filteredPost} setPost={setPost} openPost={openPost} togglePost={togglePost} handleLike={handleLike}
       handleComment={handleComment} setCommentInput={setCommentInput} commentInput={commentInput}
       countComment={countComment} setCountComment={setCountComment} deletePost={deletePost} 
       deleteComment={deleteComment} openReplyInput={openReplyInput} toggleReplyInput={toggleReplyInput}
       replyInput={replyInput} setReplyInput={setReplyInput} addReply={addReply} setOpenReplyInput={setOpenReplyInput}
       deleteReply={deleteReply}
-      /> : null}
+      /> : <CommunityNoText/>}
     </div>
   );
 };

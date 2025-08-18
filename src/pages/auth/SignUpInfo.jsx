@@ -23,6 +23,8 @@ const SignUpInfo = () => {
   const [birthDay, setBirthDay] = useState('');
   const [selectedEmailDomain, setSelectedEmailDomain] = useState('');
   const [showCustomDomain, setShowCustomDomain] = useState(false);
+  const [isUserIdChecked, setIsUserIdChecked] = useState(false); // 중복확인 상태
+  const [userIdCheckMessage, setUserIdCheckMessage] = useState(''); // 중복확인 메시지
   
   const {
     register, handleSubmit, getValues, watch, setValue, formState: {isSubmitting, isSubmitted, errors, isValid }
@@ -42,6 +44,56 @@ const SignUpInfo = () => {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
 
+
+  // 중복확인 함수
+  const handleUserIdCheck = async (e) => {
+    console.log('중복확인 버튼 클릭됨!'); // 디버깅 로그 추가
+    e.preventDefault(); // 폼 제출 방지
+    e.stopPropagation(); // 이벤트 전파 방지
+    
+    const currentUserId = watch("userId");
+    console.log('현재 입력된 아이디:', currentUserId); // 디버깅 로그 추가
+    
+    if (!currentUserId) {
+      setUserIdCheckMessage('아이디를 먼저 입력해주세요.');
+      setIsUserIdChecked(false);
+      return;
+    }
+    
+    // 아이디 형식 검증
+    const userIdRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{6,}$/;
+    if (!userIdRegex.test(currentUserId)) {
+      setUserIdCheckMessage('영문과 숫자를 포함한 6자리 이상으로 입력해주세요.');
+      setIsUserIdChecked(false);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/check-userid`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: currentUserId
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        setUserIdCheckMessage('사용 가능한 아이디입니다.');
+        setIsUserIdChecked(true);
+      } else {
+        setUserIdCheckMessage(result.message || '이미 사용 중인 아이디입니다.');
+        setIsUserIdChecked(false);
+      }
+    } catch (error) {
+      console.error('중복확인 오류:', error);
+      setUserIdCheckMessage('중복확인 중 오류가 발생했습니다.');
+      setIsUserIdChecked(false);
+    }
+  };
 
   // 이메일 도메인 선택 핸들러
   const handleEmailDomainSelect = (domain) => {
@@ -100,42 +152,44 @@ const SignUpInfo = () => {
       <form onSubmit={handleSubmit(async (datas) => {
         console.log('폼 데이터:', datas);
         
+        // 중복확인 완료 여부 확인
+        if (!isUserIdChecked) {
+          alert('아이디 중복확인을 완료해주세요.');
+          return;
+        }
+        
         try {
-          // 2단계: 회원정보 입력 API 호출
-          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/api/signup`, {
+          // 디버깅: 전송할 데이터 확인
+          const requestData = {
+            user_id: datas.userId,
+            password: datas.password,
+            name: datas.name,
+            tel: datas.phone,
+            birth: datas.birthday,
+            email: datas.email ? `${datas.email}@${selectedEmailDomain === "직접입력" ? datas.customDomain : selectedEmailDomain}` : null
+          };
+          console.log('전송할 데이터:', requestData);
+          console.log('환경변수 URL:', process.env.REACT_APP_BACKEND_URL);
+          
+          // 1단계: 기본 회원가입 (임시 데이터만 반환, DB 저장 안함)
+          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/register`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-              userId: datas.userId,
-              password: datas.password,
-              name: datas.name,
-              phone: datas.phone,
-              birthday: datas.birthday,
-              email: datas.email ? `${datas.email}@${selectedEmailDomain === "직접입력" ? datas.customDomain : selectedEmailDomain}` : null
-            })
+            body: JSON.stringify(requestData)
           });
 
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || '회원정보 입력에 실패했습니다.');
+            throw new Error(errorData.message || '회원가입 중 오류가 발생했습니다.');
           }
 
           const result = await response.json();
-          console.log('회원정보 입력 성공:', result);
+          console.log('기본 정보 입력 성공:', result);
 
-          // 사용자 이름을 localStorage에 저장
-          localStorage.setItem('userName', datas.name);
-          
-          // 임시 사용자 정보를 localStorage에 저장 (프로필 등록 단계에서 사용)
-          localStorage.setItem('tempUserData', JSON.stringify({
-            userId: datas.userId,
-            name: datas.name,
-            phone: datas.phone,
-            birthday: datas.birthday,
-            email: datas.email ? `${datas.email}@${selectedEmailDomain === "직접입력" ? datas.customDomain : selectedEmailDomain}` : null
-          }));
+          // 임시 데이터를 localStorage에 저장 (DB 저장 안됨)
+          localStorage.setItem('tempUserData', JSON.stringify(result.tempData));
           
           // 다음 단계로 이동 (프로필 등록)
           navigate('/sign-up/profile');
@@ -157,14 +211,28 @@ const SignUpInfo = () => {
               placeholder="아이디를 입력해주세요."
               buttonText="중복확인"
               variant="default"
+              onButtonClick={handleUserIdCheck}
               {...register("userId", {
                 required: true,
                 pattern: {
                   value: /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{6,}$/,
                   message: "영문과 숫자를 포함한 6자리 이상으로 입력해주세요"
+                },
+                onChange: (e) => {
+                  // 아이디가 변경되면 중복확인 상태 초기화
+                  setIsUserIdChecked(false);
+                  setUserIdCheckMessage('');
                 }
               })}
             />
+            {userIdCheckMessage && (
+              <S.ConfirmMessage style={{ 
+                color: isUserIdChecked ? '#4CAF50' : '#f44336',
+                marginTop: '8px'
+              }}>
+                {userIdCheckMessage}
+              </S.ConfirmMessage>
+            )}
             {errors && errors?.userId?.type === "required" && (
               <S.ConfirmMessage>아이디를 입력해주세요</S.ConfirmMessage>
             )}
@@ -311,13 +379,13 @@ const SignUpInfo = () => {
 
         {/*이메일*/}
         <S.SignUpInfoInputWrapper>
-          <Text.Body2 fontWeight="600">
-            이메일<RequiredSpan></RequiredSpan>
+                      <Text.Body2 fontWeight="600">
+            이메일
           </Text.Body2>
           <S.EmailWrapper>
             <BasicInput 
               type="text" 
-              placeholder="이메일을 입력해주세요." 
+              placeholder="이메일을 입력해주세요. (선택사항)" 
               {...register("email")}
             />
             <Text.Button2>@</Text.Button2>    
@@ -349,7 +417,6 @@ const SignUpInfo = () => {
         </S.ConfirmButtonWrapper>
         </S.SignUpInfoWrapper>
       </form>
-
   );
 };
 

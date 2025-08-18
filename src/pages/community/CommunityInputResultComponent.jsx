@@ -3,12 +3,12 @@ import S from './style';
 import BasicInput from '../../components/input/BasicInput';
 import PopupCardLarge from '../../components/popUp/PopupCardLarge';
 
-const CommunityInputResultComponent = ({post, openPost, togglePost, 
+const CommunityInputResultComponent = ({post,setPost, openPost, togglePost, 
   handleComment,handleLike,setCommentInput,commentInput,
   countComment, setCountComment, deletePost, deleteComment, toggleReplyInput, openReplyInput,
   replyInput, setReplyInput, addReply, setOpenReplyInput, deleteReply}) => {
 
-
+// 시간 표시
 const getTime = (time) => {
   const now = new Date();
   const postTime = new Date(time);
@@ -42,6 +42,161 @@ const getTotalCommentCount = (commentList) => {
   })
   return count;
 }
+
+// 좋아요 토글
+const onToggleLike = async (postItem) => {
+  const prevLiked = postItem.liked;
+  const prevLikeCount = postItem.likeCount;
+
+  setPost((prev) => 
+    prev.map((p) => 
+      p.id === postItem.id
+        ? {
+          ...p,
+          liked: !p.liked,
+          likeCount: p.liked ? p.likeCount - 1: p.likeCount + 1,
+        }
+        : p
+    )
+  );
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/community/api/toggle-like/${postItem.id}`,{
+      method:'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({post_id: postItem.id, liked: prevLiked}),
+    });
+    if (!response.ok) throw new Error(`좋아요 실패: ${response.status}`);
+    const data = await response.json().catch(() => ({}));
+    if (typeof data?.like_count === 'number') {
+      setPost(prev => prev.map(p => 
+        p.id === postItem.id ? { ...p, likeCount: data.like_count} : p
+      ))
+    }
+
+  } catch (error) {
+    console.error(error);
+
+    setPost((prev) =>
+      prev.map((p) =>
+        p.id === postItem.id
+          ? {...p, liked: prevLiked, likeCount: prevLikeCount}
+          : p
+      )
+    );
+    alert('좋아요 처리 중 오류 발생')
+  }
+}
+
+// 댓글 등록
+const onAddComment = async (postId, text) => {
+  const trimmed = (text || '').trim();
+  if (!trimmed) return;
+
+  const tempId = Date.now();
+  const tempComment = {
+    id: tempId,
+    text: trimmed,
+    createdAt: new Date().toISOString(),
+    replies: [],
+  }
+
+  setPost((prev) =>
+    prev.map((p) => 
+      p.id === postId
+        ? { ...p, commentList: [...(p.commentList || []), tempComment]}
+        : p
+    )
+  );
+
+  try {
+    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/community/api/register-reply`,{
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        post_id: postId,
+        user_id:'', //로그인 후
+        reply_content: trimmed,
+      }),
+    });
+    if (!res.ok) throw new Error(`댓글 등록 실패: ${res.status}`);
+    const data = await res.json().catch(() => ({}));
+    const serverReplyId = data?.reply?.reply_id;
+    const serverCreatedAt = data?.reply?.created_at;
+
+    setPost((prev) => 
+      prev.map((p) => {
+        if(p.id !== postId) return p;
+        return {
+          ...p,
+          commentList: p.commentList.map((c) =>
+            c.id === tempId
+              ? {
+                ...c,
+                id: serverReplyId || c.id,
+                createdAt: serverCreatedAt || c.createdAt,
+              }
+              :c
+          ),
+        }
+      })
+    );
+  } catch (e) {
+    console.error(e);
+    setPost((prev) =>
+      prev.map((p) => 
+        p.id === postId
+          ? {
+            ...p,
+            commentList: p.commentList.filter((c) => c.id !== tempId)
+          }
+          :p
+      )
+    );
+    alert('댓글 등록 중 오류 발생')
+  } finally {
+    // 입력창 비우기
+    setCommentInput((prev) => ({...prev, [postId]: '' }));
+  }
+}
+
+// 게시글 삭제
+const onRemovePost = async (postId) => {
+  try{
+    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/community/api/remove-post/${postId}`, {
+      method:'DELETE',
+    });
+    if (!res.ok) throw new Error(`게시글 삭제 실패: ${res.status}`);
+    await res.json().catch(() => ({}));
+
+    setPost(prev => prev.filter(p => p.id !== postId));
+  } catch (e) {
+    console.error(e);
+    alert('게시글 삭제 중 오류 발생')
+  }
+};
+
+// 댓글 삭제
+const onRemoveReply = async (postId, replyId) => {
+  try{
+    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/community/api/remove-reply/${replyId}`, {
+      method:'DELETE',
+
+    });
+    if (!res.ok) throw new Error(`댓글 삭제 실패: ${res.status}`);
+    await res.json().catch(() => ({}));
+
+    setPost(prev => 
+      prev.map(p => 
+        p.id === postId
+          ? { ...p, commentList: p.commentList.filter(c => c.id !== replyId)}
+          : p
+      ));
+  } catch (e) {
+    console.error(e);
+    alert('댓글 삭제 중 오류 발생')
+  }
+}
   
 
 return (  
@@ -65,7 +220,7 @@ return (
             <S.TRTitle>{postItem.title}</S.TRTitle>
             <S.HCTBWrapper>
               {!isOpen && (<S.HeartCommentTop>
-                  <S.HeartButton onClick={()=> handleLike(postItem.id)} type='button'
+                  <S.HeartButton onClick={()=> onToggleLike(postItem)} type='button'
                     $liked={postItem.liked}  
                   >
                     <img src={postItem.liked ? "/assets/icons/heart-click.svg" : "/assets/icons/heart.svg"}  alt="좋아요" />
@@ -89,7 +244,7 @@ return (
             </S.TextResult>
             <S.HeartLine>
               <S.HeartComment>
-                <S.HeartButton onClick={()=> handleLike(postItem.id)} type='submit'>
+                <S.HeartButton onClick={()=> onToggleLike(postItem)} type='submit'>
                   <img src={postItem.liked ? "/assets/icons/heart-click.svg" : "/assets/icons/heart.svg"} width={24} height={24} alt="좋아요" />
                 </S.HeartButton>
                 <S.HeartCommentCount>{postItem.likeCount}</S.HeartCommentCount>
@@ -101,7 +256,7 @@ return (
               <S.DeleteButton className='DeleteText' 
               onClick={() => {
                 setIsLargeOpenText(true);
-                setShowConfirm(() => () => deletePost(postItem.id))
+                setShowConfirm(() => () => onRemovePost(postItem.id))
               }
                 } >삭제하기</S.DeleteButton>
             </S.HeartLine>
@@ -122,7 +277,7 @@ return (
                     <S.PlusComment onClick={() => toggleReplyInput(comment.id)}>댓글 남기기</S.PlusComment>
                     <S.DeleteCommentButton onClick={() => {
                       setIsLargeOpenComment(true);
-                      setShowConfirm(() => () => deleteComment(postItem.id,comment.id))
+                      setShowConfirm(() => () => onRemoveReply(postItem.id,comment.id))
                     }}>삭제하기</S.DeleteCommentButton>
                   </S.CommentLine>
                   <S.Line/>
@@ -180,8 +335,7 @@ return (
               onChange={(e) => setCommentInput({...commentInput, [postItem.id]: e.target.value})} 
               onKeyDown={(e) => {
                 if(e.key === "Enter") {
-                  handleComment(postItem.id, commentInput[postItem.id]);
-                  setCommentInput({...commentInput, [postItem.id]: ""});
+                  onAddComment(postItem.id, commentInput[postItem.id])
                 }
               }}/>
             </S.CommentWrapper>
