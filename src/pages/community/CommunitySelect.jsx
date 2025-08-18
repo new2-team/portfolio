@@ -3,11 +3,10 @@ import S from './style';
 import SelectBox from '../../components/selectBox/SelectBox';
 import BasicInput from '../../components/input/BasicInput';
 
-const CommunitySelect = () => {
-  const [activeFilter, setActiveFilter] = useState("최신순");
+const CommunitySelect = ({activeFilter,onChange}) => {
 
   const handleFilterClick = (filterName) => {
-    setActiveFilter(filterName)
+    onChange(filterName)
   }
 
   return (
