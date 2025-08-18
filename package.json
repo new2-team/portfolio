@@ -30,12 +30,8 @@
     "react-time-picker": "^8.0.2",
     "redux": "^5.0.1",
     "redux-actions": "^3.0.3",
-<<<<<<< HEAD
     "socket.io-client": "^4.8.1",
-    "styled-components": "^6.1.18",
-=======
     "styled-components": "^6.1.19",
->>>>>>> b692c5cf240caba1cbc493b31003d18b8a5ae2de
     "styled-reset": "^4.5.2",
     "web-vitals": "^2.1.0"
   },

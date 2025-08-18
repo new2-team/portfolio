@@ -81,6 +81,8 @@ S.OptionText = styled(Text.Body2)`
 /* ─── 옵션 카드 ─────────────────────────────────────────── */
 S.OptionCard = styled.div`
   flex: 1;
+  width: 360px; 
+  height: 360px;   /* 카드 높이 고정 */
   background: #fff;
   border: ${({ selected, theme }) =>
     selected
@@ -100,10 +102,10 @@ S.OptionCard = styled.div`
   }
 
   img {
-    max-width: 100%;
-    max-height: 260px;
-    object-fit: cover;
-    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* 비율 유지하면서 꽉 채우기 */
+    display: block;
   }
 `;
 
@@ -131,13 +133,13 @@ S.NextButton = styled(BasicButton)`
   font-size: ${({ theme }) => theme.FONT_SIZE.button2};
 `;
 
-/* ─── Footer ────────────────────────────────────────────── */
-S.Footer = styled.footer`
-  text-align: center;
-  padding: 24px 0;
-  background: ${({ theme }) => theme.PALLETE.primary.main};
-  color: ${({ theme }) => theme.PALLETE.text.white};
-  font-size: ${({ theme }) => theme.FONT_SIZE.caption2};
-`;
+// /* ─── Footer ────────────────────────────────────────────── */
+// S.Footer = styled.footer`
+//   text-align: center;
+//   padding: 24px 0;
+//   background: ${({ theme }) => theme.PALLETE.primary.main};
+//   color: ${({ theme }) => theme.PALLETE.text.white};
+//   font-size: ${({ theme }) => theme.FONT_SIZE.caption2};
+// `;
 
 export default S;

@@ -346,26 +346,6 @@ const AddProfile = ({ onProfileComplete }) => {
         if (onProfileComplete) {
             onProfileComplete(profileData);
         }
-        
-        // 소셜 로그인 사용자인지 확인 (토큰이 있으면 소셜 로그인)
-        const isSocialLogin = localStorage.getItem('jwt_token');
-        
-        if (isSocialLogin) {
-            // 소셜 로그인 사용자: 건강정보 등록 페이지로 이동
-            navigate('/profile/add-health', { 
-                state: { 
-                    profileData: profileData,
-                    isSocialLogin: true 
-                } 
-            });
-        } else {
-            // 일반 회원가입: 회원가입 완료 페이지로 이동
-            navigate('/sign-up/complete', { 
-                state: { 
-                    profileData: profileData 
-                } 
-            });
-        }
     };
 
     // 에러 메시지 컴포넌트

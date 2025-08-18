@@ -5,7 +5,7 @@ import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import S from './style2';
 
-const Diary = ({ eventId }) => {
+const Diary = ({ eventId, scheduleDiary }) => {
   const [text, setText] = useState('');
   const [image, setImage] = useState(null);
 

@@ -1,8 +1,5 @@
 import styled from "styled-components";
-<<<<<<< HEAD
-=======
-import { flexCenter, flexColumn, flexColumnCenter } from "../../styles/common";
->>>>>>> b692c5cf240caba1cbc493b31003d18b8a5ae2de
+import { flexColumn } from "../../styles/common";
 import { spacingProps } from "../../styles/spacingProps";
 
 const S = {};
