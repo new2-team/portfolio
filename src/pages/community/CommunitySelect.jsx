@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import S from './style';
-import SelectBox from '../../components/selectBox/SelectBox';
+
+import { useState } from 'react';
 import BasicInput from '../../components/input/BasicInput';
+import SelectBox from '../../components/selectBox/SelectBox';
+import S from './style';
 
 const CommunitySelect = ({activeFilter,onChange}) => {
 

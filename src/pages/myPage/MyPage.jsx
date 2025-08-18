@@ -1,7 +1,5 @@
-import React from 'react';
 import S from './style';
-import ChattingWidget from '../chat/ChattingWidget';
-import Profile from './mypageComponent/profile/Profile';
+
 import Friends from './mypageComponent/friends/Friends';
 
 // 프로필
