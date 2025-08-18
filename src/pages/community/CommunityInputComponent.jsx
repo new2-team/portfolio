@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
-import S from './style';
-import BasicInput from '../../components/input/BasicInput';
-import BasicButton from '../../components/button/BasicButton';
+import { useState } from 'react';
 import PopupCardLarge from '../../components/popUp/PopupCardLarge';
-import TextArea from '../../components/textArea/TextArea';
 import CommunityTextAreaComponent from './CommunityTextAreaComponent';
+import S from './style';
 
 
 
-const CommunityInputComponent = ({post, setPost}) => {
+const CommunityInputComponent = ({post, setPost, error}) => {
   const [newPost, setNewPost] = useState({title:'', content:''})
   const [showConfirm, setShowConfirm] = useState(false)
   const handleConfirm = async () => {
