@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser, setUserStatus } from "../../components/modules/user";
 import BasicButton from "../../components/button/BasicButton";
 import Text from "../../components/text/size";
 import BasicInput from "../../components/input/BasicInput";
@@ -17,6 +20,72 @@ import MiniFooter from "../../components/layout/footer/MiniFooter";
 import RadioGroupExample from "../../components/radio/RadioGroupExample";
 
 const Main = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  // 소셜 로그인 처리
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const accessToken = urlParams.get('accessToken');
+    
+    if (accessToken) {
+      // URL에서 accessToken 제거
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+      
+      // 토큰 저장
+      localStorage.setItem('jwt_token', accessToken);
+      
+      // 토큰으로 사용자 정보 가져오기
+      const fetchUserInfo = async () => {
+        try {
+          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/jwt`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (response.ok) {
+            const responseData = await response.json();
+            console.log('소셜 로그인 응답 데이터:', responseData);
+            
+            const { user, isNewUser, message } = responseData;
+            
+            // 사용자 정보 저장
+            dispatch(setUser(user));
+            dispatch(setUserStatus(true));
+            
+            console.log('사용자 정보:', user);
+            console.log('신규 회원 여부:', isNewUser);
+            console.log('메시지:', message);
+            
+            // 신규 회원이거나 프로필이 없으면 프로필 등록 페이지로 이동
+            if (isNewUser || !user.dogProfile) {
+              console.log('신규 회원 또는 프로필 없음 - 프로필 등록 페이지로 이동');
+              navigate('/profile/add');
+            } else {
+              // 기존 회원이고 프로필이 있으면 메인 페이지 유지
+              console.log('기존 회원 - 메인 페이지 유지');
+            }
+          } else {
+            console.error('토큰 검증 실패');
+            localStorage.removeItem('jwt_token');
+            dispatch(setUserStatus(false));
+          }
+        } catch (error) {
+          console.error('사용자 정보 가져오기 실패:', error);
+          localStorage.removeItem('jwt_token');
+          dispatch(setUserStatus(false));
+        }
+      };
+
+      fetchUserInfo();
+    }
+  }, [location, navigate, dispatch]);
+
   return (
     <Container>
       <section>

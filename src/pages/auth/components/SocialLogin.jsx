@@ -13,17 +13,17 @@ const SocialLogin = (props) => {
 
         <S.IConArea mt="20">
           <S.Icon>
-            <a href='http://localhost:8080/auth/kakao'>
+            <a href='http://localhost:8000/auth/kakao'>
               <img src="/assets/img/kakao.png" alt="kakao"/>
             </a>
           </S.Icon>
           <S.Icon>
-            <a href='http://localhost:8080/auth/naver'>
+            <a href='http://localhost:8000/auth/naver'>
               <img src="/assets/img/naver.png" alt="naver"/>
             </a>
           </S.Icon> 
           <S.Icon>
-            <a href='http://localhost:8080/auth/google'>
+            <a href='http://localhost:8000/auth/google'>
               <img src="/assets/img/google.png" alt="google"/>
             </a>
           </S.Icon>      

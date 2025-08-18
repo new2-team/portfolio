@@ -38,6 +38,7 @@ const AddHealthProfile = () => {
     const dispatch = useDispatch();
     const isEditMode = location.state?.mode === 'edit';
     const userData = location.state?.userData || {};
+    const currentUser = useSelector(state => state.user.currentUser);
 
     const [form, setForm] = useState({
         vaccine : isEditMode ? userData.vaccine || ['DHPP'] : ['DHPP'], // 기본값 설정
@@ -227,117 +228,184 @@ const AddHealthProfile = () => {
         } else {
             // 신규 등록 모드일 때 처리 - 최종 회원가입 완료 API 호출
             try {
-                // localStorage에서 임시 사용자 정보 가져오기
-                const tempUserData = JSON.parse(localStorage.getItem('tempUserData') || '{}');
+                // 소셜 로그인 사용자인지 확인
+                const isSocialLogin = localStorage.getItem('jwt_token');
+                const profileData = location.state?.profileData;
                 
-                if (!tempUserData.user_id) {
-                    alert('사용자 정보가 없습니다. 다시 로그인해주세요.');
-                    return;
-                }
-                
-                // 간단하게 필요한 데이터만 전송
-                const simpleData = {
-                    user_id: tempUserData.user_id,
-                    password: tempUserData.password,
-                    name: tempUserData.name,
-                    tel: tempUserData.tel,
-                    birth: tempUserData.birth,
-                    email: tempUserData.email,
-                    ad_yn: tempUserData.ad_yn,
-                    pri_yn: tempUserData.pri_yn,
-                    type: tempUserData.type,
-                    // 강아지 프로필 (이미지 경로만)
-                    dogProfile: {
-                        name: tempUserData.dogProfile?.name,
-                        weight: tempUserData.dogProfile?.weight,
-                        birthDate: tempUserData.dogProfile?.birthDate,
-                        gender: tempUserData.dogProfile?.gender,
-                        address: tempUserData.dogProfile?.address,
-                        breed: tempUserData.dogProfile?.breed,
-                        custombreed: tempUserData.dogProfile?.custombreed,
-                        nickname: tempUserData.dogProfile?.nickname,
-                        favoriteSnack: tempUserData.dogProfile?.favoriteSnack,
-                        walkingCourse: tempUserData.dogProfile?.walkingCourse,
-                        messageToFriend: tempUserData.dogProfile?.messageToFriend,
-                        charactor: tempUserData.dogProfile?.charactor,
-                        favorites: tempUserData.dogProfile?.favorites || [1], // 실제 선택된 값들 사용
-                        cautions: tempUserData.dogProfile?.cautions || [1],  // 실제 선택된 값들 사용
-                        neutralization: tempUserData.dogProfile?.neutralization,
-                        profileImage: tempUserData.dogProfile?.profileImage || null // 이미지 경로만
-                    },
-                    // 건강정보
-                    healthProfile: {
-                        vaccine: ['DHPP'],
-                        hospital: finalData.hospital || '',
-                        visitCycle: finalData.visit || '',
-                        lastVisit: finalData.lastDay || null,
-                        allergyCause: finalData.Cause || '',
-                        allergySymptom: (finalData.Symptom || []).map(getSymptomTitle).filter(Boolean)
+                if (isSocialLogin && profileData) {
+                    // 소셜 로그인 사용자: 프로필과 건강정보를 함께 저장
+                    console.log('소셜 로그인 사용자 최종 회원가입 처리');
+                    
+                    const socialUserData = {
+                        // 소셜 로그인 사용자 정보 (Redux에서 가져오기)
+                        user_id: currentUser?.user_id,
+                        name: currentUser?.name,
+                        email: currentUser?.email,
+                        profileImage: currentUser?.profileImage,
+                        // 강아지 프로필 정보
+                        dogProfile: {
+                            ...profileData,
+                            profileImage: profileData.profileImage || currentUser?.profileImage
+                        },
+                        // 건강정보
+                        healthProfile: {
+                            vaccine: finalData.vaccine || ['DHPP'],
+                            hospital: finalData.hospital || '',
+                            visitCycle: finalData.visit || '',
+                            lastVisit: finalData.lastDay || null,
+                            allergyCause: finalData.Cause || '',
+                            allergySymptom: (finalData.Symptom || []).map(getSymptomTitle).filter(Boolean)
+                        }
+                    };
+                    
+                    console.log('소셜 로그인 사용자 데이터:', socialUserData);
+                    
+                    // 소셜 로그인 사용자 최종 회원가입 API 호출
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/social-complete`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(socialUserData)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || '소셜 로그인 회원가입 완료 중 오류가 발생했습니다.');
                     }
-                };
-
-                console.log('간단한 데이터로 전송:');
-                console.log('프로필 이미지 경로:', simpleData.dogProfile.profileImage);
-                console.log('favorites (선택된 값들):', simpleData.dogProfile.favorites);
-                console.log('cautions (선택된 값들):', simpleData.dogProfile.cautions);
-                console.log('allergySymptom (원본):', finalData.Symptom);
-                console.log('allergySymptom (변환됨):', simpleData.healthProfile.allergySymptom);
-                console.log('데이터 크기:', JSON.stringify(simpleData).length, 'bytes');
-                
-                // 최종 단계: 모든 정보를 한번에 DB에 저장
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/complete-registration`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(simpleData)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || '회원가입 완료 중 오류가 발생했습니다.');
-                }
-
-                const result = await response.json();
-                console.log('회원가입 완료 성공:', result);
-                
-                // 사용자 이름을 localStorage에 저장 (SignUpComplete에서 사용)
-                if (tempUserData.userName || tempUserData.name) {
-                    const nameToSave = tempUserData.userName || tempUserData.name;
-                    localStorage.setItem('userName', nameToSave);
-                    console.log('userName localStorage에 저장됨:', nameToSave);
-                }
-                
-                // Redux에 로그인 상태와 사용자 정보 설정 (헤더 변경용)
-                dispatch(setUser({
-                    user_id: tempUserData.user_id,
-                    name: tempUserData.userName || tempUserData.name,
-                    email: tempUserData.email,
-                    profileImage: tempUserData.dogProfile?.profileImage || null
-                }));
-                dispatch(setUserStatus(true));
-                
-                // 프로필 이미지 경로를 localStorage에 저장 (새로고침 시 복원용)
-                if (tempUserData.dogProfile?.profileImage) {
-                    localStorage.setItem('profileImage', tempUserData.dogProfile.profileImage);
-                    console.log('프로필 이미지 경로 localStorage에 저장됨:', tempUserData.dogProfile.profileImage);
+                    
+                    const result = await response.json();
+                    console.log('소셜 로그인 회원가입 완료 성공:', result);
+                    
+                    // 사용자 정보 업데이트
+                    if (result.user) {
+                        dispatch(setUser(result.user));
+                        dispatch(setUserStatus(true));
+                    }
+                    
+                    // 회원가입 완료 페이지로 이동
+                    navigate('/sign-up/complete', { 
+                        state: { 
+                            isSocialLogin: true,
+                            userName: currentUser?.name 
+                        } 
+                    });
+                    
                 } else {
-                    console.log('프로필 이미지 경로가 없음:', tempUserData.dogProfile?.profileImage);
+                    // 일반 회원가입 사용자 처리 (기존 로직)
+                    // localStorage에서 임시 사용자 정보 가져오기
+                    const tempUserData = JSON.parse(localStorage.getItem('tempUserData') || '{}');
+                    
+                    if (!tempUserData.user_id) {
+                        alert('사용자 정보가 없습니다. 다시 로그인해주세요.');
+                        return;
+                    }
+                    
+                    // 간단하게 필요한 데이터만 전송
+                    const simpleData = {
+                        user_id: tempUserData.user_id,
+                        password: tempUserData.password,
+                        name: tempUserData.name,
+                        tel: tempUserData.tel,
+                        birth: tempUserData.birth,
+                        email: tempUserData.email,
+                        ad_yn: tempUserData.ad_yn,
+                        pri_yn: tempUserData.pri_yn,
+                        type: tempUserData.type,
+                        // 강아지 프로필 (이미지 경로만)
+                        dogProfile: {
+                            name: tempUserData.dogProfile?.name,
+                            weight: tempUserData.dogProfile?.weight,
+                            birthDate: tempUserData.dogProfile?.birthDate,
+                            gender: tempUserData.dogProfile?.gender,
+                            address: tempUserData.dogProfile?.address,
+                            breed: tempUserData.dogProfile?.breed,
+                            custombreed: tempUserData.dogProfile?.custombreed,
+                            nickname: tempUserData.dogProfile?.nickname,
+                            favoriteSnack: tempUserData.dogProfile?.favoriteSnack,
+                            walkingCourse: tempUserData.dogProfile?.walkingCourse,
+                            messageToFriend: tempUserData.dogProfile?.messageToFriend,
+                            charactor: tempUserData.dogProfile?.charactor,
+                            favorites: tempUserData.dogProfile?.favorites || [1], // 실제 선택된 값들 사용
+                            cautions: tempUserData.dogProfile?.cautions || [1],  // 실제 선택된 값들 사용
+                            neutralization: tempUserData.dogProfile?.neutralization,
+                            profileImage: tempUserData.dogProfile?.profileImage || null // 이미지 경로만
+                        },
+                        // 건강정보
+                        healthProfile: {
+                            vaccine: ['DHPP'],
+                            hospital: finalData.hospital || '',
+                            visitCycle: finalData.visit || '',
+                            lastVisit: finalData.lastDay || null,
+                            allergyCause: finalData.Cause || '',
+                            allergySymptom: (finalData.Symptom || []).map(getSymptomTitle).filter(Boolean)
+                        }
+                    };
+
+                    console.log('간단한 데이터로 전송:');
+                    console.log('프로필 이미지 경로:', simpleData.dogProfile.profileImage);
+                    console.log('favorites (선택된 값들):', simpleData.dogProfile.favorites);
+                    console.log('cautions (선택된 값들):', simpleData.dogProfile.cautions);
+                    console.log('allergySymptom (원본):', finalData.Symptom);
+                    console.log('allergySymptom (변환됨):', simpleData.healthProfile.allergySymptom);
+                    console.log('데이터 크기:', JSON.stringify(simpleData).length, 'bytes');
+                    
+                    // 최종 단계: 모든 정보를 한번에 DB에 저장
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/complete-registration`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(simpleData)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || '회원가입 완료 중 오류가 발생했습니다.');
+                    }
+
+                    const result = await response.json();
+                    console.log('회원가입 완료 성공:', result);
+                    
+                    // 사용자 이름을 localStorage에 저장 (SignUpComplete에서 사용)
+                    if (tempUserData.userName || tempUserData.name) {
+                        const nameToSave = tempUserData.userName || tempUserData.name;
+                        localStorage.setItem('userName', nameToSave);
+                        console.log('userName localStorage에 저장됨:', nameToSave);
+                    }
+                    
+                    // Redux에 로그인 상태와 사용자 정보 설정 (헤더 변경용)
+                    dispatch(setUser({
+                        user_id: tempUserData.user_id,
+                        name: tempUserData.userName || tempUserData.name,
+                        email: tempUserData.email,
+                        profileImage: tempUserData.dogProfile?.profileImage || null
+                    }));
+                    dispatch(setUserStatus(true));
+                    
+                    // 프로필 이미지 경로를 localStorage에 저장 (새로고침 시 복원용)
+                    if (tempUserData.dogProfile?.profileImage) {
+                        localStorage.setItem('profileImage', tempUserData.dogProfile.profileImage);
+                        console.log('프로필 이미지 경로 localStorage에 저장됨:', tempUserData.dogProfile.profileImage);
+                    } else {
+                        console.log('프로필 이미지 경로가 없음:', tempUserData.dogProfile?.profileImage);
+                    }
+                    
+                    console.log('=== 프로필 이미지 저장 확인 ===');
+                    console.log('tempUserData.dogProfile:', tempUserData.dogProfile);
+                    console.log('localStorage profileImage:', localStorage.getItem('profileImage'));
+                    
+                    // user_id도 localStorage에 저장 (새로고침 시 로그인 상태 유지용)
+                    localStorage.setItem('user_id', tempUserData.user_id);
+                    console.log('user_id localStorage에 저장됨:', tempUserData.user_id);
+                    
+                    // 회원가입 완료! localStorage 정리 (프로필 이미지는 유지)
+                    localStorage.removeItem('tempUserData');
+                    
+                    // 회원가입 완료 페이지로 이동
+                    navigate('/sign-up/complete');
                 }
-                
-                console.log('=== 프로필 이미지 저장 확인 ===');
-                console.log('tempUserData.dogProfile:', tempUserData.dogProfile);
-                console.log('localStorage profileImage:', localStorage.getItem('profileImage'));
-                
-                // user_id도 localStorage에 저장 (새로고침 시 로그인 상태 유지용)
-                localStorage.setItem('user_id', tempUserData.user_id);
-                console.log('user_id localStorage에 저장됨:', tempUserData.user_id);
-                
-                // 회원가입 완료! localStorage 정리 (프로필 이미지는 유지)
-                localStorage.removeItem('tempUserData');
-                
-                // 회원가입 완료 페이지로 이동
-                navigate('/sign-up/complete');
             } catch (error) {
                 console.error('회원가입 완료 오류:', error);
                 alert(error.message);

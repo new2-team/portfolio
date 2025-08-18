@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import BasicButton from '../../components/button/BasicButton';
 import S from './style';
 import Text from '../../components/text/size';
@@ -16,6 +18,10 @@ const AddProfile = ({ onProfileComplete }) => {
     const calendarRef = useRef(null);
     const fileInputRef = useRef(null);
     const location = useLocation();
+    const navigate = useNavigate();
+    
+    // Redux에서 사용자 정보 가져오기
+    const currentUser = useSelector(state => state.user.currentUser);
     
     // React Hook Form 설정
     const { register, handleSubmit, control, setValue, watch, getValues, formState: { isSubmitting, errors } } = useForm({ 
@@ -48,11 +54,29 @@ const AddProfile = ({ onProfileComplete }) => {
             setValue("cautions", [1]); // 필수사항이므로 기본값 [1]
             setValue("gender", "male");
             
+            // 소셜 로그인 사용자의 경우 기본 정보 설정
+            if (currentUser) {
+                // 사용자 이름이 있으면 설정
+                if (currentUser.name) {
+                    setValue("ownerName", currentUser.name);
+                }
+                
+                // 이메일이 있으면 설정
+                if (currentUser.email) {
+                    setValue("email", currentUser.email);
+                }
+                
+                // 프로필 이미지가 있으면 설정
+                if (currentUser.profileImage) {
+                    setImageSrc(currentUser.profileImage);
+                }
+            }
+            
             // 상태 동기화
             setSelectedFavorite([1]);
             setSelectedCautions([1]);
         }
-    }, [isEditMode, setValue]);
+    }, [isEditMode, setValue, currentUser]);
 
     // 품종 옵션
     const BREEDS = [
@@ -321,6 +345,26 @@ const AddProfile = ({ onProfileComplete }) => {
         
         if (onProfileComplete) {
             onProfileComplete(profileData);
+        }
+        
+        // 소셜 로그인 사용자인지 확인 (토큰이 있으면 소셜 로그인)
+        const isSocialLogin = localStorage.getItem('jwt_token');
+        
+        if (isSocialLogin) {
+            // 소셜 로그인 사용자: 건강정보 등록 페이지로 이동
+            navigate('/profile/add-health', { 
+                state: { 
+                    profileData: profileData,
+                    isSocialLogin: true 
+                } 
+            });
+        } else {
+            // 일반 회원가입: 회원가입 완료 페이지로 이동
+            navigate('/sign-up/complete', { 
+                state: { 
+                    profileData: profileData 
+                } 
+            });
         }
     };
 
