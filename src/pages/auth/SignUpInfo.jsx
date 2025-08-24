@@ -53,21 +53,8 @@ const SignUpInfo = () => {
         setTimeout(() => {
           setValue('userId', parsedData.user_id || parsedData.email.split('@')[0]);
           setValue('name', parsedData.name);
-          setValue('email', parsedData.email.split('@')[0]);
-          
-          // 이메일 도메인 자동 선택
-          if (parsedData.email) {
-            const domain = parsedData.email.split('@')[1];
-            if (domain) {
-              if (["gmail.com", "naver.com", "daum.net", "nate.com"].includes(domain)) {
-                setSelectedEmailDomain(domain);
-              } else {
-                setSelectedEmailDomain("직접입력");
-                setShowCustomDomain(true);
-                setValue("customDomain", domain);
-              }
-            }
-          }
+          // 소셜 로그인 사용자는 전체 이메일을 설정
+          setValue('email', parsedData.email);
           
           // 폼 값 강제 업데이트
           const form = document.querySelector('form');
@@ -77,7 +64,7 @@ const SignUpInfo = () => {
             const emailInput = form.querySelector('input[name="email"]');
             if (userIdInput) userIdInput.value = parsedData.user_id || parsedData.email.split('@')[0];
             if (nameInput) nameInput.value = parsedData.name;
-            if (emailInput) emailInput.value = parsedData.email.split('@')[0];
+            if (emailInput) emailInput.value = parsedData.email; // 전체 이메일 설정
           }
           
           // 소셜 로그인 사용자는 중복확인 완료 상태로 설정
@@ -207,10 +194,11 @@ const SignUpInfo = () => {
       setValue("customDomain", "");
     } else {
       setShowCustomDomain(false);
-      const emailValue = watch("email");
-      if (emailValue) {
-        setValue("email", `${emailValue}@${domain}`);
-      }
+      // 도메인만 선택하고 이메일 앞에 붙이지 않음
+      // const emailValue = watch("email");
+      // if (emailValue) {
+      //   setValue("email", `${emailValue}@${domain}`);
+      // }
     }
   };
 
@@ -306,9 +294,13 @@ const SignUpInfo = () => {
           // 소셜 로그인 사용자의 경우 이메일 정보 가져오기
           let email = null;
           if (isSocialLogin && socialUserData) {
-            email = socialUserData.email;
+            // 소셜 로그인 사용자는 입력된 이메일을 그대로 사용
+            email = datas.email;
+            console.log('소셜 로그인 사용자 - 입력된 이메일:', email);
           } else {
+            // 일반 회원가입은 분리된 필드에서 조합
             email = datas.email ? `${datas.email}@${selectedEmailDomain === "직접입력" ? datas.customDomain : selectedEmailDomain}` : null;
+            console.log('일반 회원가입 사용자 - 조합된 이메일:', email);
           }
           
           // 디버깅: 전송할 데이터 확인
@@ -595,33 +587,43 @@ const SignUpInfo = () => {
             이메일<RequiredSpan>*</RequiredSpan>
           </Text.Body2>
           <S.EmailWrapper>
-            <BasicInput 
-              type="text" 
-              placeholder="이메일을 입력해주세요." 
-              value={isSocialLogin && socialUserData?.email ? socialUserData.email.split('@')[0] : undefined}
-              readOnly={isSocialLogin}
-              style={isSocialLogin ? { backgroundColor: '#f5f5f5', cursor: 'not-allowed' } : {}}
-              {...register("email", { required: true })}
-            />
-            <Text.Button2>@</Text.Button2>    
-            <SelectBox
-              options={["gmail.com", "naver.com", "daum.net", "nate.com" , "직접입력"]}
-              placeholder="선택하세요."
-              onSelect={handleEmailDomainSelect}
-              defaultValue={isSocialLogin && socialUserData?.email ? socialUserData.email.split('@')[1] : undefined}
-            />
-            {showCustomDomain && !isSocialLogin && (
+            {isSocialLogin ? (
+              // 소셜 로그인 사용자: 전체 이메일 입력
               <BasicInput 
-                type="text" 
-                placeholder="도메인을 입력해주세요." 
-                {...register("customDomain", { required: true })}
+                type="email" 
+                placeholder="이메일을 입력해주세요." 
+                defaultValue={socialUserData?.email || ''}
+                {...register("email", { required: true })}
+                style={{ width: '100%' }}
               />
+            ) : (
+              // 일반 회원가입: 분리된 입력 필드
+              <>
+                <BasicInput 
+                  type="text" 
+                  placeholder="이메일을 입력해주세요." 
+                  {...register("email", { required: true })}
+                />
+                <Text.Button2>@</Text.Button2>    
+                <SelectBox
+                  options={["gmail.com", "naver.com", "daum.net", "nate.com" , "직접입력"]}
+                  placeholder="선택하세요."
+                  onSelect={handleEmailDomainSelect}
+                />
+                {showCustomDomain && (
+                  <BasicInput 
+                    type="text" 
+                    placeholder="도메인을 입력해주세요." 
+                    {...register("customDomain", { required: true })}
+                  />
+                )}
+              </>
             )}
           </S.EmailWrapper>
           {errors && errors?.email?.type === "required" && (
             <S.ConfirmMessage>이메일을 입력해주세요</S.ConfirmMessage>
           )}
-          {showCustomDomain && !isSocialLogin && errors && errors?.customDomain?.type === "required" && (
+          {!isSocialLogin && showCustomDomain && errors && errors?.customDomain?.type === "required" && (
             <S.ConfirmMessage>도메인을 입력해주세요</S.ConfirmMessage>
           )}
         </S.SignUpInfoInputWrapper>
