@@ -199,6 +199,8 @@ const SignUpInfo = () => {
       // if (emailValue) {
       //   setValue("email", `${emailValue}@${domain}`);
       // }
+      
+
     }
   };
 
@@ -280,6 +282,33 @@ const SignUpInfo = () => {
     }
   }, [birthYear, birthMonth, birthDay, setValue]);
 
+  // 이메일 형식 검증 함수
+  const validateEmailFormat = (localPart, domain) => {
+    if (!localPart || !domain) return false;
+    
+    // 로컬 파트 검증: 영문, 숫자, 특수문자(._-) 허용, 시작과 끝은 영문/숫자
+    const localPartRegex = /^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]$/;
+    if (!localPartRegex.test(localPart)) return false;
+    
+    // 도메인 검증: 영문, 숫자, 하이픈 허용, 시작과 끝은 영문/숫자
+    const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9](\.[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])*$/;
+    if (!domainRegex.test(domain)) return false;
+    
+    // 전체 이메일 형식 검증
+    const fullEmail = `${localPart}@${domain}`;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(fullEmail);
+  };
+
+  // 이메일 입력 시 단순히 값만 설정 (실시간 검증 제거)
+  const handleEmailInputChange = (field, value) => {
+    if (field === 'email') {
+      setValue('email', value);
+    } else if (field === 'customDomain') {
+      setValue('customDomain', value);
+    }
+  };
+
   return (
       <form onSubmit={handleSubmit(async (datas) => {
         console.log('폼 데이터:', datas);
@@ -301,6 +330,17 @@ const SignUpInfo = () => {
             // 일반 회원가입은 분리된 필드에서 조합
             email = datas.email ? `${datas.email}@${selectedEmailDomain === "직접입력" ? datas.customDomain : selectedEmailDomain}` : null;
             console.log('일반 회원가입 사용자 - 조합된 이메일:', email);
+            
+            // 일반 회원가입 사용자의 경우 이메일 형식 검증
+            if (email) {
+              const localPart = datas.email;
+              const domain = selectedEmailDomain === "직접입력" ? datas.customDomain : selectedEmailDomain;
+              
+              if (!validateEmailFormat(localPart, domain)) {
+                alert('이메일 형식이 올바르지 않습니다.\n\n올바른 형식: example@example.com\n\n- 이메일 앞부분: 영문, 숫자, 특수문자(._-)만 사용 가능\n- 도메인: 영문, 숫자, 하이픈만 사용 가능');
+                return;
+              }
+            }
           }
           
           // 디버깅: 전송할 데이터 확인
@@ -602,7 +642,10 @@ const SignUpInfo = () => {
                 <BasicInput 
                   type="text" 
                   placeholder="이메일을 입력해주세요." 
-                  {...register("email", { required: true })}
+                  {...register("email", { 
+                    required: true,
+                    onChange: (e) => handleEmailInputChange('email', e.target.value)
+                  })}
                 />
                 <Text.Button2>@</Text.Button2>    
                 <SelectBox
@@ -614,7 +657,10 @@ const SignUpInfo = () => {
                   <BasicInput 
                     type="text" 
                     placeholder="도메인을 입력해주세요." 
-                    {...register("customDomain", { required: true })}
+                    {...register("customDomain", { 
+                      required: true,
+                      onChange: (e) => handleEmailInputChange('customDomain', e.target.value)
+                    })}
                   />
                 )}
               </>
