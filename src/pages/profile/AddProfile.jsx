@@ -362,10 +362,10 @@ const AddProfile = ({ onProfileComplete }) => {
         <div style={{marginTop:"195px",marginBottom:"550px"}}>
             {/* 기본정보 섹션 */}
             <S.TitleWrap> 
-                <Text.Body1>
+                <div style={{ fontSize: '18px', lineHeight: '1.5' }}>
                     <span style={{ color: '#CE5347', fontWeight: 'bold'}}>*&nbsp;</span>
                     <S.highlight style={{ fontWeight: 'bold', fontSize: '30px'}}>기본정보</S.highlight>
-                </Text.Body1>
+                </div>
             </S.TitleWrap>
             
             {/* 이름과 몸무게 */}

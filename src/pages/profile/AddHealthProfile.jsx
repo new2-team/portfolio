@@ -238,14 +238,15 @@ const AddHealthProfile = () => {
                 // 간단하게 필요한 데이터만 전송
                 const simpleData = {
                     user_id: tempUserData.user_id,
-                    password: tempUserData.password,
                     name: tempUserData.name,
                     tel: tempUserData.tel,
                     birth: tempUserData.birth,
                     email: tempUserData.email,
                     ad_yn: tempUserData.ad_yn,
                     pri_yn: tempUserData.pri_yn,
-                    type: tempUserData.type,
+                    type: tempUserData.type || 'k', // 소셜 로그인 타입
+                    // 소셜 로그인 사용자는 password가 없으므로 제외
+                    ...(tempUserData.password && { password: tempUserData.password }),
                     // 강아지 프로필 (이미지 경로만)
                     dogProfile: {
                         name: tempUserData.dogProfile?.name,
@@ -335,12 +336,157 @@ const AddHealthProfile = () => {
                 // 회원가입 완료! localStorage 정리 (프로필 이미지는 유지)
                 localStorage.removeItem('tempUserData');
                 
+                // 임시 토큰을 실제 토큰으로 변경 (소셜 로그인 사용자)
+                const tempAccessToken = localStorage.getItem('tempAccessToken');
+                if (tempAccessToken) {
+                    localStorage.setItem('accessToken', tempAccessToken);
+                    localStorage.removeItem('tempAccessToken');
+                }
+                
                 // 회원가입 완료 페이지로 이동
                 navigate('/sign-up/complete');
             } catch (error) {
                 console.error('회원가입 완료 오류:', error);
                 alert(error.message);
             }
+        }
+    };
+
+    // 회원가입 완료 처리
+    const handleCompleteRegistration = async () => {
+        try {
+            console.log('=== 회원가입 완료 처리 시작 ===');
+            
+            // tempUserData에서 사용자 정보 가져오기
+            const tempUserData = JSON.parse(localStorage.getItem('tempUserData') || '{}');
+            console.log('tempUserData:', tempUserData);
+            
+            if (!tempUserData.user_id) {
+                throw new Error('사용자 정보를 찾을 수 없습니다. 다시 시도해주세요.');
+            }
+
+            // 소셜 로그인 사용자인지 확인
+            const isSocialLogin = tempUserData.provider && tempUserData.provider !== 'local';
+            
+            if (isSocialLogin) {
+                // 소셜 로그인 사용자: 소셜 로그인 완료 API 호출
+                console.log('소셜 로그인 사용자 - 소셜 로그인 완료 API 호출');
+                
+                const accessToken = tempUserData.accessToken;
+                if (!accessToken) {
+                    throw new Error('소셜 로그인 토큰을 찾을 수 없습니다.');
+                }
+
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/social-complete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({
+                        user_id: tempUserData.user_id,
+                        email: tempUserData.email,
+                        name: tempUserData.name,
+                        provider: tempUserData.provider,
+                        dogProfile: tempUserData.dogProfile,
+                        healthProfile: {
+                            vaccine: form.vaccine,
+                            hospital: form.hospital,
+                            visit: form.visit,
+                            lastDay: form.lastDay,
+                            Cause: form.Cause,
+                            Symptom: form.Symptom,
+                            favorites: form.favorites,
+                            cautions: form.cautions
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('소셜 로그인 완료 처리 중 오류가 발생했습니다.');
+                }
+
+                const result = await response.json();
+                console.log('소셜 로그인 완료 결과:', result);
+
+                // 소셜 로그인 완료 후 로그인 상태로 설정
+                dispatch(setUserStatus(true));
+                
+                // localStorage 정리 및 설정
+                localStorage.setItem('jwt_token', accessToken);
+                localStorage.setItem('userName', tempUserData.name);
+                localStorage.setItem('user_id', tempUserData.user_id);
+                localStorage.setItem('email', tempUserData.email);
+                
+                // 프로필 이미지가 있으면 저장
+                if (tempUserData.dogProfile?.profileImage) {
+                    localStorage.setItem('profileImage', tempUserData.dogProfile.profileImage);
+                }
+                
+                // 임시 데이터 정리
+                localStorage.removeItem('tempUserData');
+                localStorage.removeItem('socialUserData');
+                
+                // 회원가입 완료 페이지로 이동
+                navigate('/sign-up/complete');
+                
+            } else {
+                // 일반 회원가입 사용자: 기존 로직 유지
+                console.log('일반 회원가입 사용자 - 기존 로직 실행');
+                
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/complete-registration`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: tempUserData.user_id,
+                        email: tempUserData.email,
+                        name: tempUserData.name,
+                        dogProfile: tempUserData.dogProfile,
+                        healthProfile: {
+                            vaccine: form.vaccine,
+                            hospital: form.hospital,
+                            visit: form.visit,
+                            lastDay: form.lastDay,
+                            Cause: form.Cause,
+                            Symptom: form.Symptom,
+                            favorites: form.favorites,
+                            cautions: form.cautions
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('회원가입 완료 처리 중 오류가 발생했습니다.');
+                }
+
+                const result = await response.json();
+                console.log('회원가입 완료 결과:', result);
+
+                // localStorage에 사용자 정보 저장
+                localStorage.setItem('userName', tempUserData.name);
+                localStorage.setItem('user_id', tempUserData.user_id);
+                localStorage.setItem('email', tempUserData.email);
+                
+                // 프로필 이미지가 있으면 저장
+                if (tempUserData.dogProfile?.profileImage) {
+                    localStorage.setItem('profileImage', tempUserData.dogProfile.profileImage);
+                }
+                
+                // user_id도 localStorage에 저장 (새로고침 시 로그인 상태 유지용)
+                localStorage.setItem('user_id', tempUserData.user_id);
+                console.log('user_id localStorage에 저장됨:', tempUserData.user_id);
+                
+                // 회원가입 완료! localStorage 정리 (프로필 이미지는 유지)
+                localStorage.removeItem('tempUserData');
+                
+                // 회원가입 완료 페이지로 이동
+                navigate('/sign-up/complete');
+            }
+        } catch (error) {
+            console.error('회원가입 완료 오류:', error);
+            alert(error.message);
         }
     };
 
