@@ -23,9 +23,10 @@ const AcceptTerms = () => {
         const userId = searchParams.get('user_id');
         const name = searchParams.get('name');
         const email = searchParams.get('email');
-        const type = searchParams.get('type');
+        const provider = searchParams.get('provider'); // type 대신 provider 사용
+        const type = searchParams.get('type'); // 기존 type도 유지 (호환성)
 
-        console.log('AcceptTerms URL 파라미터:', { accessToken, isNewUser, userId, name, email, type });
+        console.log('AcceptTerms URL 파라미터:', { accessToken, isNewUser, userId, name, email, provider, type });
 
         // 소셜 로그인 사용자인 경우 (URL 파라미터가 있는 경우만)
         if ((isNewUser === 'true' && accessToken && userId) || 
@@ -37,10 +38,8 @@ const AcceptTerms = () => {
                 accessToken: accessToken,
                 email: decodeURIComponent(email || ''),
                 name: decodeURIComponent(name || ''),
-                provider: type || 'google',
-                type: type === 'google' ? 'google' : 
-                      type === 'kakao' ? 'kakao' : 
-                      type === 'naver' ? 'naver' : 'google',
+                provider: provider || type || 'google', // provider 우선, 없으면 type 사용
+                type: 'social', // 모든 소셜 로그인은 'social'로 통일
                 user_id: userId
             };
             
@@ -69,6 +68,11 @@ const AcceptTerms = () => {
             localStorage.setItem('isRegularSignup', 'true');
             console.log('일반 회원가입 플래그 설정 완료 - 깨끗한 상태로 시작');
         }
+        
+        // 페이지 로드 시 localStorage 상태 로깅
+        console.log('AcceptTerms 페이지 로드 후 localStorage 상태:');
+        console.log('- socialUserData:', localStorage.getItem('socialUserData'));
+        console.log('- isRegularSignup:', localStorage.getItem('isRegularSignup'));
     }, [searchParams]);
     
     // 필수 약관 동의 그룹 (useCheckGroup 활용)

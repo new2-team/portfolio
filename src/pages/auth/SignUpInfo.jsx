@@ -43,11 +43,32 @@ const SignUpInfo = () => {
     console.log('localStorage에서 읽은 socialData:', socialData);
     console.log('일반 회원가입 여부:', isRegularSignup);
     
-    if (socialData && !isRegularSignup) {
+    // 소셜 로그인 감지 로직 개선
+    const hasValidSocialData = socialData && isRegularSignup !== 'true';
+    console.log('유효한 소셜 데이터 존재 여부:', hasValidSocialData);
+    
+    if (hasValidSocialData) {
       try {
         const parsedData = JSON.parse(socialData);
-        setSocialUserData(parsedData);
-        setIsSocialLogin(true);
+        
+        // 소셜 데이터 유효성 검사 추가
+        if (parsedData && parsedData.user_id && parsedData.email && parsedData.name && parsedData.provider) {
+          setSocialUserData(parsedData);
+          setIsSocialLogin(true);
+          console.log('유효한 소셜 로그인 데이터 감지:', parsedData);
+          console.log('소셜 로그인 provider:', parsedData.provider);
+        } else {
+          console.log('소셜 데이터가 불완전함 - 일반 회원가입으로 처리');
+          console.log('누락된 필드:', {
+            user_id: !!parsedData?.user_id,
+            email: !!parsedData?.email,
+            name: !!parsedData?.name,
+            provider: !!parsedData?.provider
+          });
+          setIsSocialLogin(false);
+          setSocialUserData(null);
+          localStorage.removeItem('socialUserData'); // 불완전한 데이터 정리
+        }
         
         // 소셜 로그인 사용자의 경우 이름과 이메일을 미리 설정
         setTimeout(() => {
@@ -79,8 +100,15 @@ const SignUpInfo = () => {
       }
     } else {
       // 소셜 로그인 데이터가 없거나 일반 회원가입인 경우
+      console.log('소셜 로그인 데이터 없음 또는 일반 회원가입으로 처리');
       setIsSocialLogin(false);
       setSocialUserData(null);
+      
+      // 소셜 로그인 데이터가 있지만 isRegularSignup이 true인 경우 정리
+      if (socialData && isRegularSignup === 'true') {
+        console.log('소셜 데이터가 있지만 일반 회원가입 플래그가 설정됨 - 소셜 데이터 정리');
+        localStorage.removeItem('socialUserData');
+      }
       
       // 일반 회원가입 플래그가 있으면 일반 회원가입 모드로 설정
       if (isRegularSignup) {
@@ -350,10 +378,7 @@ const SignUpInfo = () => {
             tel: datas.phone,
             birth: datas.birthday,
             email: email,
-            type: isSocialLogin ? 
-              (socialUserData.provider === 'google' ? 'google' : 
-               socialUserData.provider === 'kakao' ? 'kakao' : 
-               socialUserData.provider === 'naver' ? 'naver' : 'social') : 'regular'
+            type: isSocialLogin ? 'social' : 'regular'  // 단순화: 소셜 로그인은 'social', 일반은 'regular'
           };
           
           console.log('전송할 데이터:', requestData);
@@ -373,6 +398,8 @@ const SignUpInfo = () => {
           console.log('API 엔드포인트:', apiEndpoint);
           console.log('API 요청 데이터:', requestBody);
           console.log('isSocialLogin:', isSocialLogin);
+          console.log('socialUserData.provider:', socialUserData?.provider);
+          console.log('전달할 provider 값:', socialUserData?.provider);
           
           const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}${apiEndpoint}`, {
             method: 'POST',
@@ -397,7 +424,7 @@ const SignUpInfo = () => {
             result.tempData.provider = socialUserData.provider;
             result.tempData.accessToken = socialUserData.accessToken;
             result.tempData.user_id = socialUserData.user_id;
-            result.tempData.type = socialUserData.provider === 'naver' ? 'n' : 'k';
+            result.tempData.type = 'social';  // 단순화: 모든 소셜 로그인은 'social'
             result.tempData.isSocialLogin = true;
           }
 
