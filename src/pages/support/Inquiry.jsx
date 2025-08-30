@@ -12,58 +12,79 @@ import RadioWithLabel from '../../components/radio/RadioWithLabel';
 import { Link } from 'react-router-dom';
 
 const Inquiry = ({isUpdate, setIsUpdate}) => {
-    
-    const [selected, handleChange] = useRadioGroup();
+  
+  const [title, setTitle] = useState("")
 
-    const [title, setTitle] = useState("")
-    const onChangeTitle = (e) => {
-      setTitle(e.target.value)
-    }
+  const onChangeTitle = (e) => {
+    setTitle(e.target.value)
+    console.log(e.target.value)
+  }
   
-    const [content, setContent] = useState("")
-    const onChangeContent = (e) => {
-      setContent(e.target.value)
-    }
+  const [content, setContent] = useState("")
+
+  const onChangeContent = (e) => {
+    setContent(e.target.value)
+    console.log(e.target.value)
+  }
   
-    const [type, setType] = useState("")
-    const onChangeType = (e) => {
-      setType(e.target.value)
-    }
+  const [type, setType] = useState("")
   
-    const [file, setFile] = useState("")
-    const onChangeFile = (e) => {
-      setFile(e.target.value)
-    }
+  const [selected, setSelected] = useState("");
   
-    const onClickPost = async (e) => {
+  const handleChange = (value) => {
+    setSelected(value);
+    console.log(value);
+    
+   const mapping = { a: 0, b: 1, c: 2, d: 3 };
+    setType(mapping[value]);
+    console.log(mapping[value]);
+  };
+  
+  const [file, setFile] = useState("")
+  const onChangeFile = (e) => {
+    setFile(e.target.value)
+  }
+
+  const onClickPost = async (e) => {
+
+    // if (!type) {
+    //   if(!window.alert('문의 유형을 선택하세요')) return;
+    // } else if (!title) {
+    //   if(!window.alert('제목을 입력하세요')) return;
+    // } else if (!content) {
+    //   if(!window.alert('내용을 입력하세요')) return;
+    // } else {
+      window.alert('저장되었습니다');
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry`, {
+        method : "POST",
+        headers : {
+          "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({
+          inquiry_id : "inquiry_test7",
+          user_id : "user_test4",
+          type : type,
+          title : title,
+          content : content,
+          file : file
+        })
+      })
+      .then((res) => {
+        if(!res.ok) throw new Error(`Response Fetching Error`);
+        return res.json()
+      })
+      .then((res) => {
+        console.log(res)
+        if(res.message) alert(res.message);
+        setTitle("")
+        setContent("")
+        setType("")
+        setFile("")
+        setIsUpdate(!isUpdate)
+      })
+      .catch(console.error)
+    // }
       
-     if(!window.alert('저장되었습니다')) return;
-     await fetch('http://localhost:8000/inquiry/api/post-inquiry', {
-       method : "POST",
-       headers : {
-         "Content-Type" : "application/json"
-       },
-       body : JSON.stringify({
-         type : type,
-         title : title,
-         content : content,
-         file : file
-       })
-     })
-     .then((res) => {
-       if(!res.ok) throw new Error(`Response Fetching Error`);
-       return res.json()
-     })
-     .then((res) => {
-       console.log(res)
-       if(res.message) alert(res.message);
-       setTitle("")
-       setContent("")
-       setType("")
-       setFile("")
-       setIsUpdate(!isUpdate) // 상태 리랜더링
-     })
-     .catch(console.error)
       
     }
 
@@ -137,7 +158,7 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
                     문의유형&nbsp;
                     <FontAwesomeIcon icon={faStarOfLife} style={{color: "#cf4b05", fontSize: "10px"}} />
                    </S.InquiryCategory>
-                   <S.RadiosWrapper>
+                   <S.RadiosWrapper >
                     <RadioWithLabel checked={selected === "a"} onChange={() => handleChange("a")} label="회원정보" />
                     <RadioWithLabel checked={selected === "b"} onChange={() => handleChange("b")} label="서비스" />
                     <RadioWithLabel checked={selected === "c"} onChange={() => handleChange("c")} label="상품" />
@@ -161,7 +182,7 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
                     <S.InputsWrapper>
                      <S.CharWrapper>
                       <S.InquiryBody>
-                        <TextArea placeholder={"문의하실 내용을 입력하세요"} maxChars={"1000"} onChange={onChangeContent} value={content} />
+                        <TextArea placeholder={"문의하실 내용을 입력하세요"} maxChars={"1000"} onChange={onChangeContent} />
                       </S.InquiryBody>
                      </S.CharWrapper>
                     </S.InputsWrapper>
@@ -170,10 +191,6 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
                    <S.InquiryCategory>파일첨부</S.InquiryCategory>
                        <S.FileWrapper>
                         <S.FileInputButton>
-                         {/* <S.FileInput>
-                          <BasicInput readOnly/>
-                         </S.FileInput> 
-                         <BasicButton children={"찾아보기"} basicButton={"superSmall"} variant={"filled"} /> */}
                          <FileUpload onChange={onChangeFile} />
                         </S.FileInputButton>
                             <p>*파일은 1 개만 등록이 가능하며, 용량은 총 50MB 이하로 첨부하여 주시기 바랍니다. <br/>

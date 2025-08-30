@@ -10,6 +10,31 @@ const data = Array.from({ length: 1234 }, (_, i) => ({
   category: i % 2 === 0 ? "답변중" : "답변완료"
 }));
 
+  const [inquiry, setInquiry] = useState({});
+
+  useEffect(() => {
+    const getInquiry = async () => {
+      const response = await fetch(`http://localhost:8000/inquiry/api/get-inquirys`, );
+      const data = await response.json()
+      return data;
+    }
+
+    getInquiry()
+      .then((res) => {
+        return res.inquiry
+      })
+      .then((inquiry) => {
+        setInquiry(todo)
+        setDate(new Date(todo.createdAt))
+        setIsLoading(false)
+      })
+      .catch((err) => {
+        setIsLoading(true)
+        console.error(err)
+      })
+
+  }, [])
+
 const ITEMS_PER_PAGE = 10;
 
 const List = () => {

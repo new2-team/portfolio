@@ -26,7 +26,7 @@ const CommunityInputComponent = ({post, setPost}) => {
         }),
       });
       
-      if(!response.ok) throw new error("게시글 등록 실패");
+      if(!response.ok) throw new Error("게시글 등록 실패");
 
       const data = await response.json();
       console.log("등록 성공:", data);
