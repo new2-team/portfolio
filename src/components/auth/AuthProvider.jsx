@@ -4,13 +4,28 @@ import { setUser, setUserStatus } from '../modules/user';
 
 const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 회원가입 관련 경로인지 확인 (완료 페이지 제외)
+  const isSignUpPage = (window.location.pathname.startsWith('/sign-up') && 
+                        !window.location.pathname.includes('/complete')) || 
+                      window.location.pathname.startsWith('/profile/add') ||
+                      window.location.pathname === '/sign-in';
 
   // 토큰 유효성 검사
   useEffect(() => {
     const token = localStorage.getItem('jwt_token');
     const userName = localStorage.getItem('userName');
     const user_id = localStorage.getItem('user_id');
+    
+    // 회원가입 페이지라면 로그인 상태 해제
+    if (isSignUpPage) {
+      console.log('회원가입 페이지 감지 - 로그인 상태 해제');
+      dispatch(setUserStatus(false));
+      dispatch(setUser(null));
+      setIsLoading(false);
+      return;
+    }
     
     if (token) {
       // JWT 토큰이 있으면 토큰 검증
@@ -45,7 +60,7 @@ const AuthProvider = ({ children }) => {
           localStorage.removeItem('rememberedId');
           dispatch(setUserStatus(false));
         } finally {
-          setIsLoading(false); // 로딩 완료
+          setIsLoading(false);
         }
       };
 
@@ -56,7 +71,7 @@ const AuthProvider = ({ children }) => {
       dispatch(setUser({
         user_id: user_id,
         name: userName,
-        email: null,
+        email: localStorage.getItem('email') || null,
         profileImage: localStorage.getItem('profileImage') || null
       }));
       dispatch(setUserStatus(true));
@@ -64,9 +79,9 @@ const AuthProvider = ({ children }) => {
     } else {
       // JWT 토큰이 없으면 로그아웃 상태로 변경
       dispatch(setUserStatus(false));
-      setIsLoading(false); // 로딩 완료
+      setIsLoading(false);
     }
-  }, [dispatch]);
+  }, [dispatch, isSignUpPage]);
 
   // 스켈레톤 UI로 새로고침시 자연스럽게 처리
   if (isLoading) {

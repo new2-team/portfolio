@@ -63,8 +63,28 @@ const SignIn = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || '로그인에 실패했습니다.');
+        let errorMessage = '로그인에 실패했습니다.';
+        
+        try {
+          // JSON 응답을 시도
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          // JSON 파싱 실패 시 텍스트 응답 확인
+          try {
+            const textResponse = await response.text();
+            if (textResponse.includes('Unauthorized')) {
+              errorMessage = '아이디 또는 비밀번호를 확인해주세요.';
+            } else {
+              errorMessage = textResponse || errorMessage;
+            }
+          } catch (textError) {
+            // 모든 파싱 실패 시 기본 메시지
+            errorMessage = '아이디 또는 비밀번호를 확인해주세요.';
+          }
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
