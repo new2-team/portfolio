@@ -5,22 +5,40 @@ import BasicButton from '../../components/button/BasicButton';
 import PopupCardLarge from '../../components/popUp/PopupCardLarge';
 import TextArea from '../../components/textArea/TextArea';
 import CommunityTextAreaComponent from './CommunityTextAreaComponent';
+import { useSelector } from 'react-redux';
 
 
 
 const CommunityInputComponent = ({post, setPost}) => {
   const [newPost, setNewPost] = useState({title:'', content:''})
   const [showConfirm, setShowConfirm] = useState(false)
+
+  const currentUser = useSelector(state => state.user.currentUser);
+  const profileSrc = currentUser?.dogProfile?.profileImage || '/assets/img/sample-profile.png';
+
   const handleConfirm = async () => {
+
+    const raw = localStorage.getItem("jwt_token");
+    const token = raw?.startsWith('Bearer ') ? raw.slice(7) : raw;
+    console.log('token?',token)
+
+    if(!newPost.title?.trim() || !newPost.content?.trim()){
+      alert("제목/내용을 입력하세요.")
+      return ;
+    }
+    if (!token) {
+      alert("로그인이 필요합니다");
+      return;
+    }
+
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/community/api/register-post`,{
         method:"POST",
         headers:{
           "Content-Type":"application/json",
+          Authorization: `Bearer ${raw}`,
         },
         body: JSON.stringify({
-          post_id: Date.now().toString(),
-          user_id: "", // 로그인 후 입력
           title: newPost.title,
           content: newPost.content
         }),
@@ -28,23 +46,27 @@ const CommunityInputComponent = ({post, setPost}) => {
       
       if(!response.ok) throw new Error("게시글 등록 실패");
 
-      const data = await response.json();
-      console.log("등록 성공:", data);
+      const resJson = await response.json();
+      const created = resJson?.data;
 
-      const updatePost = [
-        ...post,
-        {
-          ...newPost,
-          id: Date.now(),
-          likeCount:0,
-          liked: false,
-          commentList: [],
-          createdAt : new Date().toISOString()
-        }
-      ];
-        setPost(updatePost)
-        setNewPost({title: "", content: ""});
-        setShowConfirm(false);
+      const mapped = {
+        id: created.post_id,
+        title : created.title,
+        content: created.content,
+        createdAt: created.created_at,
+        likeCount: created.like_count ?? 0,
+        liked: false,
+        commentList: [],
+        authorName: created.authorName,
+        authorProfileImage: created.authorProfileImage || '/assets/img/sample-profile.png',
+        authorId: created.user_id,
+      };
+
+
+
+      setPost((prev) => [...prev, mapped]);
+      setNewPost({title: "", content: ""});
+      setShowConfirm(false);
 
       } catch (error) {
         console.error("게시글 등록 오류: ", error);
@@ -63,7 +85,7 @@ const CommunityInputComponent = ({post, setPost}) => {
     <>
       <S.TextBoxWrapper>
         <S.TextBoxLeftWrapper>
-          <img src="/assets/img/profile3.jpg" alt="dogProfile" />
+          <img src={profileSrc} alt="dogProfile" />
         </S.TextBoxLeftWrapper>
           <S.TextBoxInputWrapper>
             <S.TitleInputWrapper>              
@@ -91,9 +113,9 @@ const CommunityInputComponent = ({post, setPost}) => {
                 }} maxLength={500} /> */}
               </S.ContentInputWrapper>
               <S.TBBWrapper>
-                <button className='imgUpload' type='submit'>
+                {/* <button className='imgUpload' type='submit'>
                   사진
-                </button>
+                </button> */}
                 <button onClick={() => {
                   if(newPost.title && newPost.content){
                     setShowConfirm(true);

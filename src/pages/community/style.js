@@ -12,6 +12,7 @@ S.Background = styled.div`
   display: flex;
   justify-content: center;
   background-color: #FFF5EC;
+  margin-top: 40px;
 `
 
 S.Wrapper = styled.div`
@@ -482,6 +483,7 @@ S.TBBWrapper = styled.div`
   
   button {
     font-size : ${({theme}) => theme.FONT_SIZE.button4};
+    margin-left: 80px;
   }
 
   img {
@@ -495,6 +497,7 @@ S.TBBWrapper = styled.div`
 
 
 S.TextResultWrapper= styled.div`
+  margin-bottom: 50px;
   margin-top: 24px;
   border-radius: 20px;
   border-style: solid;
@@ -806,6 +809,11 @@ S.MoreTextButton = styled(BasicButton)`
   border-radius: 52px;
   margin-bottom: 40px;
   margin-top: 43px;
+
+`
+S.MoreTextButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
 `
 
 S.MoreTextBox = styled.button`
@@ -832,10 +840,10 @@ S.FNTWrapper = styled.div`
   width: 952px;
   height: 242px;
   box-shadow: 2px 2px 7px #A0A0A0;
+  margin-bottom: 100px;
 `
 
 S.FilterNoText = styled.div`
-  
   
   display: flex;
   font-size : ${({theme}) => theme.FONT_SIZE.h5};
