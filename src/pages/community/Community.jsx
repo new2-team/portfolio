@@ -20,7 +20,6 @@ const Community = () => {
           <CommunitySelect activeFilter={activeFilter} onChange={setActiveFilter}/>
           <CommunityInputContainer activeFilter={activeFilter}/>
           
-          <S.MoreTextButton roundButton="medium" variant="filled">더보기</S.MoreTextButton>
 
         </S.Wrapper>
       </S.Background>
