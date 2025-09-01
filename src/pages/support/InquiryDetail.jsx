@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SupportMenuComponent from './SupportMenuComponent';
 import S from './style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,7 +7,53 @@ import TextArea from '../../components/textArea/TextArea';
 import BasicButton from '../../components/button/BasicButton';
 import { Link } from 'react-router-dom';
 
-const InquiryDetail = () => {
+const InquiryDetail = ({isUpdate, setIsUpdate}) => {
+    
+    const [content, setContent] = useState("")
+
+    const onChangeContent = (e) => {
+        setContent(e.target.value);
+        console.log(e.target.value);
+    }
+
+     const [data, setData] = useState([])
+
+     useEffect(() => {
+       fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/get-inquiry-reply`)
+       .then(response => response.json())
+       .then(data => setData(data))
+       .catch(error => console.error("문의글 답변 불러오는 중 오류" + error))
+     }, [])
+
+     console.log(data)
+
+    const onClickReplyPost = async (e) => {
+
+      window.alert('저장되었습니다');
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry-reply`, {
+        method : "POST",
+        headers : {
+          "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({
+          reply_id : Date.now().toString(36) + Math.random().toString(36).substring(2, 8),
+          inquiry_id : "test",
+          user_id : "user_test",
+          reply_content : content,
+        })
+      })
+      .then((res) => {
+        if(!res.ok) throw new Error(`Response Fetching Error`);
+        return res.json()
+      })
+      .then((res) => {
+        console.log(res)
+        if(res.message) alert(res.message);
+        setContent("")
+        setIsUpdate(!isUpdate)
+      })
+      .catch(console.error)
+ }
 
  const inquiryBody = "문의 내용~ "
  const repeatedIinquiryBody = inquiryBody.repeat(50)
@@ -67,8 +113,8 @@ const InquiryDetail = () => {
                 {repeatedReplyBody}
             </S.ReplyContent>
             <S.TextAreaWrapper>
-                <TextArea placeholder={"답변을 입력해주세요"} maxChars={"500"} />
-                <S.Replybutton>
+                <TextArea placeholder={"답변을 입력해주세요"} maxChars={"500"} onChange={onChangeContent} />
+                <S.Replybutton onClick={onClickReplyPost} >
                     <img src="/assets/icons/send.svg" alt="댓글쓰기" />
                 </S.Replybutton>
             </S.TextAreaWrapper>

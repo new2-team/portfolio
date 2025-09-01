@@ -3,16 +3,20 @@ import styled from 'styled-components';
 import S from '../textArea/style';
 
 
-const TextArea = ({placeholder, maxChars, value, onChange}) => {
+const TextArea = ({placeholder, maxChars, onChange }) => {
 
   const [text, setText] = useState('');
+  const [content, setContent] = useState('');
 
   return (
     <S.TextAreaWrapper>
       <S.TextArea
         maxLength={maxChars}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          onChange(e);
+          setText(e.target.value);
+        }}
         placeholder={placeholder}
       />
       <S.CharCount limitReached={text.length >= maxChars}>

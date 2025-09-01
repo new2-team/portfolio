@@ -1,21 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import S from "./style";
 import { Link } from "react-router-dom";
 
-const data = Array.from({ length: 1234 }, (_, i) => ({
-  id: i + 1,
-  title: `멍픽 관련해서 문의 드립니다 ${i + 1}`,
-  author: "홍 * 동",
-  date: "2025.07.29",
-  category: i % 2 === 0 ? "답변중" : "답변완료"
-}));
+// const data = Array.from({ length: 1234 }, (_, i) => ({
+//   id: i + 1,
+//   title: `멍픽 관련해서 문의 드립니다 ${i + 1}`,
+//   author: "홍 * 동",
+//   date: "2025.07.29",
+//   category: i % 2 === 0 ? "답변중" : "답변완료"
+// }));
+
+
+
 
 const ITEMS_PER_PAGE = 10;
 
 const List = () => {
+  
+ const [data, setData] = useState([])
 
- const [currentPage, setCurrentPage] = useState(1);
- const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+ useEffect(() => {
+   fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/get-inquiry`)
+   .then(response => response.json())
+   .then(data => setData(data.data))
+   .catch(error => console.error("문의글 불러오는 중 오류" + error))
+ }, [])
+
+ console.log(data.length)
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  console.log(data.length)
 
  const getPageNumbers = () => {
   if (totalPages <= 5) {
@@ -44,8 +59,12 @@ const List = () => {
  
  const currentItems = data.slice(
   (currentPage - 1) * ITEMS_PER_PAGE,
-  currentPage * ITEMS_PER_PAGE
- );
+  currentPage * ITEMS_PER_PAGE,
+ )
+// .map((item) => {
+//   item.created_at.split(10)
+//   console.log(item.created_at)
+//  })
 
   return (
     <div>
@@ -53,11 +72,11 @@ const List = () => {
         <tbody>
           {currentItems.map((item) => (
             <S.Data key={item.id}>
-              <S.Author>{item.author}</S.Author>
+              <S.Author>{item.user_id}</S.Author>
               <Link to={"/support/inquiry-detail"} >
                <S.Title>{item.title}</S.Title>
               </Link>
-              <S.Date>{item.date}</S.Date>
+              <S.Date>{item.created_at}</S.Date>
               <S.Reply>{item.category}</S.Reply>
             </S.Data>
           ))}
