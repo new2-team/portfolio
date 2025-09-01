@@ -7,6 +7,7 @@ import theme from "./styles/theme";
 import { RouterProvider } from "react-router-dom";
 import Router from "./routes/router";
 import rootReducer from "./components/modules";
+import AuthProvider from "./components/auth/AuthProvider";
 
 // Redux store 생성
 const store = configureStore({
@@ -22,7 +23,9 @@ function App() {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <RouterProvider router={Router} />
+        <AuthProvider>
+          <RouterProvider router={Router} />
+        </AuthProvider>
       </ThemeProvider>
     </Provider>
   );

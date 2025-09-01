@@ -2,9 +2,10 @@ import { addDays, format, startOfWeek } from 'date-fns';
 import { useEffect, useState } from 'react';
 import Diary from './Diary';
 import Schedule from './Schedule';
-import styles from './style';
+import S from './style2';
 
 const CalendarDay = ({ eventId, onBack, initialDate }) => {
+  // 선택된 날짜 관리
   const [selectedDate, setSelectedDate] = useState(initialDate);
 
   useEffect(() => {
@@ -13,7 +14,7 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
 
   const weekStart = startOfWeek(new Date(selectedDate), { weekStartsOn: 0 });
 
-  // ✅ selectedDate 기준으로 영문 월 + 연도 표시
+  // selectedDate 기준으로 영문 월 + 연도 표시
   const selectedMonthYear = format(new Date(selectedDate), 'MMMM yyyy');
 
   const weekDates = Array.from({ length: 7 }).map((_, idx) => {
@@ -25,52 +26,36 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
     };
   });
 
+  // 주간 캘린더로 날짜 변경할 때
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
   return (
-    <div style={styles.calendarDay}>
-      <h3 style={styles.calendarDayTitle}>
+    <S.CalendarDay>
+      <S.CalendarDayTitle mt={30} ml={30} mb={30} mr={0}>
         {selectedMonthYear}
-      </h3>
+      </S.CalendarDayTitle>
 
-      <div style={styles.calendarDayHeaderContainer}>
+      <S.CalendarDayHeaderContainer>
         {weekDates.map((d) => (
-          <div
+          <S.WeekDateBox
             key={d.date}
+            isSelected={selectedDate === d.date}
             onClick={() => handleDateChange(d.date)}
-            style={{
-              flex: '1 1 0',
-              padding: '8px 10px',
-              borderRadius: '15px',
-              backgroundColor: selectedDate === d.date ? '#000' : '#f0f0f0',
-              color: selectedDate === d.date ? '#fff' : '#000',
-              cursor: 'pointer',
-              textAlign: 'center',
-              height: '60px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: '13px',
-              lineHeight: '16px',
-              minWidth: '0',
-              maxWidth: 'none',
-            }}
           >
-            <div style={styles.headerEng}>{d.day}</div>
-            <div style={styles.headerDay}>{d.dayNum}</div>
-          </div>
+            <S.HeaderEng>{d.day}</S.HeaderEng>
+            <S.HeaderDay>{d.dayNum}</S.HeaderDay>
+          </S.WeekDateBox>
         ))}
-      </div>
+      </S.CalendarDayHeaderContainer>
 
-
-      <div style={styles.calendarDayContainer}>
+      <S.CalendarDayContainer>
         <Schedule eventId={eventId} selectedDate={selectedDate} />
         <Diary eventId={eventId} selectedDate={selectedDate} />
-      </div>
-    </div>
+      </S.CalendarDayContainer>
+    </S.CalendarDay>
+
   );
 };
 

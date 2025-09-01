@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BasicInput from "../input/BasicInput";
 import S from "./style";
 
-const SelectBox = ({ options = [], placeholder = "선택하세요", onSelect }) => {
+const SelectBox = ({ options = [], placeholder = "선택하세요", onSelect, defaultValue }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState("");
+
+  // defaultValue가 있으면 초기값 설정
+  useEffect(() => {
+    if (defaultValue && options.includes(defaultValue)) {
+      setSelected(defaultValue);
+    }
+  }, [defaultValue, options]);
 
   const handleSelect = (val) => {
     setSelected(val);

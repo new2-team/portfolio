@@ -2,10 +2,13 @@ import { faClock, faEllipsisVertical, faPaperclip, faPaperPlane } from '@fortawe
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import Text from '../../components/text/size.js';
-import './Chatting.css';
 import ScheduleModal from './ScheduleModal.jsx';
+import S from './style.js';
 
 const ChatApp = ({ chat, onToggleScheduleAlert }) => {
+  // chat: ChatList에서 선택한 채팅방 객체
+  // onToggleScheduleAlert: ScheduleAlert on/off
+
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const fileInputRef = useRef(null);
@@ -13,8 +16,8 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
 
   const activeChat = chat || {
     id: 0,
-    name: '',
-    avatar: '',
+    name: '채팅방을 선택해주세요',
+    avatar: '/assets/img/chat/dogEmptyProfile.png',
   };
 
   const messages = [
@@ -76,7 +79,6 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
   },
 ];
 
-
   const handleAddSchedule = (newSchedule) => {
     console.log('새 일정 추가:', newSchedule);
     // 일정 추가되면 채팅방에도 일정이 떠야함 !!
@@ -112,6 +114,8 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
     setSelectedImage(null);
   };
 
+  // 받은 채팅방 Id로 messages객체 api로 불러오기, useEffect로 마운팅할때마다, 채팅방 id가 변할때마다
+
   // ✅ delete / backspace 키 누르면 이미지 제거 useEffect 추가
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -125,92 +129,86 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
   }, [selectedImage]);
 
   return (
-    <div className="chat-app"> 
-      <div className="chat-header">
-        <div className="chat-header-left">
-          <img src={activeChat.avatar} alt={activeChat.name} className="chat-header-avatar" />
-          <Text.Body2 fontWeight="700" color="#000" style={{ margin: 0 }}>
+    <S.ChatApp>
+      <S.ChatAppHeader>
+        <S.ChatAppHeaderLeft>
+          <S.ChatAppAvatar src={activeChat.avatar} alt={activeChat.name} />
+          <Text.Body3 fontWeight="600" color="#000" style={{ margin: 0 }}>
             {activeChat.name}
-          </Text.Body2>
-        </div>
-        <div className="chat-header-actions">
-          <button onClick={onToggleScheduleAlert}>
-            <FontAwesomeIcon icon={faEllipsisVertical} style={{ fontSize: '24px' }}/>
-          </button>
-        </div>
-      </div>
+          </Text.Body3>
+        </S.ChatAppHeaderLeft>
 
-      <div className="chat-messages">
+        <S.ChatAppHeaderActions>
+          <button onClick={onToggleScheduleAlert}>
+            <FontAwesomeIcon icon={faEllipsisVertical} style={{ fontSize: '24px' }} />
+          </button>
+        </S.ChatAppHeaderActions>
+      </S.ChatAppHeader>
+
+      <S.ChatAppMessages>
         {messages.reduce((acc, msg, idx, arr) => {
           const prevMsg = arr[idx - 1];
           const showDateDivider = !prevMsg || prevMsg.date !== msg.date;
 
           if (showDateDivider) {
             acc.push(
-              <div key={`date-${msg.date}`} className="date-divider">
+              <S.ChatAppDateDivider key={`date-${msg.date}`}>
                 {msg.date}
-              </div>
+              </S.ChatAppDateDivider>
             );
           }
 
           acc.push(
-            <div key={msg.id} className={`chat-message ${msg.sender === 'me' ? 'me' : 'other'}`}>
-              <div className="message-bubble">
-                {msg.text && <div className="message-text">{msg.text}</div>}
-                {msg.image && <img src={msg.image} alt="message" className="message-image" />}
-              </div>
-              <div className="message-info-outside">
-                <span className="message-time">{msg.time}</span>
+            <S.ChatAppMessage key={msg.id} isMe={msg.sender === 'me'}>
+              <S.ChatAppBubble isMe={msg.sender === 'me'}>
+                {msg.text && <S.ChatAppMessageText>{msg.text}</S.ChatAppMessageText>}
+                {msg.image && <S.ChatAppMessageImage src={msg.image} alt="message" />}
+              </S.ChatAppBubble>
+
+              <S.ChatAppMessageInfo>
+                <S.ChatAppTime>{msg.time}</S.ChatAppTime>
                 {msg.sender === 'me' && (
-                  <span className="message-read">{msg.read ? '읽음' : '전송됨'}</span>
+                  <S.ChatAppReadStatus>{msg.read ? '읽음' : '전송됨'}</S.ChatAppReadStatus>
                 )}
-              </div>
-            </div>
+              </S.ChatAppMessageInfo>
+            </S.ChatAppMessage>
           );
 
           return acc;
         }, [])}
-      </div>
+      </S.ChatAppMessages>
 
-
-      <div className="chat-input" style={{ display: 'flex', alignItems: 'center' }}>
-        <button onClick={() => setIsScheduleModalOpen(true)}>
+      <S.ChatAppInputArea>
+        <S.ChatAppButton onClick={() => setIsScheduleModalOpen(true)}>
           <FontAwesomeIcon icon={faClock} style={{ color: '#999999', fontSize: '25px' }} />
-        </button>
+        </S.ChatAppButton>
 
-        <div
-          ref={messageInputRef}
-          contentEditable
-          className="message-input"
-        ></div>
+        <S.ChatAppMessageInput ref={messageInputRef} contentEditable />
 
+        <S.ChatAppButton onClick={() => fileInputRef.current.click()}>
+          <FontAwesomeIcon icon={faPaperclip} style={{ color: '#999999', fontSize: '25px' }} />
+        </S.ChatAppButton>
 
-        <button onClick={() => fileInputRef.current.click()}>
-          <FontAwesomeIcon icon={faPaperclip} style={{ color: '#999999', fontSize: '25px' }}/>
-        </button>
-
-        <input
+        <S.ChatAppFileInput
           type="file"
           accept="image/*"
           ref={fileInputRef}
-          className="file-input" 
-          style={{ display: 'none' }}
           onChange={handleImageSelect}
         />
 
-        <button onClick={handleSendMessage} className="send-button">
-          <FontAwesomeIcon icon={faPaperPlane} className="send-icon" />
-        </button>
-      </div>
+        <S.ChatAppSendButton onClick={handleSendMessage}>
+          <FontAwesomeIcon icon={faPaperPlane} style={{ color: '#fff', fontSize: '20px', marginRight: '2px' }}/>
+        </S.ChatAppSendButton>
+      </S.ChatAppInputArea>
 
       {isScheduleModalOpen && (
         <ScheduleModal
           onClose={() => setIsScheduleModalOpen(false)}
-          onAddSchedule={handleAddSchedule} // ✅ 추가
+          onAddSchedule={handleAddSchedule}
         />
       )}
+    </S.ChatApp>
 
-    </div>
   );
 };
 

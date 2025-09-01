@@ -19,6 +19,7 @@ import Inquiry from "../pages/support/Inquiry";
 import DbtiQuestion from "../pages/dbti/DbtiQuestion";
 import DbtiResult from "../pages/dbti/DbtiResult";
 import Main from "../pages/main/Main";
+import Matching from "../pages/matching/Matching";
 import InquiryList from "../pages/support/InquiryList";
 import InquiryDetail from "../pages/support/InquiryDetail";
 
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       // 프로필 관련
       {
         path: "profile",
+        element: <SignUpLayout />, 
         children: [
           { path: "add", element: <AddProfile /> },
           { path: "add-health", element: <AddHealthProfile /> },
@@ -66,6 +68,8 @@ const router = createBrowserRouter([
       },
       // 마이페이지
       { path: "my-page", element: <MyPage /> },
+      // 친구들 보러가기
+      { path: "friends", element: <Matching /> },
       // DBTI
       { path: "dbti-question", element: <DbtiQuestion /> },
       { path: "dbti-result", element: <DbtiResult /> },
