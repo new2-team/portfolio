@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import RadioWithLabel from '../../../components/radio/RadioWithLabel';
 import S from '../style';
 import Text from '../../../components/text/size';
@@ -12,7 +12,68 @@ import SocialTabWrapper from './SocialTabWrapper';
 // 이용약관 동의 페이지
 const AcceptTerms = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [showAlert, setShowAlert] = useState(false);
+    
+    // 소셜 로그인 사용자 정보 확인
+    useEffect(() => {
+        console.log('=== AcceptTerms useEffect 실행 ===');
+        const accessToken = searchParams.get('accessToken');
+        const isNewUser = searchParams.get('isNewUser');
+        const userId = searchParams.get('user_id');
+        const name = searchParams.get('name');
+        const email = searchParams.get('email');
+        const provider = searchParams.get('provider'); // type 대신 provider 사용
+        const type = searchParams.get('type'); // 기존 type도 유지 (호환성)
+
+        console.log('AcceptTerms URL 파라미터:', { accessToken, isNewUser, userId, name, email, provider, type });
+
+        // 소셜 로그인 사용자인 경우 (URL 파라미터가 있는 경우만)
+        if ((isNewUser === 'true' && accessToken && userId) || 
+            (accessToken && userId && name && email)) {
+            console.log('소셜 로그인 사용자 감지 - 사용자 정보 저장');
+            
+            // 소셜 로그인 사용자 정보를 localStorage에 저장
+            const socialData = {
+                accessToken: accessToken,
+                email: decodeURIComponent(email || ''),
+                name: decodeURIComponent(name || ''),
+                provider: provider || type || 'google', // provider 우선, 없으면 type 사용
+                type: 'social', // 모든 소셜 로그인은 'social'로 통일
+                user_id: userId
+            };
+            
+            console.log('localStorage에 저장할 소셜 데이터:', socialData);
+            localStorage.setItem('socialUserData', JSON.stringify(socialData));
+            
+            // 저장 확인
+            const savedData = localStorage.getItem('socialUserData');
+            console.log('localStorage 저장 확인:', savedData);
+        } else {
+            // URL 파라미터가 없으면 일반 회원가입으로 간주
+            console.log('일반 회원가입 감지 - 소셜 로그인 데이터 완전 정리 및 일반 회원가입 플로우 시작');
+            
+            // 기존 소셜 로그인 데이터가 있으면 완전히 정리
+            const existingSocialData = localStorage.getItem('socialUserData');
+            if (existingSocialData) {
+                console.log('기존 소셜 로그인 데이터 발견 - 일반 회원가입을 위해 완전 정리');
+                localStorage.removeItem('socialUserData');
+                console.log('socialUserData 삭제 완료');
+            }
+            
+            // 기존 일반 회원가입 플래그도 정리
+            localStorage.removeItem('isRegularSignup');
+            
+            // 일반 회원가입 플래그 새로 설정
+            localStorage.setItem('isRegularSignup', 'true');
+            console.log('일반 회원가입 플래그 설정 완료 - 깨끗한 상태로 시작');
+        }
+        
+        // 페이지 로드 시 localStorage 상태 로깅
+        console.log('AcceptTerms 페이지 로드 후 localStorage 상태:');
+        console.log('- socialUserData:', localStorage.getItem('socialUserData'));
+        console.log('- isRegularSignup:', localStorage.getItem('isRegularSignup'));
+    }, [searchParams]);
     
     // 필수 약관 동의 그룹 (useCheckGroup 활용)
     const {

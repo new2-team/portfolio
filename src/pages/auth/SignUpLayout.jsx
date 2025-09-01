@@ -1,36 +1,44 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Container from "../../components/layout/Container";
 import ProgressStep from "../../components/progressStep/ProgressStep";
 import { getSignUpSteps } from "../../components/progressStep/SignUpStepData";
 import SocialTabWrapper from "./components/SocialTabWrapper";
+import ScrollToTop from "../../components/ScrollToTop";
+import SignUpContainer from "../../components/layout/SignUpContainer";
 
 // URL 경로에 따라 진행 단계 매핑
 const stepMap = {
   "/sign-up": 0,
   "/sign-up/info": 1,
   "/sign-up/profile": 2,
+  "/profile/add-health": 2,
   "/sign-up/complete": 3,
 };
 
 const SignUpLayout = () => {
   const location = useLocation();
-  // 현재 경로에 따라 진행 단계 결정
   const activeStep = stepMap[location.pathname] ?? 0;
   const steps = getSignUpSteps(activeStep);
 
-  // 1단계(약관 동의) 경로일 때만 SocialTabWrapper 노출
+  // profile/add-health도 첫 단계가 아니므로 SocialTabWrapper 숨김
   const isFirstStep = location.pathname === "/sign-up";
 
+  // profile 경로들도 SignUpLayout을 사용할 수 있도록 조건 확인
+  const isSignUpFlow = location.pathname.startsWith("/sign-up") || 
+                       location.pathname.startsWith("/profile");
+
+  // SignUp 플로우가 아니면 렌더링하지 않음
+  if (!isSignUpFlow) {
+    return <Outlet />;
+  }
+
   return (
-    <Container>
-      {/* 1단계에서만 소셜 탭을 진행바 위에 노출 */}
+    <SignUpContainer>
+      <ScrollToTop />
       {isFirstStep && <SocialTabWrapper />}
-      {/* 진행 단계 표시 */}
       <ProgressStep steps={steps} activeStep={activeStep} />
-      {/* 단계별 페이지가 Outlet에 렌더링됨 */}
       <Outlet />
-    </Container>
+    </SignUpContainer>
   );
 };
 
