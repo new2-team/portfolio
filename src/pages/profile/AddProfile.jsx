@@ -373,7 +373,7 @@ const ErrorMessage = ({ show, message }) => {
                     message={validationErrors.gender}  
                 />
             </S.InputReguler>
-            <S.InputReguler >
+            <S.InputReguler>
                 <S.CaptionTitlewrap>주소</S.CaptionTitlewrap>
                     <div 
                     onClick={handleSearchAddress} 
@@ -381,7 +381,6 @@ const ErrorMessage = ({ show, message }) => {
                         width:'100%',
                         display:'flex',
                         alignItems: 'center',
-                        position:'relative',
                         cursor:"pointer",
                         }}>
                     <BasicInput 
@@ -396,10 +395,7 @@ const ErrorMessage = ({ show, message }) => {
                     <img 
                     src="/assets/icons/search.svg" 
                     width={30} height={30} 
-                    alt="검색" 
-                    style={{
-                        position:'absolute',
-                        right:'10px'}}/>
+                    alt="검색" />
                 </div>
                 <ErrorMessage
                     show={hasSubmitted && validationErrors.address}

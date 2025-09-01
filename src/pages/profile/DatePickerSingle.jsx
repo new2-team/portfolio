@@ -63,6 +63,7 @@ const DatePickerSingle = forwardRef(({ selected, onChange, ...props }, ref) => {
               setIsOpen(false);
             }}
             inline // 인풋 대신 달력만 표시
+            maxDate={new Date()}
             renderCustomHeader={({
               date,
               changeYear,
