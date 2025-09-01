@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStarOfLife } from '@fortawesome/free-solid-svg-icons';
 import FileUpload from '../../components/fileUpload/FileUpload';
 import TextArea from '../../components/textArea/TextArea';
-import { useRadioGroup } from '../../hooks/useRadioGroup';
 import RadioWithLabel from '../../components/radio/RadioWithLabel';
 import { Link } from 'react-router-dom';
 
@@ -47,13 +46,6 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
 
   const onClickPost = async (e) => {
 
-    // if (!type) {
-    //   if(!window.alert('문의 유형을 선택하세요')) return;
-    // } else if (!title) {
-    //   if(!window.alert('제목을 입력하세요')) return;
-    // } else if (!content) {
-    //   if(!window.alert('내용을 입력하세요')) return;
-    // } else {
       window.alert('저장되었습니다');
       await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry`, {
         method : "POST",
@@ -61,8 +53,8 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
           "Content-Type" : "application/json"
         },
         body : JSON.stringify({
-          inquiry_id : "inquiry_test7",
-          user_id : "user_test4",
+          inquiry_id : Date.now().toString(36) + Math.random().toString(36).substring(2, 8),
+          user_id : "user_test",
           type : type,
           title : title,
           content : content,
@@ -83,7 +75,6 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
         setIsUpdate(!isUpdate)
       })
       .catch(console.error)
-    // }
       
       
     }
@@ -171,7 +162,7 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
                     <FontAwesomeIcon icon={faStarOfLife} style={{color: "#cf4b05", fontSize: "10px"}} />
                    </S.InquiryCategory>
                    <S.InputsWrapper>
-                    <BasicInput placeholder="제목을 입력하세요" maxlength="35" onChange={onChangeTitle} value={title} />
+                    <BasicInput placeholder="제목을 입력하세요" maxLength="35" onChange={onChangeTitle} value={title} />
                    </S.InputsWrapper>
                </S.InquiryQuestionTitleWrapper>
                <S.InquiryQuestionBodyWrapper>
