@@ -418,7 +418,6 @@ const AddProfile = ({ onProfileComplete }) => {
                         src="/assets/icons/calendar.svg" 
                         width={30} height={30} alt="캘린더" 
                         onClick={() => calendarRef.current?.setFocus()}
-    
                     />
                     <Controller 
                         name="birthDate" 

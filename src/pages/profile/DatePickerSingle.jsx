@@ -5,13 +5,17 @@ import styled from "styled-components";
 import { getMonth, getYear } from "date-fns";
 
 const StyledDatePicker = styled.div`
+  position: absolute;
+  top: auto;
+  right: 0;
+  z-index: 1000;
   .react-datepicker {
-    width: 350px;
+    /* width: 350px; */
     /* height: 400px; */
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
   }
   .react-datepicker__header {
-    height: 80px;
+    /* height: 80px; */
     flex-shrink: 0;
   }
   .react-datepicker__month-container {
@@ -73,7 +77,13 @@ const DatePickerSingle = forwardRef(({ selected, onChange, ...props }, ref) => {
               prevMonthButtonDisabled,
               nextMonthButtonDisabled,
             }) => (
-              <div style={{ margin: 10, display: "flex", justifyContent: "center", gap: "4px" }}>
+              <div style={{ 
+                margin: 10, 
+                display: "flex", 
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10px"
+                }}>
                 <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
                   {"<"}
                 </button>
