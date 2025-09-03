@@ -4,11 +4,11 @@ import { results as MOCK_RESULTS }     from '../pages/dbti/dbtiResultData';
 
 const BASE =
   (import.meta?.env?.VITE_API_BASE_URL) ||
-  (process.env.REACT_APP_API_BASE_URL) ||
-  'http://localhost:8080';
+  (process.env.REACT_APP_BACKEND_UR) ||
+  'http://localhost:8000';
 
 // 백엔드 붙을 때 false 로 바꾸세요
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 export async function getQuestions() {
   if (USE_MOCK) return MOCK_QUESTIONS;

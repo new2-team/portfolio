@@ -418,7 +418,6 @@ const AddProfile = ({ onProfileComplete }) => {
                         src="/assets/icons/calendar.svg" 
                         width={30} height={30} alt="캘린더" 
                         onClick={() => calendarRef.current?.setFocus()}
-    
                     />
                     <Controller 
                         name="birthDate" 
@@ -487,7 +486,6 @@ const AddProfile = ({ onProfileComplete }) => {
                         width:'100%',
                         display:'flex',
                         alignItems: 'center',
-                        position:'relative',
                         cursor:"pointer",
                     }}>
                     <BasicInput 
@@ -498,10 +496,9 @@ const AddProfile = ({ onProfileComplete }) => {
                         {...register("address", { required: "주소를 검색해주세요" })}
                     />
                     <img 
-                        src="/assets/icons/search.svg" 
-                        width={30} height={30} 
-                        alt="검색" 
-                    />
+                    src="/assets/icons/search.svg" 
+                    width={30} height={30} 
+                    alt="검색" />
                 </div>
                 <ErrorMessage
                     show={hasSubmitted && errors.address}

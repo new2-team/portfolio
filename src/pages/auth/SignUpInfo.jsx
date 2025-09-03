@@ -210,6 +210,7 @@ const SignUpInfo = () => {
     } catch (error) {
       console.error('중복확인 오류:', error);
       setUserIdCheckMessage('중복확인 중 오류가 발생했습니다.');
+      console.log("백엔드 연결 상태:", process.env.REACT_APP_BACKEND_URL);
       setIsUserIdChecked(false);
     }
   };
