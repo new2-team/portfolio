@@ -1,5 +1,6 @@
 import { faArrowLeft, faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 import 'react-clock/dist/Clock.css';
@@ -55,6 +56,9 @@ const ScheduleModal = ({
         return;
       }
     // setShowError(false);
+    const onlyDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+    const onlyTime = startTime ? format(startTime, "HH:mm") : null;
+
     await fetch(`http://localhost:8000/calendar/api/post-schedules`, {
       method : "POST",
       headers : {
@@ -64,8 +68,8 @@ const ScheduleModal = ({
         user_id: user_id,
         // chat_id: selectedFriends,
         title : title,
-        date: selectedDate,
-        time: startTime,
+        date: onlyDate,
+        time: onlyTime,
         location: location,
       })
     })

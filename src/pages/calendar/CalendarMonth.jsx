@@ -1,33 +1,62 @@
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
-import { useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './Calendar.css';
 import S from './style2';
 
 const CalendarMonth = ({ onDateClick, onEventClick }) => {
+  const user_id = localStorage.getItem('user_id');
   const calendarRef = useRef(null);
 
-  const events = [
-    {
-      id: '1',
-      title: "Soul's birthday party",
-      date: '2025-07-04',
-      description: 'Soul의 생일 파티입니다.',
-    },
-    {
-      id: '3',
-      title: "애견카페 가는날",
-      date: '2025-07-04',
-      description: 'Soul의 생일 파티입니다.',
-    },
-    {
-      id: '2',
-      title: "Meeting with team",
-      date: '2025-07-10',
-      description: '프로젝트 회의',
-    },
-  ];
+  const [schedules, setSchedules] = useState([]);
+
+  useEffect(() => {
+    const getSchedules = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/calendar/api/month-schedules/${user_id}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`서버 응답 에러: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const schedules = data.schedules;
+        setSchedules(schedules);
+
+        // console.log("받아온 일정: ", schedules);
+
+        // 필요하면 여기서 setState 호출
+        // setSchedules(schedules);
+      } catch (err) {
+        console.error("일정 불러오기 실패:", err);
+      }
+    };
+
+    if (user_id) {
+      getSchedules();
+    }
+  }, [user_id]); // user_id 바뀌면 다시 실행
+
+  // 캘린더 버전으로 매핑
+  const calendarEvents = useMemo(() => {
+    return (schedules || []).map((s) => {
+      const hasTime = s.time && /^\d{2}:\d{2}$/.test(s.time); // "18:00" 등
+      const start = hasTime ? `${s.date}T${s.time}` : s.date;  // "YYYY-MM-DD" or "YYYY-MM-DDTHH:mm"
+
+      return {
+        id: String(s._id || s.id),
+        title: s.title,
+        start,
+        allDay: !hasTime,
+        // 클릭 시 원본 객체 통째로 전달하려고 저장
+        extendedProps: { schedule: s },
+      };
+    });
+  }, [schedules]);
+
 
   // 월별 캘린더 날짜 클릭했을때
   const handleDateClick = (info) => { 
@@ -37,9 +66,10 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
 
   // 월별 캘린더 일정제목 클릭했을때
   const handleEventClick = (info) => {
-    const eventId = info.event.id;
-    const eventDate = info.event.startStr.slice(0, 10);
-    onEventClick(eventId, eventDate);
+    const scheduleInfo = info.event.extendedProps?.schedule;
+    const scheduleDate = info.event.startStr.slice(0, 10);
+    onEventClick(scheduleInfo, scheduleDate);
+    // console.log("캘린더에서 넘어온 값", scheduleInfo);
   };
 
   return (
@@ -48,7 +78,8 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        events={events}
+        events={calendarEvents}
+        displayEventTime={false} 
         dateClick={handleDateClick}
         eventClick={handleEventClick}
         height="auto"
@@ -59,6 +90,9 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
           center: '',
           right: 'prev,next'
         }}
+        eventContent={(arg) => (
+          <div style={{ fontWeight: 300, marginLeft: 5 }}>{arg.event.title}</div>
+        )}
       />
     </S.CalendarContainer>
   );

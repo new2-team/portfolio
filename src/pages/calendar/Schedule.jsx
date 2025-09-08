@@ -1,5 +1,6 @@
 import { faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { format } from 'date-fns';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -7,12 +8,15 @@ import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import S from './style2';
 
-const Schedule = ({ eventId, selectedDate, scheduleId }) => {
+const Schedule = ({ selectedSchedule, selectedDate }) => {
   const user_id = localStorage.getItem('user_id');
-  console.log(user_id);
+  // console.log(user_id);
+  // console.log("selectedSchedule: ", selectedSchedule);
   // const [user_Id, setUserId] = useState('6895c4d407695ea93734389a')
   const [date, setDate] = useState(selectedDate); // props에서 받은날짜
-  const [schedule, setSchedule] = useState({}); // 일정객체를 통째로 등록
+  const [schedule, setSchedule] = useState(selectedSchedule); // 일정객체를 통째로 등록
+  console.log("day에서 넘겨받은 schedule객체: ",schedule);
+
   const [title, setTitle] = useState(''); // 일정 제목
   const [startTime, setStartTime] = useState(null); // 일정시작시간
   const [location, setLocation] = useState(''); // 일정 장소
@@ -86,6 +90,10 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
       return;
     }
     setShowError(false);
+
+    const onlyTime = startTime ? format(startTime, "HH:mm") : null;
+    const onlyDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+
     await fetch(`http://localhost:8000/calendar/api/post-schedules`, {
       method : "POST",
       headers : {
@@ -95,8 +103,8 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
         user_id: user_id,
         chat_id: selectedFriends,
         title : title,
-        date: date,
-        time: startTime,
+        date: onlyDate,
+        time: onlyTime,
         location: location,
       })
     })
@@ -123,7 +131,7 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
         },
         body: JSON.stringify({
           user_id: user_id,
-          schedule_id: scheduleId, 
+          // schedule_id: scheduleId, 
           schedule: {
             title,
             date: date,
