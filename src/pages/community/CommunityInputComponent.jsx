@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import S from './style';
-import BasicInput from '../../components/input/BasicInput';
-import BasicButton from '../../components/button/BasicButton';
-import PopupCardLarge from '../../components/popUp/PopupCardLarge';
-import TextArea from '../../components/textArea/TextArea';
-import CommunityTextAreaComponent from './CommunityTextAreaComponent';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import PopupCardLarge from '../../components/popUp/PopupCardLarge';
+import CommunityTextAreaComponent from './CommunityTextAreaComponent';
+import S from './style';
+
 
 
 

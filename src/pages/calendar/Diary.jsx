@@ -5,9 +5,11 @@ import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import S from './style2';
 
-const Diary = ({ eventId, scheduleDiary }) => {
+const Diary = ({ selectedSchedule, scheduleDiary }) => {
   const [text, setText] = useState('');
   const [image, setImage] = useState(null);
+  const [schedule, setSchedule] = useState(selectedSchedule);
+  console.log("day에서 넘겨받은 schedule객체: ",schedule);
 
   // ✅ 예시: 기존에 저장된 데이터 (빈 객체 or 데이터 있는 객체)
   // const scheduleDiary = {}; 
@@ -25,7 +27,10 @@ const Diary = ({ eventId, scheduleDiary }) => {
   //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"
   //   , imageUrl: "/assets/img/chat/soul.png" };
 
-  const hasDiary = scheduleDiary && Object.keys(scheduleDiary).length > 0;
+  const [diaryText, setDiaryText] = useState(schedule.diary_text);
+  const [diaryPhoto, setDiaryPhoto] = useState(schedule.diary_photo_url); 
+  
+  const hasDiary = !!(diaryText || diaryPhoto);
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -36,7 +41,7 @@ const Diary = ({ eventId, scheduleDiary }) => {
   };
 
   const handleSave = () => {
-    console.log('Diary saved:', { eventId, text, image });
+    console.log('Diary saved:', { text, image });
   };
 
   const handleEdit = () => {
@@ -56,7 +61,7 @@ const Diary = ({ eventId, scheduleDiary }) => {
 
   return (
     <S.DiaryCard>
-      {!hasDiary && <S.DiaryTitle>일정에 대한 일기를 써보세요!</S.DiaryTitle>}
+      {!hasDiary  && <S.DiaryTitle>일정에 대한 일기를 써보세요!</S.DiaryTitle>}
 
       {hasDiary ? (
         scheduleDiary.imageUrl && (

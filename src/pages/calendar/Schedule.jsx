@@ -1,5 +1,6 @@
 import { faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { format } from 'date-fns';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -7,12 +8,15 @@ import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import S from './style2';
 
-const Schedule = ({ eventId, selectedDate, scheduleId }) => {
-  // const user_Id = useSelector(s => s.user.currentUser?.user_Id);
-  // const user_Id = '6895c4d407695ea93734389a'
-  const [user_Id, setUserId] = useState('6895c4d407695ea93734389a')
+const Schedule = ({ selectedSchedule, selectedDate }) => {
+  const user_id = localStorage.getItem('user_id');
+  // console.log(user_id);
+  // console.log("selectedSchedule: ", selectedSchedule);
+  // const [user_Id, setUserId] = useState('6895c4d407695ea93734389a')
   const [date, setDate] = useState(selectedDate); // props에서 받은날짜
-  const [schedule, setSchedule] = useState({}); // 일정객체를 통째로 등록
+  const [schedule, setSchedule] = useState(selectedSchedule); // 일정객체를 통째로 등록
+  console.log("day에서 넘겨받은 schedule객체: ",schedule);
+
   const [title, setTitle] = useState(''); // 일정 제목
   const [startTime, setStartTime] = useState(null); // 일정시작시간
   const [location, setLocation] = useState(''); // 일정 장소
@@ -35,22 +39,6 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
   const onChangeValue = (e) => {
     setValue(e.target.value)
   }
-
-  // ✅ 추가: 훅 사용
-  // const {
-  //   loading: mutating,
-  //   error: mutateError,
-  //   createScheduleSafe,
-  //   putSchedule,
-  //   deleteSchedule,
-  // } = useScheduleApi();
-
-  // useEffect(() => {
-  //   // eventId로 조회해서 setSchedule() 할 자리 (지금은 dummy)
-  //   setSchedule({});
-  // }, [eventId]);
-
-
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleLocationChange = (e) => setLocation(e.target.value);
@@ -102,18 +90,22 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
       return;
     }
     setShowError(false);
+
+    const onlyTime = startTime ? format(startTime, "HH:mm") : null;
+    const onlyDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+
     await fetch(`http://localhost:8000/calendar/api/post-schedules`, {
       method : "POST",
       headers : {
         "Content-Type" : "application/json"
       },
       body : JSON.stringify({
+        user_id: user_id,
+        chat_id: selectedFriends,
         title : title,
-        date: date,
-        time: startTime,
+        date: onlyDate,
+        time: onlyTime,
         location: location,
-        // user_id: user_Id,
-        // chat_id: selectedFriends,
       })
     })
     .then((res) => {
@@ -138,12 +130,12 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: user_Id,
-          schedule_id: scheduleId,
+          user_id: user_id,
+          // schedule_id: scheduleId, 
           schedule: {
             title,
-            date: date ? date.toISOString() : null,
-            time: startTime ? startTime.toISOString() : null,
+            date: date,
+            time: startTime,
             place: location,
           },
         }),
@@ -163,17 +155,25 @@ const Schedule = ({ eventId, selectedDate, scheduleId }) => {
 
   // 삭제버튼 - api 일정 삭제
   const handleDelete = async () => {
-    //  if (!window.confirm("정말 삭제하시겠어요?")) return;
-    // try {
-    //   const res = await deleteSchedule({ user_id: user_Id, schedule_id: scheduleId });
-    //   console.log("deleted:", res);
-    //   alert(res.message ?? "일정이 삭제되었습니다.");
-    //   // (선택) refetch()
-    // } catch (e) {
-    //   console.error(e);
-    //   alert("삭제 실패");
-    // }
+  try {
+    const res = await fetch(`http://localhost:8000/calendar/api/delete-schedules`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: user_id,
+        // schedule_id: scheduleid,
+      }),
+    });
+
+    if (!res.ok) throw new Error("Response Fetching Error");
+    const result = await res.json();
+    console.log("deleted:", result);
+    alert(result.message ?? "일정이 삭제되었습니다.");
+  } catch (e) {
+    console.error(e);
+    alert("삭제 실패");
   }
+};
 
   return (
     <S.ScheduleCard>

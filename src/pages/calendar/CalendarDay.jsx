@@ -4,9 +4,12 @@ import Diary from './Diary';
 import Schedule from './Schedule';
 import S from './style2';
 
-const CalendarDay = ({ eventId, onBack, initialDate }) => {
+const CalendarDay = ({ scheduleInfo, onBack, initialDate }) => {
   // 선택된 날짜 관리
   const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [schedule, setSchedule] = useState(scheduleInfo);
+  // console.log("initialDate", initialDate);
+  // console.log("scheduleInfo", scheduleInfo);
 
   useEffect(() => {
     setSelectedDate(initialDate);
@@ -50,9 +53,10 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
         ))}
       </S.CalendarDayHeaderContainer>
 
+        {/* prop으로 schedule.id 전해주기 */}
       <S.CalendarDayContainer>
-        <Schedule eventId={eventId} selectedDate={selectedDate} />
-        <Diary eventId={eventId} selectedDate={selectedDate} />
+        <Schedule selectedSchedule={schedule} selectedDate={selectedDate} />  
+        <Diary selectedSchedule={schedule} selectedDate={selectedDate} />
       </S.CalendarDayContainer>
     </S.CalendarDay>
 

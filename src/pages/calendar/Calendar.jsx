@@ -12,36 +12,44 @@ const Calendar = () => {
   // MiniCalendar에서 보낸 selectedDate 관리
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd')); 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [viewMode, setViewMode] = useState('month');
 
-  const handleDateClick = (date) => {
-    setSelectedDate(date);
-    setIsModalOpen(true);
-  };
+  
 
   // MiniCalendar에서 가져온 날짜 등록
   const handleMiniCalendarDateClick = (date) => {
     setSelectedDate(date);
-    setSelectedEventId('mini'); // mini placeholder for eventId
+    setViewMode('day');
   };
 
   // ComingSchedule에서 가져온 item 등록
   const handleComingItemClick = (item) => {
-    
+    setViewMode('day');
   }
 
   // CompletedSchedule에서 가져온 item 등록
   const handleCompletedItemClick = (item) => {
-
+    setViewMode('day');
   } 
-  // 선택한 id(miniCalendar인지, calenderMonth인지), 선택한 날짜 보내는 함수
-  const handleEventClick = (eventId, eventDate) => {
-    setSelectedEventId(eventId);
-    setSelectedDate(eventDate);
+
+  // 월별 캘린더에서 빈날짜칸 눌렀을 때
+  // 일정 모달창 열림
+  const handleDateClick = (clickedDate) => {
+    setSelectedDate(clickedDate);
+    setIsModalOpen(true);
   };
+
+  // 월별캘린더 일정 제목 클릭 시
+  const handleEventClick = (scheduleInfo, scheduleDate) => {
+    setSelectedSchedule(scheduleInfo)
+    setSelectedDate(scheduleDate);
+    setViewMode('day');
+  };
+
   // MonthCalender로 이동 -> 이거 나중에 DayCalender 에서 월 클릭하면 연결하기 
   const handleBackToMonth = () => { 
-    setSelectedEventId(null);
+    setViewMode('month');
   };
 
   return (
@@ -53,9 +61,9 @@ const Calendar = () => {
       </S.Sidebar>
 
       <S.Main mt={20} mr={20} mb={20} ml={15}>
-        {selectedEventId ? (
+        {viewMode === 'day' ? (
           <CalendarDay
-            eventId={selectedEventId}
+            scheduleInfo={selectedSchedule}
             onBack={handleBackToMonth}
             initialDate={selectedDate}
           />
