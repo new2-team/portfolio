@@ -30,7 +30,7 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
   ];
 
   // 월별 캘린더 날짜 클릭했을때
-  const handleDateClick = (info) => {
+  const handleDateClick = (info) => { 
     const clickedDate = info.dateStr;
     onDateClick(clickedDate);
   };

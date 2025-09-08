@@ -552,6 +552,16 @@ S.InputGroup = styled.div`
   align-items: center;
 `;
 
+S.DateInput = styled.input`
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  font-size: ${({ theme }) => theme.FONT_SIZE.caption1};
+  width: 100%;
+`;
+
+
 S.Input = styled.input`
   border: none;
   background: transparent;
