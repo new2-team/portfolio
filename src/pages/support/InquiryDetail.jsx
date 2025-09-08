@@ -5,60 +5,124 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowTurnUp, faPaperclip, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import TextArea from '../../components/textArea/TextArea';
 import BasicButton from '../../components/button/BasicButton';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const InquiryDetail = ({isUpdate, setIsUpdate}) => {
+    const {id} = useParams();
     
     const [content, setContent] = useState("")
 
     const onChangeContent = (e) => {
-        setContent(e.target.value);
-        console.log(e.target.value);
+        setContent(e.target.value);   
     }
 
-     const [data, setData] = useState([])
+    // 문의글 조회
 
-     useEffect(() => {
-       fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/get-inquiry-reply`)
-       .then(response => response.json())
-       .then(data => setData(data))
-       .catch(error => console.error("문의글 답변 불러오는 중 오류" + error))
-     }, [])
+    const [inquiryTitle, setInquiryTitle] = useState("")
+    const [inquiryContent, setInquiryContent] = useState("")
+    const [inquiryDate, setInquiryDate] = useState("")
+    const [inquiryName, setInquiryName] = useState("")
+    const [file, setFile] = useState("")
 
-     console.log(data)
-
-    const onClickReplyPost = async (e) => {
-
-      window.alert('저장되었습니다');
-      await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry-reply`, {
-        method : "POST",
-        headers : {
-          "Content-Type" : "application/json"
-        },
-        body : JSON.stringify({
-          reply_id : Date.now().toString(36) + Math.random().toString(36).substring(2, 8),
-          inquiry_id : "test",
-          user_id : "user_test",
-          reply_content : content,
+    useEffect(() => {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/get-inquiry-detail/${id}`)
+      .then(response => response.json())
+      .then(data => {
+          setInquiryTitle(data.user.title);
+            setInquiryContent(data.user.content);
+            const date = data.user.created_at.slice(0,10).split("-").join(".");
+            setInquiryDate(date)
+            setInquiryName(data.user.user_name)
+            setFile(data.user.file)
         })
-      })
-      .then((res) => {
-        if(!res.ok) throw new Error(`Response Fetching Error`);
-        return res.json()
-      })
-      .then((res) => {
-        console.log(res)
-        if(res.message) alert(res.message);
-        setContent("")
-        setIsUpdate(!isUpdate)
-      })
-      .catch(console.error)
- }
+        .catch(error => console.error("문의글 불러오는 중 오류" + error))
+    }, [])
 
- const inquiryBody = "문의 내용~ "
- const repeatedIinquiryBody = inquiryBody.repeat(50)
- const replyBody = "답변 내용~ "
- const repeatedReplyBody = replyBody.repeat(50)
+    const fileButton = () => {
+        if (file != ""){
+            return (
+                <S.FileLinkWrapper>
+                     <FontAwesomeIcon icon={faPaperclip} size='sm' />
+                     &nbsp;
+                     첨부파일.jpg
+                </S.FileLinkWrapper>
+            )
+        } else {
+            return (
+                <S.FileLinkWrapper></S.FileLinkWrapper>
+            )
+        }
+    }
+    
+    // 답변 조회
+
+    const [reply, setReply] = useState([])
+    useEffect(() => {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/get-inquiry-reply/${id}`)
+      .then(response => response.json())
+      .then(data => setReply(data.data))
+      .catch(error => console.error("문의글 답변 불러오는 중 오류" + error))
+    }, [])
+
+    const inquiryReply = reply.map((item) => {
+        const content = item.reply_content;
+        const name = item.user_name;
+        const date = item.created_at.slice(0, 10).split("-").join(".");
+
+        return (
+        <S.InquiryReplyWapper>
+            <S.ReplyProfileDateWrapper>
+                <S.ReplyProfileDateWrapper> 
+                    <S.ReplyProfileWrapper>
+                     <FontAwesomeIcon icon={faArrowTurnUp} rotation={90} size='2xl' />
+                     <S.Profile src="/assets/img/my-profile.png" alt="작성자 프로필" />
+                     <S.AuthorName>{name}</S.AuthorName>
+                    </S.ReplyProfileWrapper>
+                    <S.DateWrapper>
+                        {date}  
+                    </S.DateWrapper>
+                </S.ReplyProfileDateWrapper>
+            </S.ReplyProfileDateWrapper>
+            <S.ReplyContent>
+                {content}
+            </S.ReplyContent>
+        </S.InquiryReplyWapper>
+        )
+    })
+
+    // 답변 등록
+    const onClickReplyPost = async (e) => {
+        const raw = localStorage.getItem("jwt_token")
+
+        if(!content) {
+            window.alert('내용을 입력해 주세요')
+        } else{
+            window.alert('저장되었습니다');
+            await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry-reply`, {
+              method : "POST",
+              headers : {
+                "Content-Type" : "application/json",
+                Authorization : `Bearer ${raw}`
+              },
+              body : JSON.stringify({
+                reply_id : Date.now().toString(36) + Math.random().toString(36).substring(2, 8),
+                inquiry_id : id,
+                reply_content : content,
+              })
+            })
+            .then((res) => {
+              if(!res.ok) throw new Error(`Response Fetching Error`);
+              return res.json()
+            })
+            .then((res) => {
+              console.log(res)
+              if(res.message) alert(res.message);
+              setIsUpdate(!isUpdate)
+            })
+            .catch(console.error)
+        }
+        window.location.reload();
+     }
 
  return (
   <S.InquiryWrapper>
@@ -78,25 +142,26 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
             <S.ProfileDateWrapper>
                 <S.AuthorProfileWrapper>
                     <S.Profile src="/assets/img/my-profile.png" alt="작성자 프로필" />
-                    <S.AuthorName>홍길동</S.AuthorName>
+                    <S.AuthorName>{inquiryName}</S.AuthorName>
                 </S.AuthorProfileWrapper>
                 <S.DateWrapper>
-                    2025.07.29
+                    {inquiryDate}
                 </S.DateWrapper>
             </S.ProfileDateWrapper>
             <S.InquiryTitile>
-                멍픽 관련해서 질문 드립니다~
+                {inquiryTitle}
             </S.InquiryTitile>
             <S.InquiryContent>
-                {repeatedIinquiryBody}
+                {inquiryContent}
             </S.InquiryContent>
-            <S.FileLinkWrapper>
+            {/* <S.FileLinkWrapper>
                  <FontAwesomeIcon icon={faPaperclip} size='sm' />
                  &nbsp;
                  첨부파일.jpg
-            </S.FileLinkWrapper>
+            </S.FileLinkWrapper> */}
+            {fileButton}
         </S.InquiryContentWrapper>
-        <S.InquiryReplyWapper>
+        {/* <S.InquiryReplyWapper>
             <S.ReplyProfileDateWrapper>
                 <S.ReplyProfileDateWrapper> 
                     <S.ReplyProfileWrapper>
@@ -110,15 +175,15 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
                 </S.ReplyProfileDateWrapper>
             </S.ReplyProfileDateWrapper>
             <S.ReplyContent>
-                {repeatedReplyBody}
             </S.ReplyContent>
-            <S.TextAreaWrapper>
-                <TextArea placeholder={"답변을 입력해주세요"} maxChars={"500"} onChange={onChangeContent} />
-                <S.Replybutton onClick={onClickReplyPost} >
-                    <img src="/assets/icons/send.svg" alt="댓글쓰기" />
-                </S.Replybutton>
-            </S.TextAreaWrapper>
-        </S.InquiryReplyWapper>
+        </S.InquiryReplyWapper> */}
+        {inquiryReply}
+        <S.TextAreaWrapper>
+            <TextArea placeholder={"답변을 입력해주세요"} maxChars={"500"} onChange={onChangeContent} />
+            <S.Replybutton onClick={onClickReplyPost} >
+                <img src="/assets/icons/send.svg" alt="댓글쓰기" />
+            </S.Replybutton>
+        </S.TextAreaWrapper>
         <S.ButtonToList>
          <Link to={"/support/inquiry-list"} >
           <BasicButton children={"목록"} variant={"default"} basicButton={"medium"} />

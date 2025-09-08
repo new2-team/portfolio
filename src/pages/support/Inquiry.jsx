@@ -8,7 +8,7 @@ import { faStarOfLife } from '@fortawesome/free-solid-svg-icons';
 import FileUpload from '../../components/fileUpload/FileUpload';
 import TextArea from '../../components/textArea/TextArea';
 import RadioWithLabel from '../../components/radio/RadioWithLabel';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Inquiry = ({isUpdate, setIsUpdate}) => {
   
@@ -16,14 +16,12 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
 
   const onChangeTitle = (e) => {
     setTitle(e.target.value)
-    console.log(e.target.value)
   }
   
   const [content, setContent] = useState("")
 
   const onChangeContent = (e) => {
     setContent(e.target.value)
-    console.log(e.target.value)
   }
   
   const [type, setType] = useState("")
@@ -32,11 +30,9 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
   
   const handleChange = (value) => {
     setSelected(value);
-    console.log(value);
     
    const mapping = { a: 0, b: 1, c: 2, d: 3 };
     setType(mapping[value]);
-    console.log(mapping[value]);
   };
   
   const [file, setFile] = useState("")
@@ -44,21 +40,36 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
     setFile(e.target.value)
   }
 
+  const link = useNavigate("")
+
   const onClickPost = async (e) => {
 
-      window.alert('저장되었습니다');
-      await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry`, {
-        method : "POST",
+    const raw = localStorage.getItem("jwt_token");
+    
+    if(type == undefined) {
+      alert('문의 유형을 선택해주세요');
+      return;
+      } else if (!title) {
+        alert('제목을 입력하세요');
+        return;
+      } else if (!content) {
+        alert('내용을 입력하세요')
+        return;
+      } else {
+        window.alert('저장되었습니다');
+        link("/support/inquiry-list")
+        await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry`, {
+          method : "POST",
         headers : {
-          "Content-Type" : "application/json"
+          "Content-Type" : "application/json",
+          Authorization : `Bearer ${raw}`,
         },
         body : JSON.stringify({
           inquiry_id : Date.now().toString(36) + Math.random().toString(36).substring(2, 8),
-          user_id : "user_test",
           type : type,
           title : title,
           content : content,
-          file : file
+          file : file,
         })
       })
       .then((res) => {
@@ -75,8 +86,16 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
         setIsUpdate(!isUpdate)
       })
       .catch(console.error)
-      
-      
+    }}
+
+    const onClickCancel = () => {
+      if (content) {
+        if (window.confirm('변경내용이 저장되지 않았습니다. 나가시겠습니까?')) {
+          window.open("/support/inquiry-list", "_self")
+        }
+      } else {
+        link("/support/inquiry-list")
+      }
     }
 
 
@@ -189,13 +208,12 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
                        </S.FileWrapper>
                </S.InquiryFileWrapper>
             </S.InquiryBodyWrapper>
-             <Link to="/support/inquiry-list" >
+
                 <S.InquiryButtonWrapper>
-                    <BasicButton children={"취소"} variant={"gray"} basicButton={"medium"} />
+                    <BasicButton children={"취소"} variant={"gray"} basicButton={"medium"} onClick={onClickCancel}/>
                     <BasicButton children={"저장"} variant={"default"} basicButton={"medium"} onClick={onClickPost} />
                 </S.InquiryButtonWrapper>
-             </Link>
-        </S.InquiryWrapper>
+      </S.InquiryWrapper>
     );
 };
 

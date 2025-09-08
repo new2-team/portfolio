@@ -327,6 +327,7 @@ S.InquiryContentWrapper = styled.div`
  height: fit-content;
  /* padding: 0 24px; */
  border-bottom: solid 2px #cccccc;
+ padding-bottom: 180px;
 `
 
 S.ProfileDateWrapper = styled.div`
@@ -382,6 +383,7 @@ S.FileLinkWrapper = styled.div`
  align-items: end;
  width: 100%;
  height: 186px;
+ flex: 0 0 auto;
  padding: 0 24px 56px 0;
  font-size: ${({ theme }) => theme.FONT_SIZE.button2 };
 `
@@ -417,6 +419,8 @@ S.ReplyContent = styled.div`
  height: fit-content;
  padding-left: 152px;
  font-size: ${({ theme }) => theme.FONT_SIZE.body2 };
+ border-bottom: solid 2px #cccccc;
+ padding-bottom: 90px;
 `
 
 S.TextAreaWrapper = styled.div`
