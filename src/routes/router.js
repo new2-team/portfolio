@@ -82,7 +82,7 @@ const router = createBrowserRouter([
           { path: "faq", element: <Faq /> },
           { path: "customer-inquiry", element: <Inquiry /> },
           { path: "inquiry-list", element: <InquiryList />},
-          { path: "inquiry-detail", element: <InquiryDetail />},
+          { path: "inquiry-detail/:id", element: <InquiryDetail />},
         ],
       },
     ],

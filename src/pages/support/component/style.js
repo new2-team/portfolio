@@ -31,10 +31,11 @@ S.Author = styled.div`
  font-size: ${({ theme }) => theme.FONT_SIZE.body2 };
 `
 
-S.Title = styled.div`
+S.Title = styled.button`
  display: flex;
  align-items: center;
  width: 720px;
+ background-color: white;
  font-size: ${({ theme }) => theme.FONT_SIZE.body2 };
 `
 

@@ -3,10 +3,9 @@ import styled from 'styled-components';
 import S from '../textArea/style';
 
 
-const TextArea = ({placeholder, maxChars, onChange }) => {
+const TextArea = ({placeholder, maxChars, onChange, onChangeValue}) => {
 
   const [text, setText] = useState('');
-  const [content, setContent] = useState('');
 
   return (
     <S.TextAreaWrapper>
