@@ -1,14 +1,13 @@
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import Text from '../../components/text/size';
 import BasicButton from '../../components/button/BasicButton';
 import { spacingProps } from '../../styles/spacingProps';
-
 
 export const HEADER_HEIGHT = 72;
 
 const S = {};
 
-/* ─── 상단 Header ─────────────────────────────────────────── */
+/* Header */
 S.Header = styled.header`
   height: ${HEADER_HEIGHT}px;
   display: flex;
@@ -19,7 +18,7 @@ S.Header = styled.header`
   border-bottom: 1px solid ${({ theme }) => theme.PALLETE.background.gray100};
 `;
 
-/* ─── Progress Bar ───────────────────────────────────────── */
+/* Progress */
 S.Progress = styled.div`
   display: flex;
   justify-content: center;
@@ -35,20 +34,20 @@ S.StepDot = styled.div`
     active ? theme.PALLETE.primary.main : theme.PALLETE.background.gray200};
 `;
 
-/* ─── 컨텐츠 영역 ─────────────────────────────────────────── */
+/* Container */
 S.Container = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: 24px 16px 80px;
 `;
 
-/* ─── 질문 타이틀 ───────────────────────────────────────── */
+/* Title */
 S.QuestionTitle = styled(Text.H6)`
   ${spacingProps};
   text-align: center;
-  white-space: nowrap;    /* 한 줄로 유지 */
-  overflow: visible;      /* 넘쳐도 숨기지 않음 */
-  text-overflow: clip;    /* 말줄임 없이 끝까지 보이도록 */
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
 
   span {
     white-space: nowrap;
@@ -58,8 +57,7 @@ S.QuestionTitle = styled(Text.H6)`
   }
 `;
 
-
-/* ─── 옵션 그룹 ─────────────────────────────────────────── */
+/* Options */
 S.Options = styled.div`
   display: flex;
   justify-content: space-between;
@@ -67,23 +65,31 @@ S.Options = styled.div`
   margin: 32px 0;
 `;
 
-/* ─── 옵션 텍스트 (A. / B.) ─────────────────────────────── */
 S.OptionText = styled(Text.Body2)`
   ${spacingProps};
   margin-bottom: 8px;
   text-align: center;
-  white-space: nowrap;           /* 한 줄로 유지 */
-  overflow: visible;
-  text-overflow: clip;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: ${({ theme }) => theme.PALLETE.text.main};
 `;
 
-/* ─── 옵션 카드 ─────────────────────────────────────────── */
+/* 슬라이드 인 애니메이션 */
+const slideInLeft = keyframes`
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+`;
+const slideInRight = keyframes`
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+`;
+
+/* Option Card */
 S.OptionCard = styled.div`
   flex: 1;
-  width: 360px; 
-  height: 360px;   /* 카드 높이 고정 */
-  background: #fff;
+  height: 260px;
+  background: #fbfbfb;
   border: ${({ selected, theme }) =>
     selected
       ? `2px solid ${theme.PALLETE.primary.main}`
@@ -95,21 +101,34 @@ S.OptionCard = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #fbfbfb;
+
+  /* 방향에 따라 애니메이션 */
+  ${({ dir }) =>
+    dir === 'left' &&
+    css`
+      animation: ${slideInLeft} 0.35s ease;
+    `}
+  ${({ dir }) =>
+    dir === 'right' &&
+    css`
+      animation: ${slideInRight} 0.35s ease;
+    `}
+
+  will-change: transform, opacity;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;  /* 비율 유지하면서 꽉 채우기 */
+    object-fit: cover;
     display: block;
   }
 `;
 
-/* ─── 버튼 그룹 ─────────────────────────────────────────── */
+/* Buttons */
 S.ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -117,7 +136,6 @@ S.ButtonWrapper = styled.div`
   margin-top: 24px;
 `;
 
-/* 이전 버튼 */
 S.PrevButton = styled(BasicButton)`
   width: 120px;
   height: 48px;
@@ -125,21 +143,11 @@ S.PrevButton = styled(BasicButton)`
   font-size: ${({ theme }) => theme.FONT_SIZE.button2};
 `;
 
-/* 다음 버튼 */
 S.NextButton = styled(BasicButton)`
   width: 120px;
   height: 48px;
   border-radius: 24px;
   font-size: ${({ theme }) => theme.FONT_SIZE.button2};
 `;
-
-// /* ─── Footer ────────────────────────────────────────────── */
-// S.Footer = styled.footer`
-//   text-align: center;
-//   padding: 24px 0;
-//   background: ${({ theme }) => theme.PALLETE.primary.main};
-//   color: ${({ theme }) => theme.PALLETE.text.white};
-//   font-size: ${({ theme }) => theme.FONT_SIZE.caption2};
-// `;
 
 export default S;
