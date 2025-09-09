@@ -195,11 +195,11 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
         </S.InputGroup>
       </S.InputGroupContainer>
 
-      {schedule.startTime ? (
+      {schedule.time ? (
         <S.InputGroupContainer>
           <FontAwesomeIcon icon={faClock} style={{ size: '20px', marginRight: '15px', color: '#616161' }} />
           <S.InputGroup>
-            {schedule.startTime}
+            {schedule.time}
           </S.InputGroup>
         </S.InputGroupContainer>
       ) : (

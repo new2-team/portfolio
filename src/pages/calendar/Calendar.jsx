@@ -14,6 +14,7 @@ const Calendar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [viewMode, setViewMode] = useState('month');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   
 
@@ -52,6 +53,11 @@ const Calendar = () => {
     setViewMode('month');
   };
 
+  // 일정 등록 성공 시 호출될 콜백
+  const handleScheduleAdded = () => {
+    setRefreshKey((k) => (k + 1));
+  }
+
   return (
     <S.Container>
       <S.Sidebar>
@@ -66,11 +72,14 @@ const Calendar = () => {
             scheduleInfo={selectedSchedule}
             onBack={handleBackToMonth}
             initialDate={selectedDate}
+            refreshKey={refreshKey}
           />
         ) : (
           <CalendarMonth
             onDateClick={handleDateClick}
             onEventClick={handleEventClick}
+            refreshKey={refreshKey}
+            initialDate={selectedDate}
           />
         )}
       </S.Main>
@@ -80,6 +89,7 @@ const Calendar = () => {
           step={2}
           date={selectedDate}
           onClose={() => setIsModalOpen(false)}
+          onAddSchedule={handleScheduleAdded}
         />
       )}
   </S.Container>

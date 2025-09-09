@@ -5,14 +5,18 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import './Calendar.css';
 import S from './style2';
 
-const CalendarMonth = ({ onDateClick, onEventClick }) => {
+const CalendarMonth = ({ onDateClick, onEventClick, refreshKey = 0, initialDate }) => {
   const user_id = localStorage.getItem('user_id');
   const calendarRef = useRef(null);
+  console.log("refreshKey", refreshKey);
 
   const [schedules, setSchedules] = useState([]);
+  
 
   useEffect(() => {
-    const getSchedules = async () => {
+    let aborted = false; // 안전 장치(언마운트 중 setState 방지)
+
+    const getSchedulesNames = async () => {
       try {
         const response = await fetch(
           `http://localhost:8000/calendar/api/month-schedules/${user_id}`
@@ -36,9 +40,9 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
     };
 
     if (user_id) {
-      getSchedules();
+      getSchedulesNames();
     }
-  }, [user_id]); // user_id 바뀌면 다시 실행
+  }, [user_id, refreshKey]); // user_id 바뀌면 다시 실행, 일정 추가할때마다(모달 열릴 때 마다)
 
   // 캘린더 버전으로 매핑
   const calendarEvents = useMemo(() => {
@@ -78,6 +82,7 @@ const CalendarMonth = ({ onDateClick, onEventClick }) => {
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
+        initialDate={initialDate}
         events={calendarEvents}
         displayEventTime={false} 
         dateClick={handleDateClick}

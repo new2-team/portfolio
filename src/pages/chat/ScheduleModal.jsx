@@ -84,6 +84,7 @@ const ScheduleModal = ({
         // setIsUpdate(!isUpdate) // 상태 리랜더링
       })
       .catch(console.error)
+      onAddSchedule();
       onClose();
     }
   };
