@@ -103,8 +103,6 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
     .then((res) => {
         console.log(res)
         if(res.message) alert(res.message);
-        // setValue("")
-        // setIsUpdate(!isUpdate) // 상태 리랜더링
       })
       .catch(console.error)
   };

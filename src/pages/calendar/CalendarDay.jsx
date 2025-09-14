@@ -4,7 +4,7 @@ import Diary from './Diary';
 import Schedule from './Schedule';
 import S from './style2';
 
-const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0, miniKey = 0 }) => {
+const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0 }) => {
   const user_id = localStorage.getItem('user_id');
   // 선택된 날짜 관리
   const [selectedDate, setSelectedDate] = useState(initialDate);
@@ -15,7 +15,7 @@ const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0, miniKe
 
   useEffect(() => {
     setSelectedDate(initialDate);
-  }, [initialDate, miniKey]);
+  }, [initialDate]);
 
 
   // 날짜로 일정 불러오기
@@ -45,7 +45,7 @@ const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0, miniKe
     if(user_id){
       getSchedules();
     }
-  }, [user_id, selectedDate, refreshKey, miniKey]);
+  }, [user_id, selectedDate, refreshKey]);
   
 
   

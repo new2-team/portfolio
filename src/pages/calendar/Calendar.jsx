@@ -17,14 +17,13 @@ const Calendar = () => {
   const [viewMode, setViewMode] = useState('month');
   const [refreshKey, setRefreshKey] = useState(0);
   const [viewKey, setViewKey] = useState(0);
-  const [miniKey, setMiniKey] = useState(0);
 
   
 
   // MiniCalendar에서 가져온 날짜 등록
   const handleMiniCalendarDateClick = (date) => {
     setSelectedDate(date);
-    setMiniKey(k => k + 1);
+    // setSelectedSchedule(null);
     setViewMode('day');
   };
 
@@ -90,7 +89,6 @@ const Calendar = () => {
         {viewMode === 'day' ? (
           <CalendarDay
             key={`${viewKey}-${selectedSchedule?._id || ''}`}
-            miniKey={miniKey}
             scheduleInfo={selectedSchedule}
             onBack={handleBackToMonth}
             initialDate={selectedDate}
