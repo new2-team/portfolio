@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import ScheduleModal from '../chat/ScheduleModal';
 import CalendarDay from './CalendarDay';
 import CalendarMonth from './CalendarMonth';
@@ -8,6 +8,7 @@ import CompletedSchedule from './CompletedSchedule';
 import MiniCalendar from './MiniCalendar';
 import S from './style2';
 
+
 const Calendar = () => {
   // MiniCalendar에서 보낸 selectedDate 관리
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd')); 
@@ -15,12 +16,15 @@ const Calendar = () => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [viewMode, setViewMode] = useState('month');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [viewKey, setViewKey] = useState(0);
+  const [miniKey, setMiniKey] = useState(0);
 
   
 
   // MiniCalendar에서 가져온 날짜 등록
   const handleMiniCalendarDateClick = (date) => {
     setSelectedDate(date);
+    setMiniKey(k => k + 1);
     setViewMode('day');
   };
 
@@ -48,6 +52,14 @@ const Calendar = () => {
     setViewMode('day');
   };
 
+  // 다가오는 일정 클릭 시
+  const handleOpenDay = useCallback((schedule) => {
+    setSelectedSchedule(schedule);          // 객체 전체 보관
+    setSelectedDate(schedule?.date ?? null);
+    setViewMode('day');
+    setViewKey(k => k + 1);
+  }, []);
+
   // MonthCalender로 이동 -> 이거 나중에 DayCalender 에서 월 클릭하면 연결하기 
   const handleBackToMonth = () => { 
     setViewMode('month');
@@ -62,13 +74,23 @@ const Calendar = () => {
     <S.Container>
       <S.Sidebar>
         <MiniCalendar onDateClick={handleMiniCalendarDateClick} />
-        <ComingSchedule onComingItemClick={handleComingItemClick} />
-        <CompletedSchedule onCompletedItemClick={handleCompletedItemClick} />
+        <ComingSchedule 
+          onComingItemClick={handleComingItemClick}
+          refreshKey={refreshKey}
+          onOpenDay={handleOpenDay}
+        />
+        <CompletedSchedule 
+          onCompletedItemClick={handleCompletedItemClick}
+          refreshKey={refreshKey}
+          onOpenDay={handleOpenDay}
+        />
       </S.Sidebar>
 
       <S.Main mt={20} mr={20} mb={20} ml={15}>
         {viewMode === 'day' ? (
           <CalendarDay
+            key={`${viewKey}-${selectedSchedule?._id || ''}`}
+            miniKey={miniKey}
             scheduleInfo={selectedSchedule}
             onBack={handleBackToMonth}
             initialDate={selectedDate}

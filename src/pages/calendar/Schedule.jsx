@@ -14,8 +14,10 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
   // console.log("selectedSchedule: ", selectedSchedule);
   // const [user_Id, setUserId] = useState('6895c4d407695ea93734389a')
   const [date, setDate] = useState(selectedDate); // props에서 받은날짜
-  const [schedule, setSchedule] = useState(selectedSchedule); // 일정객체를 통째로 등록
+  // const [schedule, setSchedule] = useState(selectedSchedule ?? null); // 일정객체를 통째로 등록
+  const schedule = selectedSchedule ?? null;
   console.log("day에서 넘겨받은 schedule객체: ",schedule);
+  const hasExisting = !!schedule?.title;
 
   const [title, setTitle] = useState(''); // 일정 제목
   const [startTime, setStartTime] = useState(null); // 일정시작시간
@@ -43,23 +45,8 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleLocationChange = (e) => setLocation(e.target.value);
 
-  // useEffect해서 일정 객체를 eventId로 가지고오거나, selectedDate로 가지고 오기
-  // useEFfect해서 api 일정 조회를 연동하기
-  // useEffect해서 친구목록을 api로 가지고 오고 setFriends로 연결
-
-  // useEffect(() => {
-  //   const dummy = {};
-  //   // const dummy = {
-  //   //   title: '한강 산책 모임',
-  //   //   date: '8월 3일 (토)',
-  //   //   startTime: '18:00',
-  //   //   location: '여의나루역 2번 출구 앞',
-  //   // };
-  //   setSchedule(dummy);
-  // }, [eventId]);
-
   const handleSelectFriend = (friend) => {
-    if (schedule.title) {
+    if (hasExisting) {
       setSelectedFriends([friend]);
     } else {
       // toggle 방식
@@ -82,6 +69,7 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
       });
     }
   }
+
 
   // 저장버튼 - api 일정 등록
   const handleSave = async () => {
@@ -177,8 +165,8 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
 
   return (
     <S.ScheduleCard>
-      {schedule.title ? (
-        <S.ScheduleTitle1>{schedule.title}</S.ScheduleTitle1>
+      {hasExisting ? (
+        <S.ScheduleTitle1>{schedule?.title}</S.ScheduleTitle1>
       ) : (
         <S.ScheduleTitleInput
           type="text"
@@ -191,11 +179,11 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
       <S.InputGroupContainer>
         <FontAwesomeIcon icon={faCalendarDays} style={{ size: '20px', marginRight: '15px', color: '#616161' }} />
         <S.InputGroup>
-          <span>{schedule.date || formattedSelectedDate}</span>
+          <span>{schedule?.date ?? formattedSelectedDate}</span>
         </S.InputGroup>
       </S.InputGroupContainer>
 
-      {schedule.time ? (
+      {schedule?.time ? (
         <S.InputGroupContainer>
           <FontAwesomeIcon icon={faClock} style={{ size: '20px', marginRight: '15px', color: '#616161' }} />
           <S.InputGroup>
@@ -223,7 +211,7 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
       <S.InputGroupContainer>
         <FontAwesomeIcon icon={faLocationDot} style={{ size: '20px', marginRight: '15px', color: '#616161' }} />
         <S.InputGroup>
-          {schedule.location ? (
+          {schedule?.location ? (
             <span>{schedule.location}</span>
           ) : (
             <S.LocationInput
@@ -238,7 +226,7 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
 
       {/* 친구 목록 */}
       <S.FriendsSelect $maxWidth={(80 + 10) * 5}>
-        {(schedule.friends && schedule.friends.length > 0 ? schedule.friends : friends).map((f, idx) => (
+        {(schedule?.friends?.length ? schedule.friends : friends).map((f, idx) => (
           <S.FriendAvatar
             key={idx}
             src={f}
@@ -253,7 +241,7 @@ const Schedule = ({ selectedSchedule, selectedDate }) => {
       </S.FriendsSelect>
 
       <S.ScheduleButtons>
-        {schedule.title ? (
+        {hasExisting ? (
           <>
             <BasicButton roundButton="small" variant="default" style={{ width: '100%' }}
                           onClick={handleEdit}>
