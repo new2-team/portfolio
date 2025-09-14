@@ -1,12 +1,13 @@
 import { faImage, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import S from './style2';
 
 const Diary = ({ selectedSchedule, selectedDate }) => {
-  const user_id = localStorage.getItem('user_id');
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
 
   const schedule = selectedSchedule ?? null;
   // console.log("day에서 넘겨받은 schedule객체: ",schedule);

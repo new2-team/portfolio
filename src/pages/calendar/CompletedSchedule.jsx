@@ -1,11 +1,12 @@
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import theme from '../../styles/theme';
 import S from './style2';
 
 const CompletedSchedule = ({ refreshKey = 0, onOpenDay }) => {
-  const user_id = localStorage.getItem('user_id');
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
   
     const [schedules, setSchedules] = useState([]);
   

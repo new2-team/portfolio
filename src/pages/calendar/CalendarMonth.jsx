@@ -2,11 +2,12 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import './Calendar.css';
 import S from './style2';
 
 const CalendarMonth = ({ onDateClick, onEventClick, refreshKey = 0, initialDate }) => {
-  const user_id = localStorage.getItem('user_id');
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
   const calendarRef = useRef(null);
   console.log("refreshKey", refreshKey);
 

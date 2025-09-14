@@ -4,12 +4,13 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useSelector } from 'react-redux';
 import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import S from './style2';
 
 const Schedule = ({ selectedSchedule, selectedDate }) => {
-  const user_id = localStorage.getItem('user_id');
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
   // console.log(user_id);
   // console.log("selectedSchedule: ", selectedSchedule);
   // const [user_Id, setUserId] = useState('6895c4d407695ea93734389a')

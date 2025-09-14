@@ -6,6 +6,7 @@ import { useState } from 'react';
 import 'react-clock/dist/Clock.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useSelector } from 'react-redux';
 import 'react-time-picker/dist/TimePicker.css';
 import BasicButton from "../../components/button/BasicButton";
 import S from './style';
@@ -16,7 +17,8 @@ const ScheduleModal = ({
   step: initialStep = 1,
   date: initialDate = new Date(),
 }) => {
-  const user_id = localStorage.getItem('user_id');
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
+  console.log("user_id", user_id);
   const [step, setStep] = useState(initialStep);
   const [selectedDate, setSelectedDate] = useState(
     typeof initialDate === 'string' ? new Date(initialDate) : initialDate

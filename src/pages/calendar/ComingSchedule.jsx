@@ -1,13 +1,13 @@
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import theme from '../../styles/theme';
 import S from './style2';
 
 
-
 const ComingSchedule = ({ refreshKey = 0, onOpenDay }) => {
-  const user_id = localStorage.getItem('user_id');
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
 
   const [schedules, setSchedules] = useState([]);
 
@@ -40,7 +40,7 @@ const ComingSchedule = ({ refreshKey = 0, onOpenDay }) => {
     <S.InputWrapper mt={20} mr={0} mb={20} ml={10}
                     pt={20} pl={20} pb={1} pr={20}>
       <S.MainTitle>다가오는 일정</S.MainTitle>
-      {/* {(!loading && schedules?.length === 0) && <S.ScheduleLabel>예정된 일정이 없습니다.</S.ScheduleLabel>} */}
+      {/* {(!schedules && schedules?.length === 0) && <S.ScheduleLabel>예정된 일정이 없습니다.</S.ScheduleLabel>} */}
       <S.ScheduleContainer>
         {schedules.map((schedule) => (
           <S.ScheduleItem 
