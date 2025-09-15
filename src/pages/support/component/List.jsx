@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import S from "./style";
-import { Link } from "react-router-dom";
-
-// const data = Array.from({ length: 1234 }, (_, i) => ({
-//   id: i + 1,
-//   title: `멍픽 관련해서 문의 드립니다 ${i + 1}`,
-//   author: "홍 * 동",
-//   date: "2025.07.29",
-//   category: i % 2 === 0 ? "답변중" : "답변완료"
-// }));
-
+import { Link, useNavigate } from "react-router-dom";
 
 
 
@@ -30,7 +21,6 @@ const List = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
-  console.log(data.length)
 
  const getPageNumbers = () => {
   if (totalPages <= 5) {
@@ -61,25 +51,35 @@ const List = () => {
   (currentPage - 1) * ITEMS_PER_PAGE,
   currentPage * ITEMS_PER_PAGE,
  )
-// .map((item) => {
-//   item.created_at.split(10)
-//   console.log(item.created_at)
-//  })
+
+ const link = useNavigate("")
+ 
+ const inquiryList = currentItems.map((item) => {
+   
+   const reply = item.reply_yn ? "답변완료" : "답변중"
+   const date = item.created_at.slice(0, 10).split("-").join(".")
+   const name = item.user_name.slice(0,1) + " * " + item.user_name.slice(2)
+   const linkToDetail = () => {
+    link(`/support/inquiry-detail/${item.inquiry_id}`)
+   }
+
+    return (
+    <S.Data key={item.id}>
+      <S.Author>{name}</S.Author>
+      <S.Title onClick={linkToDetail}>{item.title}</S.Title>
+      <S.Date>{date}</S.Date>
+      <S.Reply>{reply}</S.Reply>
+     </S.Data>
+  )
+ }
+)
+
 
   return (
     <div>
       <S.ListWrapper>
         <tbody>
-          {currentItems.map((item) => (
-            <S.Data key={item.id}>
-              <S.Author>{item.user_id}</S.Author>
-              <Link to={"/support/inquiry-detail"} >
-               <S.Title>{item.title}</S.Title>
-              </Link>
-              <S.Date>{item.created_at}</S.Date>
-              <S.Reply>{item.category}</S.Reply>
-            </S.Data>
-          ))}
+          {inquiryList}
         </tbody>
       </S.ListWrapper>
 
