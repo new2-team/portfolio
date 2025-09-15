@@ -140,7 +140,7 @@ const Diary = ({ selectedSchedule, selectedDate, onDeleted }) => {
     try {
       let diary_photo_url = null;
       if(file){
-        diary_photo_url = await uploadDiaryImage();
+        diary_photo_url = await uploadDiaryImage(file);
       }
     
     const res = await fetch(`http://localhost:8000/calendar/api/post-diary`, {
@@ -156,6 +156,7 @@ const Diary = ({ selectedSchedule, selectedDate, onDeleted }) => {
       }),
     }
   );
+
    if (!res.ok) {
         const msg = await res.json().catch(() => ({}));
         throw new Error(msg?.message || '일기 저장 실패');
@@ -164,8 +165,8 @@ const Diary = ({ selectedSchedule, selectedDate, onDeleted }) => {
       const data = await res.json();
       alert(data?.message || '저장 완료');
 
-      setDiaryText(data.diary_text);
-      setDiaryPhoto(data.diary_photo_url);
+      setDiaryText(data.diary_text ?? text ?? null);
+      setDiaryPhoto(data.diary_photo_url ?? diary_photo_url ?? null);
       resetComposeStates();
       // console.log("data.diary_photo_url", data.diary_photo_url);
       onDeleted?.(schedule._id);
