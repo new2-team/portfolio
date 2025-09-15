@@ -11,6 +11,7 @@ const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0 }) => {
   // 선택된 날짜 관리
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [schedule, setSchedule] = useState(scheduleInfo ?? null);
+  const [deleteKey, setDeleteKey] = useState(0);
   // const [refresh, setRefresh] = useState();
   // console.log("initialDate", initialDate);
   // console.log("scheduleInfo", scheduleInfo);
@@ -47,7 +48,7 @@ const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0 }) => {
     if(user_id){
       getSchedules();
     }
-  }, [user_id, selectedDate, refreshKey]);
+  }, [user_id, selectedDate, refreshKey, deleteKey]);
   
 
   
@@ -71,6 +72,11 @@ const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0 }) => {
     setSelectedDate(date);
   };
 
+  // 일정, 일기 삭제 시 일정 재조회
+  const handleDeleted = () => {
+    setDeleteKey((k) => k + 1);
+  }
+
   return (
     <S.CalendarDay>
       <S.CalendarDayTitle mt={30} ml={30} mb={30} mr={0} onClick={onBack}>
@@ -92,8 +98,16 @@ const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0 }) => {
 
         {/* prop으로 schedule.id 전해주기 */}
       <S.CalendarDayContainer>
-        <Schedule selectedSchedule={schedule} selectedDate={selectedDate} />  
-        <Diary selectedSchedule={schedule} selectedDate={selectedDate} />
+        <Schedule 
+          selectedSchedule={schedule} 
+          selectedDate={selectedDate} 
+          onDeleted={handleDeleted}
+        />  
+        <Diary 
+          selectedSchedule={schedule} 
+          selectedDate={selectedDate} 
+          onDeleted={handleDeleted}
+        />
       </S.CalendarDayContainer>
     </S.CalendarDay>
 
