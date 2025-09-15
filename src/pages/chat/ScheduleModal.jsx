@@ -1,11 +1,12 @@
 import { faArrowLeft, faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 import 'react-clock/dist/Clock.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import TimePicker from 'react-time-picker';
+import { useSelector } from 'react-redux';
 import 'react-time-picker/dist/TimePicker.css';
 import BasicButton from "../../components/button/BasicButton";
 import S from './style';
@@ -16,6 +17,8 @@ const ScheduleModal = ({
   step: initialStep = 1,
   date: initialDate = new Date(),
 }) => {
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
+  console.log("user_id", user_id);
   const [step, setStep] = useState(initialStep);
   const [selectedDate, setSelectedDate] = useState(
     typeof initialDate === 'string' ? new Date(initialDate) : initialDate
@@ -43,9 +46,9 @@ const ScheduleModal = ({
   };
 
   // 추가하기, 일정추가 버튼 클릭 시
-  const handleAdd = () => {
+  const handleAdd = async() => {
     if (step === 1 && selectedDate) {
-      // 추가하기 버튼 클릭시
+      // 추가하기 버튼 클릭시 
       setStep(2);
     } else if (step === 2) {
       // 일정추가 버튼 클릭 시
@@ -54,16 +57,36 @@ const ScheduleModal = ({
         setError('일정을 작성해주세요');
         return;
       }
+    // setShowError(false);
+    const onlyDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+    const onlyTime = startTime ? format(startTime, "HH:mm") : null;
 
-      const newSchedule = {
-        title: title,
-        date: selectedDate.toISOString().split('T')[0],
-        startTime: startTime,
+    await fetch(`http://localhost:8000/calendar/api/post-schedules`, {
+      method : "POST",
+      headers : {
+        "Content-Type" : "application/json"
+      },
+      body : JSON.stringify({
+        user_id: user_id,
+        // chat_id: selectedFriends,
+        title : title,
+        date: onlyDate,
+        time: onlyTime,
         location: location,
-        friends: selectedFriends,
-      };
-
-      onAddSchedule(newSchedule);
+      })
+    })
+    .then((res) => {
+      if(!res.ok) throw new Error(`Response Fetching Error`);
+      return res.json()
+    })
+    .then((res) => {
+        console.log(res)
+        if(res.message) alert(res.message);
+        // setValue("")
+        // setIsUpdate(!isUpdate) // 상태 리랜더링
+      })
+      .catch(console.error)
+      onAddSchedule();
       onClose();
     }
   };
@@ -149,13 +172,15 @@ const ScheduleModal = ({
             <S.InputGroupContainer>
               <FontAwesomeIcon icon={faClock} style={{ color: '#616161', marginRight: '15px', width: '24px', height: '24px' }} />
               <S.InputGroup>
-                <TimePicker
-                  onChange={setStartTime}
-                  value={startTime}
-                  disableClock
-                  clearIcon={null}
-                  clockIcon={null}
-                  format="HH:mm"
+                <DatePicker
+                  selected={startTime}
+                  onChange={(date) => setStartTime(date)}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={30}
+                  dateFormat="h:mm aa"
+                  placeholderText="시작 시간을 선택하세요"
+                  customInput={<S.DateInput />}
                 />
               </S.InputGroup>
             </S.InputGroupContainer>

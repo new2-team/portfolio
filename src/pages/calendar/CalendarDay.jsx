@@ -1,16 +1,56 @@
 import { addDays, format, startOfWeek } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Diary from './Diary';
 import Schedule from './Schedule';
 import S from './style2';
 
-const CalendarDay = ({ eventId, onBack, initialDate }) => {
+
+const CalendarDay = ({ scheduleInfo, onBack, initialDate, refreshKey = 0 }) => {
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
   // 선택된 날짜 관리
   const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [schedule, setSchedule] = useState(scheduleInfo ?? null);
+  // const [refresh, setRefresh] = useState();
+  // console.log("initialDate", initialDate);
+  // console.log("scheduleInfo", scheduleInfo);
 
   useEffect(() => {
     setSelectedDate(initialDate);
   }, [initialDate]);
+
+
+  // 날짜로 일정 불러오기
+  useEffect(() => {
+    const getSchedules = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/calendar/api/get-schedules/${user_id}?date=${selectedDate}`
+        );
+
+        if(!response.ok) {
+          throw new Error(`서버 응답 에러: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const list = Array.isArray(data?.schedules) ? data.schedules.filter(Boolean) : [];
+        setSchedule(list.at(0) ?? null);
+        
+        console.log("1111받아온 일정: ", schedule);
+
+      } catch (err) {
+        console.error("일정 불러오기 실패: ", err)
+        setSchedule(null); 
+      }
+    };
+
+    if(user_id){
+      getSchedules();
+    }
+  }, [user_id, selectedDate, refreshKey]);
+  
+
+  
 
   const weekStart = startOfWeek(new Date(selectedDate), { weekStartsOn: 0 });
 
@@ -33,7 +73,7 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
 
   return (
     <S.CalendarDay>
-      <S.CalendarDayTitle mt={30} ml={30} mb={30} mr={0}>
+      <S.CalendarDayTitle mt={30} ml={30} mb={30} mr={0} onClick={onBack}>
         {selectedMonthYear}
       </S.CalendarDayTitle>
 
@@ -50,9 +90,10 @@ const CalendarDay = ({ eventId, onBack, initialDate }) => {
         ))}
       </S.CalendarDayHeaderContainer>
 
+        {/* prop으로 schedule.id 전해주기 */}
       <S.CalendarDayContainer>
-        <Schedule eventId={eventId} selectedDate={selectedDate} />
-        <Diary eventId={eventId} selectedDate={selectedDate} />
+        <Schedule selectedSchedule={schedule} selectedDate={selectedDate} />  
+        <Diary selectedSchedule={schedule} selectedDate={selectedDate} />
       </S.CalendarDayContainer>
     </S.CalendarDay>
 
