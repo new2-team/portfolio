@@ -6,10 +6,25 @@ import BasicButton from '../../components/button/BasicButton';
 import RadioWithLabel from '../../components/radio/RadioWithLabel';
 import BasicInput from '../../components/input/BasicInput';
 import ButtonWithInput from '../../components/input/ButtonWithInput';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import List from './component/List';
 
 const InquiryList = () => {
+
+ const link = useNavigate("")
+
+ const token = localStorage.getItem("jwt_token");
+
+ const onClickLink = (e) => {
+   if (token) {
+     link(e)
+   } else {
+     window.alert("로그인 후 이용하실 수 있습니다.");
+     link("/sign-in");
+   }
+ }
+
+
  return (
   <S.InquiryWrapper>
    <SupportMenuComponent activeMenu="inquiry" />
@@ -23,15 +38,7 @@ const InquiryList = () => {
     </div>
    </div>
    <S.InquiryBodyWrapper>
-    <Link to={"/support/customer-inquiry"}>
-    <BasicButton children={"문의하기"} variant={"filled"} basicButton={"medium"} />
-    </Link>
-    <S.RadioInputWrapper>
-        <RadioWithLabel label='내가 쓴 글' />
-        <S.SerachInput>
-         <ButtonWithInput placeholder='작성자를 입력하세요' buttonText='검색' />
-        </S.SerachInput>
-    </S.RadioInputWrapper>
+    <BasicButton children={"문의하기"} variant={"filled"} basicButton={"medium"} onClick={() => onClickLink("/support/customer-inquiry")} />
     <S.ListWrapper>
         <List />
     </S.ListWrapper>

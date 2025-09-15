@@ -23,18 +23,21 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
     const [inquiryDate, setInquiryDate] = useState("")
     const [inquiryName, setInquiryName] = useState("")
     const [file, setFile] = useState("")
+    const [userId, setUserId] = useState("")
+    const [profile, setProfile] = useState("")
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/get-inquiry-detail/${id}`)
-      .then(response => response.json())
-      .then(data => {
-          setInquiryTitle(data.user.title);
-            setInquiryContent(data.user.content);
-            const date = data.user.created_at.slice(0,10).split("-").join(".");
-            setInquiryDate(date)
-            setInquiryName(data.user.user_name)
-            setFile(data.user.file)
-        })
+        .then(response => response.json())
+        .then(data => {
+            setInquiryTitle(data.user.title);
+              setInquiryContent(data.user.content);
+              const date = data.user.created_at.slice(0,10).split("-").join(".");
+              setInquiryDate(date)
+              setInquiryName(data.user.user_name)
+              setFile(data.user.file)
+              setUserId(data.user.user_id)
+          })
         .catch(error => console.error("문의글 불러오는 중 오류" + error))
     }, [])
 
@@ -53,6 +56,21 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
             )
         }
     }
+
+    // 프로필 사진 조회
+
+    useEffect(() => {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${userId}`)
+        .then(response => response.json())
+        .then((data) => {
+            const profileImage = data.user?.dogProfile?.profileImage
+            if(profileImage != null){   
+                setProfile(profileImage)
+            } else {
+                setProfile("/assets/img/sample-profile.png")
+            }
+        })
+    })
     
     // 답변 조회
 
@@ -64,10 +82,11 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
       .catch(error => console.error("문의글 답변 불러오는 중 오류" + error))
     }, [])
 
-    const inquiryReply = reply.map((item) => {
-        const content = item.reply_content;
-        const name = item.user_name;
-        const date = item.created_at.slice(0, 10).split("-").join(".");
+    const inquiryReply = reply.map((data) => {
+        const content = data.reply_content;
+        const name = data.user_name;
+        const date = data.created_at.slice(0, 10).split("-").join(".");
+        // const profile = {profile}
 
         return (
         <S.InquiryReplyWapper>
@@ -75,7 +94,13 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
                 <S.ReplyProfileDateWrapper> 
                     <S.ReplyProfileWrapper>
                      <FontAwesomeIcon icon={faArrowTurnUp} rotation={90} size='2xl' />
-                     <S.Profile src="/assets/img/my-profile.png" alt="작성자 프로필" />
+                        {/* <S.Profile
+                          src={profile}
+                          alt="프로필"
+                          onError={(e) => {
+                            e.target.src = "/assets/img/sample-profile.png";
+                          }}
+                        /> */}
                      <S.AuthorName>{name}</S.AuthorName>
                     </S.ReplyProfileWrapper>
                     <S.DateWrapper>
@@ -97,7 +122,6 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
         if(!content) {
             window.alert('내용을 입력해 주세요')
         } else{
-            window.alert('저장되었습니다');
             await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry-reply`, {
               method : "POST",
               headers : {
@@ -120,14 +144,18 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
               setIsUpdate(!isUpdate)
             })
             .catch(console.error)
+
+            await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/get-inquiry-reply/${id}`)
+            .then(response => response.json())
+            .then(data => setReply(data.data))
+            .catch(error => console.error("방금 등록한 답변 불러오는 중 오류" + error))
         }
-        window.location.reload();
      }
 
  return (
   <S.InquiryWrapper>
    <SupportMenuComponent activeMenu="inquiry" />
-   <div>
+   {/* <div>
     <S.InquiryTitle>1:1 문의</S.InquiryTitle>
     <div>
         <S.InquiryTitleBottom>
@@ -135,13 +163,19 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
             1:1문의를 주말에 남겨 주시는 고객님께는 평일 9:00 ~ 18:00 에 순차적으로 답변 드리도록 하겠습니다.
         </S.InquiryTitleBottom>
     </div>
-   </div>
+   </div> */}
    <S.InquiryBodyWrapper>
     <S.ListWrapper>
         <S.InquiryContentWrapper>
             <S.ProfileDateWrapper>
                 <S.AuthorProfileWrapper>
-                    <S.Profile src="/assets/img/my-profile.png" alt="작성자 프로필" />
+                        <S.Profile
+                          src={profile}
+                          alt="프로필"
+                          onError={(e) => {
+                            e.target.src = "/assets/img/sample-profile.png";
+                          }}
+                        />
                     <S.AuthorName>{inquiryName}</S.AuthorName>
                 </S.AuthorProfileWrapper>
                 <S.DateWrapper>
@@ -154,33 +188,12 @@ const InquiryDetail = ({isUpdate, setIsUpdate}) => {
             <S.InquiryContent>
                 {inquiryContent}
             </S.InquiryContent>
-            {/* <S.FileLinkWrapper>
-                 <FontAwesomeIcon icon={faPaperclip} size='sm' />
-                 &nbsp;
-                 첨부파일.jpg
-            </S.FileLinkWrapper> */}
             {fileButton}
         </S.InquiryContentWrapper>
-        {/* <S.InquiryReplyWapper>
-            <S.ReplyProfileDateWrapper>
-                <S.ReplyProfileDateWrapper> 
-                    <S.ReplyProfileWrapper>
-                     <FontAwesomeIcon icon={faArrowTurnUp} rotation={90} size='2xl' />
-                     <S.Profile src="/assets/img/my-profile.png" alt="작성자 프로필" />
-                     <S.AuthorName>멍픽</S.AuthorName>
-                    </S.ReplyProfileWrapper>
-                    <S.DateWrapper>
-                        2025.08.01
-                    </S.DateWrapper>
-                </S.ReplyProfileDateWrapper>
-            </S.ReplyProfileDateWrapper>
-            <S.ReplyContent>
-            </S.ReplyContent>
-        </S.InquiryReplyWapper> */}
         {inquiryReply}
         <S.TextAreaWrapper>
             <TextArea placeholder={"답변을 입력해주세요"} maxChars={"500"} onChange={onChangeContent} />
-            <S.Replybutton onClick={onClickReplyPost} >
+            <S.Replybutton onClick={onClickReplyPost} id='replyButton' >
                 <img src="/assets/icons/send.svg" alt="댓글쓰기" />
             </S.Replybutton>
         </S.TextAreaWrapper>
