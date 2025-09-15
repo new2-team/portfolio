@@ -23,19 +23,8 @@ const Calendar = () => {
   // MiniCalendar에서 가져온 날짜 등록
   const handleMiniCalendarDateClick = (date) => {
     setSelectedDate(date);
-    // setSelectedSchedule(null);
     setViewMode('day');
   };
-
-  // ComingSchedule에서 가져온 item 등록
-  const handleComingItemClick = (item) => {
-    setViewMode('day');
-  }
-
-  // CompletedSchedule에서 가져온 item 등록
-  const handleCompletedItemClick = (item) => {
-    setViewMode('day');
-  } 
 
   // 월별 캘린더에서 빈날짜칸 눌렀을 때
   // 일정 모달창 열림
@@ -51,7 +40,7 @@ const Calendar = () => {
     setViewMode('day');
   };
 
-  // 다가오는 일정 클릭 시
+  // 다가오는, 완료된 일정 클릭 시
   const handleOpenDay = useCallback((schedule) => {
     setSelectedSchedule(schedule);          // 객체 전체 보관
     setSelectedDate(schedule?.date ?? null);
@@ -74,12 +63,10 @@ const Calendar = () => {
       <S.Sidebar>
         <MiniCalendar onDateClick={handleMiniCalendarDateClick} />
         <ComingSchedule 
-          onComingItemClick={handleComingItemClick}
           refreshKey={refreshKey}
           onOpenDay={handleOpenDay}
         />
         <CompletedSchedule 
-          onCompletedItemClick={handleCompletedItemClick}
           refreshKey={refreshKey}
           onOpenDay={handleOpenDay}
         />
