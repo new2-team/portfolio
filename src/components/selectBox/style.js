@@ -23,7 +23,7 @@ S.InputButtonWrapper = styled.div`
     cursor: pointer;
   }
 
-  svg {
+  img {
     width: 30px;
     height: 30px;
     position: absolute;
@@ -48,7 +48,9 @@ S.OptionList = styled.ul`
   z-index: 10;
   margin: 0;
   border: 1px solid #a7a7a7;
-  overflow: hidden;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 S.OptionItem = styled.li`

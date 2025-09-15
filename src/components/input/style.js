@@ -1,8 +1,6 @@
 import styled, { css, ThemeProvider } from "styled-components";
 import { spacingProps } from "../../styles/spacingProps";
 import { flexColumn, flexRow } from "../../styles/common";
-import { ReactComponent as EyeOnIcon } from "../icons/eye-on.svg";
-import { ReactComponent as EyeOffIcon } from "../icons/eye-off.svg";
 
 const S = {};
 
@@ -53,6 +51,22 @@ S.Input = styled.input`
   &:not(:focus):not(:placeholder-shown) {
     border-color: ${({ theme }) => theme.PALLETE.text.main};
   }
+  
+  /* 자동완성 배경색 제거 */
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px ${({ theme }) => theme.PALLETE.background.white} inset !important;
+    -webkit-text-fill-color: inherit !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+  
+  /* 모든 브라우저용 자동완성 스타일 */
+  &:autofill {
+    background-color: ${({ theme }) => theme.PALLETE.background.white} !important;
+    color: inherit !important;
+  }
 `;
 
 S.InputWrapper = styled.div`
@@ -70,6 +84,8 @@ S.ErrorMessage = styled.div`
 `;
 
 S.InputButtonWrapper = styled.div`
+  width: 100%; 
+  flex: 1;
   position: relative;
   ${spacingProps}
 
@@ -89,7 +105,7 @@ S.InputButtonWrapper = styled.div`
     cursor: pointer;
   }
 
-  svg {
+  img {
     position: absolute;
     right: 24px;
     top: 50%;
@@ -99,10 +115,17 @@ S.InputButtonWrapper = styled.div`
 `;
 
 S.PasswordInputWrapper = styled.div`
+  width: 100%; 
+  flex: 1;
+  position: relative;
+  ${spacingProps}
   ${flexColumn}
 `;
 
-S.EyeOn = styled(EyeOnIcon)`
+S.EyeOn = styled.img.attrs({
+  src: "/assets/icons/eye-on.svg",
+  alt: "비밀번호 보기"
+})`
   position: absolute;
   right: 24px;
   top: 50%;
@@ -110,7 +133,10 @@ S.EyeOn = styled(EyeOnIcon)`
   cursor: pointer;
 `;
 
-S.EyeOff = styled(EyeOffIcon)`
+S.EyeOff = styled.img.attrs({
+  src: "/assets/icons/eye-off.svg",
+  alt: "비밀번호 숨기기"
+})`
   position: absolute;
   right: 24px;
   top: 50%;

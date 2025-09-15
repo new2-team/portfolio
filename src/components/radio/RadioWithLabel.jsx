@@ -1,23 +1,28 @@
-import React, { useState } from "react";
-import { ReactComponent as CheckedIcon } from "../icons/radio-on.svg";
-import { ReactComponent as UncheckedIcon } from "../icons/radio-off.svg";
+import React from "react";
 import S from "./style";
+import { useToggle } from "../../hooks/useToggle";
 
-const RadioWithLabel = ({ size = "M", label = "", ...props }) => {
-  const [checked, setChecked] = useState(false);
+const RadioWithLabel = ({ size = "M", label = "", checked, onChange, ...props }) => {
+  const isControlled = typeof checked === "boolean";
+  const [internalChecked, toggleChecked, setInternalChecked] = useToggle(false);
+  const isChecked = isControlled ? checked : internalChecked;
 
   const handleClick = () => {
-    setChecked(!checked);
+    if (!isControlled) {
+      toggleChecked(); // 내부 상태 토글
+    }
+    onChange?.(!isChecked); // 외부 onChange 호출
   };
 
   return (
     <S.RadioWrapper onClick={handleClick} {...props}>
-      {checked ? (
-        <CheckedIcon width={getSize(size)} height={getSize(size)} />
-      ) : (
-        <UncheckedIcon width={getSize(size)} height={getSize(size)} />
-      )}
-      <span>{label}</span>
+      <img
+        src={isChecked ? "/assets/icons/radio-on.png" : "/assets/icons/radio-off.png"}
+        width={getSize(size)}
+        height={getSize(size)}
+        alt={isChecked ? "선택됨" : "선택안됨"}
+      />
+      <S.RadioLabel size={size}>{label}</S.RadioLabel>
     </S.RadioWrapper>
   );
 };

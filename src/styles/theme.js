@@ -74,7 +74,7 @@ theme.LINE_HEIGHT = {
   h6: "38px",
   body1: "32px",
   body2: "26px",
-  body3: "22px",
+  body3: "30px",
   caption1: "20px",
   caption2: "18px",
   caption3: "16px",

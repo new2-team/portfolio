@@ -1,19 +1,28 @@
-import React, { useState } from "react";
-import { ReactComponent as CheckedIcon } from "../icons/check-on.svg";
-import { ReactComponent as UncheckedIcon } from "../icons/check-off.svg";
+import React from "react";
 import S from "./style";
 import Text from "../text/size";
+import { useToggle } from "../../hooks/useToggle";
 
-const CheckboxWithLabel = ({ label }) => {
-  const [checked, setChecked] = useState(false);
+const CheckboxWithLabel = ({ label, checked, onChange, ...props }) => {
+  const isControlled = typeof checked === "boolean";
+  const [internalChecked, toggleChecked, setInternalChecked] = useToggle(false);
+  const isChecked = isControlled ? checked : internalChecked;
+
+  const handleClick = () => {
+    if (!isControlled) {
+      toggleChecked(); // 내부 상태 토글
+    }
+    onChange?.(!isChecked); // 외부 onChange 호출
+  };
 
   return (
-    <S.CheckboxWithLabelWrapper onClick={() => setChecked(!checked)}>
-      {checked ? (
-        <CheckedIcon width={20} height={20} />
-      ) : (
-        <UncheckedIcon width={20} height={20} />
-      )}
+    <S.CheckboxWithLabelWrapper onClick={handleClick} {...props}>
+      <img
+        src={isChecked ? "/assets/icons/check-on.png" : "/assets/icons/check-off.png"}
+        width={20}
+        height={20}
+        alt={isChecked ? "체크됨" : "체크안됨"}
+      />
       <Text.Body3 ml="10" fontWeight="600">
         {label}
       </Text.Body3>

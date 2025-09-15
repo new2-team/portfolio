@@ -6,12 +6,6 @@ import S from "../../components/input/style";
 import ErrorInput from "../../components/input/ErrorInput";
 import PasswordInput from "../../components/input/PasswordInput";
 import ButtonWithInput from "../../components/input/ButtonWithInput";
-import { ReactComponent as CalendarIcon } from "../../components/icons/calendar.svg";
-import { ReactComponent as ArrowDownIcon } from "../../components/icons/arrow-down.svg";
-import { ReactComponent as ArrowUpIcon } from "../../components/icons/arrow-up.svg";
-import { ReactComponent as SearchIcon } from "../../components/icons/search.svg";
-import { ReactComponent as ArrowRightIcon } from "../../components/icons/arrow-right.svg";
-import { ReactComponent as CloseIcon } from "../../components/icons/close.svg";
 import Checkbox from "../../components/checkbox/Checkbox";
 import CheckboxWithLabel from "../../components/checkbox/CheckboxWithLabel";
 import RadioWithLabel from "../../components/radio/RadioWithLabel";
@@ -20,6 +14,7 @@ import SelectBox from "../../components/selectBox/SelectBox";
 import Accordion from "../../components/accordion/Accordion";
 import Container from "../../components/layout/Container";
 import MiniFooter from "../../components/layout/footer/MiniFooter";
+import RadioGroupExample from "../../components/radio/RadioGroupExample";
 
 const Main = () => {
   return (
@@ -34,7 +29,7 @@ const Main = () => {
 
         <BasicButton basicButton="superSmall" variant="gray">
           텍스트
-          <ArrowRightIcon width={30} height={30} />
+          <img src="/assets/icons/arrow-right.svg" width={30} height={30} alt="오른쪽" />
         </BasicButton>
 
         <BasicButton roundButton="medium" variant="filled">
@@ -66,31 +61,31 @@ const Main = () => {
           {/*인풋  + 캘린더 아이콘*/}
           <S.InputButtonWrapper>
             <BasicInput type="text" placeholder="" />
-            <CalendarIcon width={30} height={30} />
+            <img src="/assets/icons/calendar.svg" width={30} height={30} alt="캘린더" />
           </S.InputButtonWrapper>
 
           {/*인풋 + 아래로 향하는 화살표*/}
           <S.InputButtonWrapper>
             <BasicInput type="text" placeholder="" />
-            <ArrowDownIcon width={30} height={30} />
+            <img src="/assets/icons/arrow-down.svg" width={30} height={30} alt="아래" />
           </S.InputButtonWrapper>
 
           {/*인풋 + 검색 아이콘*/}
           <S.InputButtonWrapper>
             <BasicInput type="text" placeholder="" />
-            <SearchIcon width={30} height={30} />
+            <img src="/assets/icons/search.svg" width={30} height={30} alt="검색" />
           </S.InputButtonWrapper>
 
           {/*인풋 + 닫기 아이콘*/}
           <S.InputButtonWrapper>
             <BasicInput type="text" placeholder="" />
-            <CloseIcon width={30} height={30} />
+            <img src="/assets/icons/close.svg" width={30} height={30} alt="닫기" />
           </S.InputButtonWrapper>
 
           {/*인풋 + 위로 향하는 화살표 아이콘*/}
           <S.InputButtonWrapper>
             <BasicInput type="text" placeholder="" />
-            <ArrowUpIcon width={30} height={30} />
+            <img src="/assets/icons/arrow-up.svg" width={30} height={30} alt="위" />
           </S.InputButtonWrapper>
 
           {/*인풋 + 텍스트*/}
@@ -147,7 +142,12 @@ const Main = () => {
         </div>
       </section>
       <MiniFooter></MiniFooter>
+
+
+<RadioGroupExample/>
     </Container>
+
+
 
  
   );

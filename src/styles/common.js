@@ -1,5 +1,6 @@
 import { css } from "styled-components";
 
+
 export const flexCenter = css`
   display: flex;
   justify-content: center;
@@ -41,3 +42,14 @@ export const container = css`
   box-sizing: border-box;
   background-color: ${({ backgroundColor = "#fff" }) => backgroundColor};
 `;
+
+export const SignUpContainerStyles = css`
+  width: 100%;
+  padding: 0 480px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background-color: ${({ backgroundColor = "#fff" }) => backgroundColor};
+`;
+
+
+

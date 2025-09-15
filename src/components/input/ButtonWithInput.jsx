@@ -9,6 +9,7 @@ const ButtonWithInput = ({
   placeholder = "",
   buttonText = "",
   onClick,
+  onButtonClick, 
   variant = "default",
   value,
   onChange,
@@ -24,7 +25,16 @@ const ButtonWithInput = ({
         onChange={onChange}
         {...rest}
       />
-      <BasicButton roundButton="superSmall" variant={variant} onClick={onClick}>
+      <BasicButton 
+        roundButton="superSmall" 
+        variant={variant} 
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (onButtonClick) onButtonClick(e);
+          if (onClick) onClick(e);
+        }}
+      >
         {buttonText}
       </BasicButton>
     </S.InputButtonWrapper>

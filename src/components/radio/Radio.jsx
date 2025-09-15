@@ -1,33 +1,34 @@
-import React, { useState } from "react";
-import { ReactComponent as RadioOnIcon } from "../icons/radio-on.svg";
-import { ReactComponent as RadioOffIcon } from "../icons/radio-off.svg";
+import React from "react";
 import S from "./style";
+import { useToggle } from "../../hooks/useToggle";
 
 const Radio = ({ checked, onChange, size = "M", ...props }) => {
   const isControlled = typeof checked === "boolean";
-  const [internalChecked, setInternalChecked] = useState(false);
+  const [internalChecked, toggleChecked, setInternalChecked] = useToggle(false);
   const isChecked = isControlled ? checked : internalChecked;
 
   const handleClick = () => {
     if (!isControlled) {
-      setInternalChecked(!internalChecked);
+      toggleChecked(); // 내부 상태 토글
     }
-    onChange?.(!isChecked);
+    onChange?.(!isChecked); // 외부 onChange 호출
   };
 
   const iconSize = getSize(size);
 
   return (
     <S.RadioWrapper onClick={handleClick} {...props}>
-      {isChecked ? (
-        <RadioOnIcon width={iconSize} height={iconSize} />
-      ) : (
-        <RadioOffIcon width={iconSize} height={iconSize} />
-      )}
+      <img
+        src={isChecked ? "/assets/icons/radio-on.png" : "/assets/icons/radio-off.png"}
+        width={iconSize}
+        height={iconSize}
+        alt={isChecked ? "선택됨" : "선택안됨"}
+      />
     </S.RadioWrapper>
   );
 };
 
+// 크기별 아이콘 사이즈 반환
 const getSize = (size) => {
   switch (size) {
     case "L":

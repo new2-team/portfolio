@@ -3,25 +3,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
-import styles from './style';
+import S from './style2';
 
-const Diary = ({ eventId }) => {
+const Diary = ({ eventId, scheduleDiary }) => {
   const [text, setText] = useState('');
   const [image, setImage] = useState(null);
 
   // ✅ 예시: 기존에 저장된 데이터 (빈 객체 or 데이터 있는 객체)
   // const scheduleDiary = {}; 
-  const scheduleDiary = { text: 
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
-    "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"
-    , imageUrl: "/assets/img/chat/soul.png" };
+  // const scheduleDiary = { text: 
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+
+  //   "오늘은 산책을 다녀왔어요!ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"
+  //   , imageUrl: "/assets/img/chat/soul.png" };
 
   const hasDiary = scheduleDiary && Object.keys(scheduleDiary).length > 0;
 
@@ -45,7 +47,7 @@ const Diary = ({ eventId }) => {
     console.log('Diary deleted');
   };
 
-  // ✅ 메모리 누수 방지
+  // 메모리 누수 방지
   useEffect(() => {
     return () => {
       if (image) URL.revokeObjectURL(image);
@@ -53,93 +55,42 @@ const Diary = ({ eventId }) => {
   }, [image]);
 
   return (
-    <div style={styles.diaryCard}>
-      {!hasDiary && <h3 style={styles.diaryTitle}>일정에 대한 일기를 써보세요!</h3>}
+    <S.DiaryCard>
+      {!hasDiary && <S.DiaryTitle>일정에 대한 일기를 써보세요!</S.DiaryTitle>}
 
-      {/* 객체 없을때 사진 업로드 미리보기 */}
       {hasDiary ? (
         scheduleDiary.imageUrl && (
-          <div
-            style={{
-              position: 'relative',
-              marginBottom: '10px',
-              display: 'flex',
-              justifyContent: 'center',
-            }}
-          >
-            <img
-              src={scheduleDiary.imageUrl}
-              alt="saved"
-              style={{
-                width: '100%',
-                maxWidth: '200px',
-                borderRadius: '10px',
-                objectFit: 'cover',
-                margin: '10px',
-              }}
-            />
-          </div>
+          <S.ImageWrapper>
+            <S.SavedImage src={scheduleDiary.imageUrl} alt="saved" />
+          </S.ImageWrapper>
         )
       ) : (
         image && (
-          <div
-            style={{
-              position: 'relative',
-              marginBottom: '10px',
-              display: 'flex',
-              justifyContent: 'center',
-            }}
-          >
-            <img
-              src={URL.createObjectURL(image)}
-              alt="preview"
-              style={{
-                width: '50%',
-                maxWidth: '300px',
-                borderRadius: '10px',
-                objectFit: 'cover',
-              }}
-            />
-            {/* ✅ 삭제 버튼 */}
-            <button
-              onClick={handleDeleteImage}
-              style={{
-                position: 'absolute',
-                top: '5px',
-                right: '5px',
-                background: 'rgba(0,0,0,0.5)',
-                border: 'none',
-                borderRadius: '50%',
-                cursor: 'pointer',
-              }}
-            >
+          <S.ImageWrapper>
+            <S.PreviewImage src={URL.createObjectURL(image)} alt="preview" />
+            <S.DeleteImageButton onClick={handleDeleteImage}>
               <FontAwesomeIcon icon={faTimesCircle} style={{ color: 'white', fontSize: '20px' }} />
-            </button>
-          </div>
+            </S.DeleteImageButton>
+          </S.ImageWrapper>
         )
       )}
 
-      {/* 객체 없을때 텍스트 표시 */}
       {hasDiary ? (
-        <p style={styles.textField}>
-          {scheduleDiary.text}
-        </p>
+        <S.TextField>{scheduleDiary.text}</S.TextField>
       ) : (
-        <textarea
+        <S.Textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="내용을 입력하세요!!..."
-          style={styles.textarea}
         />
       )}
 
-      <div style={styles.diaryButtons}>
-        {/* 사진업로드 버튼 */}
+      <S.DiaryButtons>
         {!hasDiary && (
           <>
-            <label htmlFor="image-upload" style={styles.imageUploadButton}>
+            <S.ImageUploadLabel htmlFor="image-upload">
               <FontAwesomeIcon icon={faImage} />
-            </label>
+            </S.ImageUploadLabel>
             <input
               id="image-upload"
               type="file"
@@ -150,38 +101,23 @@ const Diary = ({ eventId }) => {
           </>
         )}
 
-        {/* 버튼 */}
         {hasDiary ? (
           <>
-            <BasicButton
-              roundButton="small"
-              variant="default"
-              onClick={handleEdit}
-              style={styles.editButton2}
-            >
+            <BasicButton roundButton="small" variant="default" onClick={handleEdit} style={{ width: '100%', margin: '10px' }}>
               수정하기
             </BasicButton>
-            <BasicButton
-              roundButton="small"
-              variant="filled"
-              onClick={handleDelete}
-              style={styles.deleteButton2}
-            >
+            <BasicButton roundButton="small" variant="filled" onClick={handleDelete} style={{ width: '100%', margin: '10px' }}>
               삭제하기
             </BasicButton>
           </>
         ) : (
-          <BasicButton
-            roundButton="small"
-            variant="filled"
-            onClick={handleSave}
-            style={styles.saveButton}
-          >
+          <BasicButton roundButton="small" variant="filled" onClick={handleSave} style={{ width: '100%', margin: '0 10px' }}>
             저장하기
           </BasicButton>
         )}
-      </div>
-    </div>
+      </S.DiaryButtons>
+    </S.DiaryCard>
+
   );
 };
 

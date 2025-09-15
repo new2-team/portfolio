@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { spacingProps } from "../../styles/spacingProps";
 import { flexCenter, flexColumn } from "../../styles/common";
 import { faHandPointDown } from "@fortawesome/free-solid-svg-icons/faHandPointDown";
@@ -12,6 +12,7 @@ S.Background = styled.div`
   display: flex;
   justify-content: center;
   background-color: #FFF5EC;
+  margin-top: 40px;
 `
 
 S.Wrapper = styled.div`
@@ -83,7 +84,7 @@ S.SearchInput = styled.div`
       cursor: pointer;
   }
   
-  svg {
+  img {
       position: absolute;
       right: 24px;
       top: 50%;
@@ -174,6 +175,8 @@ S.SearchInput = styled.div`
 //   }
 // `
 
+
+//필터
 S.Filter = styled.div`
   margin-top: 16px;
   margin-bottom: 37px;
@@ -186,7 +189,7 @@ S.FilterNew = styled.button`
   margin-right: 15px;
   height: 54px;
   width: 125px;
-  background-color: white;
+  background-color: ${({$active}) => ($active ? "#CF4B05":"white")};
   padding: 3px 10px;
   border-radius: 52px ;
   margin-right: 30px;
@@ -200,7 +203,7 @@ S.FilterHot = styled.button`
   margin-right: 15px;
   height: 54px;
   width: 125px;
-  background-color: white;
+  background-color: ${({$active}) => ($active ? "#CF4B05":"white")};
   padding: 3px 10px;
   border-radius: 52px ;
   margin-right: 30px;
@@ -213,7 +216,7 @@ S.FilterMy = styled.button`
   margin-right: 15px;
   height: 54px;
   width: 196px;
-  background-color: white;
+  background-color: ${({$active}) => ($active ? "#CF4B05":"white")};
   padding: 3px 10px;
   border-radius: 52px ;
   margin-right: 30px;
@@ -226,11 +229,12 @@ S.FilterFriend = styled.button`
   margin-right: 15px;
   height: 54px;
   width: 221px;
-  background-color: white;
+  background-color: ${({$active}) => ($active ? "#CF4B05":"white")};
   padding: 3px 10px;
   border-radius: 52px ;
   font-size: ${({ theme }) => theme.FONT_SIZE["button2"]};
 `
+
 
 
 
@@ -266,102 +270,184 @@ S.TextBoxLeftWrapper = styled.div`
 S.TextBoxInputWrapper = styled.div`
   
   ${flexColumn}
-
-`
-S.TitleInput = styled.input`
-    height: 64px;
-    width: 600px;
-    margin-top: 29px;
-    background-color: ${({ theme }) => theme.PALLETE.background.white};
-    border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
-    border-radius: 8px;
-    font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
-    line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
-    padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
-    ${spacingProps}
-
-        //아무스 호버 상태
-        &:hover {
-            border-color: ${({ theme }) => theme.PALLETE.primary.main};
-        }
-        //placeholder 텍스트 색상
-        &::placeholder {
-            color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
-        }
-
-        //입력중일때
-        &:focus {
-            outline: none;
-            border-color: ${({ theme }) => theme.PALLETE.primary.main};
-            box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
-        }
-
-        //disabled 상태일때
-        &:disabled {
-            outline: none;
-            background-color: ${({ theme }) => theme.PALLETE.background.gray100};
-            border: none;
-        }
-
-        //입력 다 한 상태
-        &:not(:focus):not(:placeholder-shown) {
-            border-color: ${({ theme }) => theme.PALLETE.primary.main};
-        }
+  
+  `
+//준재님 textarea 컴포넌트
+S.TextAreaWrapper = styled.div`
+ position: relative;
+ width: 100%;
+ height: 100%;
+ font-family: 'SUIT';
 `
 
+S.TextArea = styled.textarea`
+ height: 64px;
+ width: 600px;
+ border-radius: 8px;
+ font-size: 20px;
+ padding: 20px 24px;
+ resize: none;
+ font-family: 'SUIT';
 
-S.ContentInput = styled.textarea`
-  flex:1;
-  height: 130px;
-  width: 600px;
-  margin-bottom: 29px;
-  resize: none;
-  font-size : ${({theme}) => theme.FONT_SIZE.body3};
+ &:hover {
+        ${({ readOnly }) =>
+                !readOnly &&
+                css`
+      border-color: ${({ theme }) => theme.PALLETE.primary.main};
+    `}
+    }
+    
+    //placeholder 텍스트 색상
+    &::placeholder {
+        color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
+    }
+
+    //입력중일때
+    &:focus {
+        ${({ readOnly }) =>
+                !readOnly &&
+                css`
+      outline: none;
+      border-color: ${({ theme }) => theme.PALLETE.primary.main};
+      box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+    `}
+    }
+
+    //disabled 상태일때
+    &:disabled {
+        outline: none;
+        background-color: ${({ theme }) => theme.PALLETE.background.gray100};
+        border: none;
+    }
+
+    //입력 다 한 상태
+    &:not(:focus):not(:placeholder-shown) {
+        border-color: ${({ theme }) => theme.PALLETE.text.main};
+    }
+`
+
+S.CharCount = styled.div`
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  text-align: right;
+  font-size: 14px;
+  color: ${(props) => (props.limitReached ? 'red' : '#666')};
   font-family: 'SUIT';
-  &::placeholder {
-    font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
-    font-family: 'SUIT';
 
+`;
+
+S.TitleInputWrapper = styled.div`
+  margin-top: 29px;
+
+  > div > div {
+    margin-right: 200px;
   }
+`
+S.ContentInputWrapper = styled.div`
+  textarea {
+    height: 130px;
+  }
+  > div > div {    
+  }
+  margin-bottom: 15px;
+`
+
+
+// S.TitleInput = styled.input`
+//     height: 64px;
+//     width: 600px;
+//     margin-top: 29px;
+//     background-color: ${({ theme }) => theme.PALLETE.background.white};
+//     border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
+//     border-radius: 8px;
+//     font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
+//     line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
+//     padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
+//     ${spacingProps}
+
+//         //아무스 호버 상태
+//         &:hover {
+//             border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//         }
+//         //placeholder 텍스트 색상
+//         &::placeholder {
+//             color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
+//         }
+
+//         //입력중일때
+//         &:focus {
+//             outline: none;
+//             border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//             box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+//         }
+
+//         //disabled 상태일때
+//         &:disabled {
+//             outline: none;
+//             background-color: ${({ theme }) => theme.PALLETE.background.gray100};
+//             border: none;
+//         }
+
+//         //입력 다 한 상태
+//         &:not(:focus):not(:placeholder-shown) {
+//             border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//         }
+// `
+
+
+// S.ContentInput = styled.textarea`
+//   flex:1;
+//   height: 130px;
+//   width: 600px;
+//   margin-bottom: 29px;
+//   resize: none;
+//   font-size : ${({theme}) => theme.FONT_SIZE.body3};
+//   font-family: 'SUIT';
+//   &::placeholder {
+//     font-size: ${({ theme }) => theme.FONT_SIZE["body3"]};
+//     font-family: 'SUIT';
+
+//   }
  
-  background-color: ${({ theme }) => theme.PALLETE.background.white};
-  border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
-  border-radius: 8px;
-  line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
-  padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
-  ${spacingProps}
+//   background-color: ${({ theme }) => theme.PALLETE.background.white};
+//   border: 1px solid ${({ theme }) => theme.PALLETE.text.sub2};
+//   border-radius: 8px;
+//   line-height: ${({ theme }) => theme.LINE_HEIGHT["body3"]};  
+//   padding: ${({ theme }) => `${theme.SPACING["20"]} ${theme.SPACING["24"]}`};
+//   ${spacingProps}
 
-      //아무스 호버 상태
-      &:hover {
-          border-color: ${({ theme }) => theme.PALLETE.primary.main};
-      }
-      //placeholder 텍스트 색상
-      &::placeholder {
-          color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
-      }
+//       //아무스 호버 상태
+//       &:hover {
+//           border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//       }
+//       //placeholder 텍스트 색상
+//       &::placeholder {
+//           color: ${({ theme }) => theme.PALLETE.text.disabled.weak};
+//       }
 
-      //입력중일때
-      &:focus {
-          outline: none;
-          border-color: ${({ theme }) => theme.PALLETE.primary.main};
-          box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
-      }
+//       //입력중일때
+//       &:focus {
+//           outline: none;
+//           border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//           box-shadow: 0 0 0 2px ${({ theme }) => theme.PALLETE.primary.light};
+//       }
 
-      //disabled 상태일때
-      &:disabled {
-          outline: none;
-          background-color: ${({ theme }) => theme.PALLETE.background.gray100};
-          border: none;
-      }
+//       //disabled 상태일때
+//       &:disabled {
+//           outline: none;
+//           background-color: ${({ theme }) => theme.PALLETE.background.gray100};
+//           border: none;
+//       }
 
-      //입력 다 한 상태
-      &:not(:focus):not(:placeholder-shown) {
-          border-color: ${({ theme }) => theme.PALLETE.primary.main};
-      }
+//       //입력 다 한 상태
+//       &:not(:focus):not(:placeholder-shown) {
+//           border-color: ${({ theme }) => theme.PALLETE.primary.main};
+//       }
    
     
    
-`
+// `
 
 S.TBButton = styled.div`
   display: flex;
@@ -397,6 +483,7 @@ S.TBBWrapper = styled.div`
   
   button {
     font-size : ${({theme}) => theme.FONT_SIZE.button4};
+    margin-left: 80px;
   }
 
   img {
@@ -410,6 +497,7 @@ S.TBBWrapper = styled.div`
 
 
 S.TextResultWrapper= styled.div`
+  margin-bottom: 50px;
   margin-top: 24px;
   border-radius: 20px;
   border-style: solid;
@@ -471,17 +559,21 @@ S.HeartButton = styled.button`
     width: 25px;
     height: 25px;
     display: block;
+    overflow: visible;
+    margin-bottom: 2px;
   }
   /* margin-right: 3px; */
-
+  
   `
 
 S.CommentButton = styled.button`
   background: none;
-  width: 23px;
-  height: 23px;
-  margin-right: 6px;
-  margin-bottom: 7px;
+  img {
+    margin-top: 1px;
+    width: 28px;
+    height: 28px;
+    overflow: visible;
+  }
 `
 
 S.HeartCommentCount = styled.span`
@@ -717,6 +809,11 @@ S.MoreTextButton = styled(BasicButton)`
   border-radius: 52px;
   margin-bottom: 40px;
   margin-top: 43px;
+
+`
+S.MoreTextButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
 `
 
 S.MoreTextBox = styled.button`
@@ -743,10 +840,10 @@ S.FNTWrapper = styled.div`
   width: 952px;
   height: 242px;
   box-shadow: 2px 2px 7px #A0A0A0;
+  margin-bottom: 100px;
 `
 
 S.FilterNoText = styled.div`
-  
   
   display: flex;
   font-size : ${({theme}) => theme.FONT_SIZE.h5};
