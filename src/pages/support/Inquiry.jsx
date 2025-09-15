@@ -56,8 +56,6 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
         alert('내용을 입력하세요')
         return;
       } else {
-        window.alert('저장되었습니다');
-        link("/support/inquiry-list")
         await fetch(`${process.env.REACT_APP_BACKEND_URL}/inquiry/api/post-inquiry`, {
           method : "POST",
         headers : {
@@ -86,6 +84,7 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
         setIsUpdate(!isUpdate)
       })
       .catch(console.error)
+      link("/support/inquiry-list");
     }}
 
     const onClickCancel = () => {
@@ -113,56 +112,6 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
                 </div>
             </div>
             <S.InquiryBodyWrapper>
-               {/* <S.InquiryNameWrapper>
-                   <S.InquiryCategory>
-                     이름&nbsp;
-                    <FontAwesomeIcon icon={faStarOfLife} style={{color: "#cf4b05", fontSize: "10px"}} />
-                   </S.InquiryCategory>
-                   <S.NameInput>
-                    <BasicInput placeholder="이름을 입력하세요" />
-                   </S.NameInput>
-               </S.InquiryNameWrapper>
-               <S.InquiryPhoneWrapper>
-                   <S.InquiryCategory>
-                    연락처&nbsp;
-                    <FontAwesomeIcon icon={faStarOfLife} style={{color: "#cf4b05", fontSize: "10px"}} />
-                   </S.InquiryCategory>
-                   <S.InputsWrapper>
-                    <S.SelectPhonStart>
-                        <SelectBox options={["010", "011", "016", "017", "018", "019"]}/>
-                    </S.SelectPhonStart>
-                    <S.PhoneInput>
-                        <BasicInput placeholder="" />
-                    </S.PhoneInput>
-                    <S.PhoneInput>
-                        <BasicInput placeholder="" />
-                    </S.PhoneInput>
-                   </S.InputsWrapper>
-               </S.InquiryPhoneWrapper>
-               <S.InquiryEmailWrapper>
-                   <S.InquiryCategory>이메일</S.InquiryCategory>
-                   <S.InputsWrapper>
-                    <BasicInput placeholder="이메일을 입력해주세요" />
-                    <S.Email>@</S.Email>
-                    <S.EmailSelectBox>
-                     <SelectBox options={[
-                        "naver.com", 
-                        "gmail.com", 
-                        "hanmail.net", 
-                        "hotmail.com", 
-                        "nate.com", 
-                        "yahoo.com", 
-                        "empas.com",
-                        "dreamwiz.com", 
-                        "freechal.com", 
-                        "lycos.co.kr", 
-                        "korea.com", 
-                        "hanmir.com", 
-                        "paran.com"
-                        ]} />
-                    </S.EmailSelectBox>
-                   </S.InputsWrapper>
-               </S.InquiryEmailWrapper> */}
                <S.InquiryQuestionCategoryWrapper>
                    <S.InquiryCategory>
                     문의유형&nbsp;
@@ -208,7 +157,6 @@ const Inquiry = ({isUpdate, setIsUpdate}) => {
                        </S.FileWrapper>
                </S.InquiryFileWrapper>
             </S.InquiryBodyWrapper>
-
                 <S.InquiryButtonWrapper>
                     <BasicButton children={"취소"} variant={"gray"} basicButton={"medium"} onClick={onClickCancel}/>
                     <BasicButton children={"저장"} variant={"default"} basicButton={"medium"} onClick={onClickPost} />

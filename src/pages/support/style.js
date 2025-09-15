@@ -287,36 +287,7 @@ S.InquiryButtonWrapper = styled.div`
 S.ListWrapper = styled.div`
   width: 1440px;
   margin-bottom: 175px;
-  border-top: 3px solid #CF4B05;
 `
-
-S.RadioInputWrapper = styled.div`
- display: flex;
- flex-direction: row;
- align-items: center;
- width: 1440px;
- padding-top: 132px;
- gap: 974px;
-`
-
-S.SerachInput = styled.div`
- width: 340px;
- height: 46px;
- margin-right: auto;
- flex: 0 0 auto;
-
- input{
-  position: relative;
-  height: 46px;
- }
-
- button{
-  position: absolute;
-  border-radius: 8px;
-  right: 4px;
- }
-`
-
 
 // inquiry detail ========================================================================
 
@@ -348,7 +319,8 @@ S.AuthorProfileWrapper = styled.div`
 S.Profile = styled.img`
  width: 64px;
  height: 64px;
- border-radius: 50%;
+ border-radius: 50px;
+ object-fit: cover;
 `
 
 S.AuthorName = styled.p`
@@ -417,7 +389,7 @@ S.ReplyProfileWrapper = styled.div`
 S.ReplyContent = styled.div`
  width: 100%;
  height: fit-content;
- padding-left: 152px;
+ padding-left: 56px;
  font-size: ${({ theme }) => theme.FONT_SIZE.body2 };
  border-bottom: solid 2px #cccccc;
  padding-bottom: 90px;
@@ -437,6 +409,15 @@ S.Replybutton = styled.button`
  background-color: white;
  top:120px;
  right: 14px;
+
+ img{
+  opacity: 50%;
+  &:hover {
+    opacity: 100%;
+   }
+ };
+
+
 `
 
 S.ButtonToList = styled.div`
