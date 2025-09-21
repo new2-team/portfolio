@@ -1,13 +1,14 @@
 import { faCalendarDays, faClock, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useSelector } from 'react-redux';
 import BasicButton from "../../components/button/BasicButton";
 import './Calendar.css';
 import S from './style2';
+
 
 const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
   const user_id = useSelector((state) => state.user.currentUser?.user_id);
@@ -23,6 +24,29 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
   const [title, setTitle] = useState(''); // 일정 제목
   const [startTime, setStartTime] = useState(null); // 일정시작시간
   const [location, setLocation] = useState(''); // 일정 장소
+  const [friends, setFriends] = useState([]);
+  const [selectedFriend, setSelectedFriend] = useState(null);
+
+  const toggleFriend = (friend) => {
+    if(hasExisting && isEditing){
+      if (draftSelectedFriend && draftSelectedFriend._id === friend._id) {
+        // 같은 친구 → 해제
+        setDraftSelectedFriend(null);
+      } else {
+        // 다른 친구 → 새로 선택
+        setDraftSelectedFriend(friend);
+      }
+    } else {
+      if (selectedFriend && selectedFriend._id === friend._id) {
+        // 같은 친구 → 해제
+        setSelectedFriend(null);
+      } else {
+        // 다른 친구 → 새로 선택
+        setSelectedFriend(friend);
+      }
+    }
+    
+  };
 
   // 보기/수정 모드 토글
   const [isEditing, setIsEditing] = useState(false);
@@ -31,28 +55,42 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
   const [draftTitle, setDraftTitle] = useState('');
   const [draftTime, setDraftTime] = useState(null);
   const [draftLocation, setDraftLocation] = useState('');
-  const [draftFriend, setDraftFriend] = useState('');
+  const [draftSelectedFriend, setDraftSelectedFriend] = useState(null);
 
 
   // 친구 목록 -> 친구 id값을 가지고와서 프로필을 띄워야 함
-  const [friends, setFriends] = useState([
-    '/assets/img/chat/soul.png',
-    '/assets/img/chat/melody.png',
-    '/assets/img/chat/coco.png',
-    '/assets/img/chat/soul.png',
-    '/assets/img/chat/melody.png',
-    '/assets/img/chat/coco.png',
-  ]);
+  // const [friends, setFriends] = useState([
+  //   '/assets/img/chat/soul.png',
+  //   '/assets/img/chat/melody.png',
+  //   '/assets/img/chat/coco.png',
+  //   '/assets/img/chat/soul.png',
+  //   '/assets/img/chat/melody.png',
+  //   '/assets/img/chat/coco.png',
+  // ]);
+  
 
-  const [selectedFriends, setSelectedFriends] = useState([]); // 선택된 친구 -> id로 상태 저장
-  const [hoveredFriend, setHoveredFriend] = useState(null);
+  useEffect(() => {
+    const getChattingRoom = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/chatting/api/get-chattingRoom/${user_id}`
+        );
+        
+        if (!response.ok) {
+          throw new Error(`서버 응답 에러: ${response.status}`);
+        }
 
-  const [showError, setShowError] = useState(false);
-  // 백에서 온 메세지
-  const [value, setValue] = useState("")
-  const onChangeValue = (e) => {
-    setValue(e.target.value)
-  }
+        const data = await response.json();
+        const friends = data.chats;
+        setFriends(friends);
+      } catch(err) {
+        console.error("일정 불러오기 실패:", err);
+      }
+    };
+    if(user_id){
+      getChattingRoom();
+    }
+  }, [user_id]);
 
   const handleTitleChange = (e) => {
     if(hasExisting && isEditing) setDraftTitle(e.target.value);
@@ -62,19 +100,23 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
     if(hasExisting && isEditing) setDraftLocation(e.target.value);
     else setLocation(e.target.value);
   }
+  // const handleFriendChage = (e) => {
+  //   if(hasExisting && isEditing) setDraftSelectedFriend(e.target.value);
+  //   else selectedFriend(e.target.value);
+  // }
 
-  const handleSelectFriend = (friend) => {
-    if (hasExisting) {
-      setSelectedFriends([friend]);
-    } else {
-      // toggle 방식
-      setSelectedFriends((prev) =>
-        prev.includes(friend)
-          ? prev.filter((f) => f !== friend)
-          : [...prev, friend]
-      );
-    }
-  };
+  // const handleSelectFriend = (friend) => {
+  //   if (hasExisting) {
+  //     setSelectedFriends([friend]);
+  //   } else {
+  //     // toggle 방식
+  //     setSelectedFriends((prev) =>
+  //       prev.includes(friend)
+  //         ? prev.filter((f) => f !== friend)
+  //         : [...prev, friend]
+  //     );
+  //   }
+  // };
 
   let formattedSelectedDate = '날짜 없음';
   if (selectedDate) {
@@ -101,14 +143,11 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
 
   // 저장버튼 - api 일정 등록
   const handleSave = async () => {
-    if (!title.trim()) {
-      setShowError(true);
-      return;
-    }
-    setShowError(false);
+    if (!title.trim()) return;
 
     const onlyTime = startTime ? format(startTime, "HH:mm") : null;
     const onlyDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+
 
     await fetch(`http://localhost:8000/calendar/api/post-schedules`, {
       method : "POST",
@@ -117,7 +156,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
       },
       body : JSON.stringify({
         user_id: user_id,
-        chat_id: selectedFriends,
+        chat_id: selectedFriend._id,
         title : title,
         date: onlyDate,
         time: onlyTime,
@@ -140,6 +179,8 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
     setDraftTitle(schedule?.title ?? '');
     setDraftLocation(schedule?.location ?? '');
     setDraftTime(hhmmToDate(schedule?.time));
+    const found = friends.find(f => f._id === schedule?.chat_id) || null;
+    setDraftSelectedFriend(found ?? (schedule?.chat_id ? { _id: schedule.chat_id } : null));
     setIsEditing(true);
   };
 
@@ -162,6 +203,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
             date: schedule?.date ?? (selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : ''),
             time: draftTime ? format(draftTime, 'HH:mm') : null,
             location: draftLocation,
+            chat_id: draftSelectedFriend?._id ?? schedule?.chat_id ?? null,
           },
         }),
       });
@@ -265,19 +307,23 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
       </S.InputGroupContainer>
 
       {/* 친구 목록 */}
-      <S.FriendsSelect $maxWidth={(80 + 10) * 5}>
-        {(schedule?.friends?.length ? schedule.friends : friends).map((f, idx) => (
-          <S.FriendAvatar
-            key={idx}
-            src={f}
-            alt="friend"
-            onClick={() => handleSelectFriend(f)}
-            onMouseEnter={() => setHoveredFriend(f)}
-            onMouseLeave={() => setHoveredFriend(null)}
-            $isSelected={selectedFriends.includes(f)}
-            $isHovered={hoveredFriend === f}
-          />
-        ))}
+      <S.FriendsSelect 
+      $maxWidth={(80 + 10) * 5}
+      >
+        {friends.map(friend => {
+          const isSelected = (hasExisting && isEditing)
+            ? (draftSelectedFriend?._id === friend._id)
+            : (selectedFriend?._id === friend._id);
+            return (
+              <S.FriendAvatar
+                key={friend._id}
+                src={friend.target_profile_img}
+                alt={friend.target_name}
+                className={isSelected ? 'selected' : ''}
+                onClick={() => toggleFriend(friend)}
+              />
+            );
+        })}
       </S.FriendsSelect>
 
       <S.ScheduleButtons>

@@ -1,6 +1,7 @@
 import { faClock, faEllipsisVertical, faPaperclip, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Text from '../../components/text/size.js';
 import ScheduleModal from './ScheduleModal.jsx';
 import S from './style.js';
@@ -8,7 +9,8 @@ import S from './style.js';
 const ChatApp = ({ chat, onToggleScheduleAlert }) => {
   // chat: ChatList에서 선택한 채팅방 객체
   // onToggleScheduleAlert: ScheduleAlert on/off
-
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
+  console.log("user_id", user_id);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const fileInputRef = useRef(null);
@@ -16,8 +18,8 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
 
   const activeChat = chat || {
     id: 0,
-    name: '채팅방을 선택해주세요',
-    avatar: '/assets/img/chat/dogEmptyProfile.png',
+    target_name: '채팅방을 선택해주세요',
+    target_profile_img: '/assets/img/chat/dogEmptyProfile.png',
   };
 
   const messages = [
@@ -128,14 +130,38 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedImage]);
 
+  // 채팅방 생성 호출 임시 api 
+  const handleClick = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/chatting/api/post-chattingRoom", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user_id,
+          target_id: "jungjiwoojjw",
+          match_id: "0",
+        }),
+      });
+
+      const data = await res.json();
+      console.log("채팅방 생성 응답:", data);
+    } catch (err) {
+      console.error("에러 발생:", err);
+    }
+  };
+
   return (
     <S.ChatApp>
-      <S.ChatAppHeader>
+      <S.ChatAppHeader> 
         <S.ChatAppHeaderLeft>
-          <S.ChatAppAvatar src={activeChat.avatar} alt={activeChat.name} />
+          <S.ChatAppAvatar src={activeChat.target_profile_img} alt={activeChat.target_name} />
           <Text.Body3 fontWeight="600" color="#000" style={{ margin: 0 }}>
-            {activeChat.name}
+            {activeChat.target_name}
           </Text.Body3>
+          {/* 채팅방 만들기 임시 api 호출 버튼 */}
+          <button onClick={handleClick}>채팅방 만들기</button>
         </S.ChatAppHeaderLeft>
 
         <S.ChatAppHeaderActions>

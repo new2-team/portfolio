@@ -41,7 +41,7 @@ const Chatting = () => {
       , unreadCount: 2 ,lastMessageAt: '16:56'
      },
 
-  ]);
+  ]); 
 
   // ChatList에서 선택된 채팅방
   const handleSelectChat = (chat) => {
