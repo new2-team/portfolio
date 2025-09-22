@@ -1,12 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { io } from 'socket.io-client';
 import ChatApp from './ChatApp';
 import ChatList from './ChatList';
 import ScheduleAlert from './ScheduleAlert.jsx';
 import S from './style.js';
 
+
 const Chatting = () => {
   const [selectedChat, setSelectedChat] = useState(null); // 선택한 채팅방
   const [showScheduleAlert, setShowScheduleAlert] = useState(true); // 스케줄alert on/off
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
+
+  if (!window.socket) {
+    window.socket = io('http://localhost:8000', { withCredentials: true });
+  }
+
+  useEffect(() => {
+    if (!user_id || !window.socket) return;
+    window.socket.emit('register', { userId: user_id });
+  }, [user_id]);
 
   // 전체 chats 리스트
   const [chats, setChats] = useState([

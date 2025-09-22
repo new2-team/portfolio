@@ -25,7 +25,8 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
   const [startTime, setStartTime] = useState(null); // 일정시작시간
   const [location, setLocation] = useState(''); // 일정 장소
   const [friends, setFriends] = useState([]);
-  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [selectedFriend, setSelectedFriend] = useState(schedule.chat_id);
+  console.log("chat_id", schedule.chat_id);
 
   const toggleFriend = (friend) => {
     if(hasExisting && isEditing){
@@ -91,6 +92,17 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
       getChattingRoom();
     }
   }, [user_id]);
+
+  useEffect(() => {
+    if(!hasExisting) return;
+    const id = schedule?.chat_id;
+    if(!id){
+      setSelectedFriend(null);
+      return;
+    }
+    const found = friends.find(f => f._id === id);
+    setSelectedFriend(found ?? {_id: id });
+  }, [hasExisting, schedule?.chat_id, friends]);
 
   const handleTitleChange = (e) => {
     if(hasExisting && isEditing) setDraftTitle(e.target.value);
@@ -215,6 +227,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
       setTitle(draftTitle);
       setStartTime(draftTime);
       setLocation(draftLocation);
+      setSelectedFriend(draftSelectedFriend);
 
     } catch (e) {
       console.error(e);
