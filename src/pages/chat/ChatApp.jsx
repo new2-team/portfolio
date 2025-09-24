@@ -25,6 +25,9 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
     target_profile_img: '/assets/img/chat/dogEmptyProfile.png',
   };
 
+  const roomId = chat?.match_id ?? null;
+  
+
   if (!window.__chatSocket) {
     window.__chatSocket = io('http://localhost:8000', { withCredentials: true });
   }
@@ -80,14 +83,21 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
       timeStr: now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
     };
   };
+  // 이미지 업로드
   const uploadImage = async (file) => {
     if (!file) return null;
-    const form = new FormData(); form.append('image', file);
-    const r = await fetch('http://localhost:8000/chatting/api/post-chatPic', { method:'POST', body: form });
+    const form = new FormData(); 
+    form.append('messageImage', file);
+
+    const r = await fetch('http://localhost:8000/chatting/api/post-chatPic', {
+       method:'POST', body: form 
+    });
+
     if (!r.ok) throw new Error('upload failed');
     const j = await r.json();
-    return Array.isArray(j?.urls) ? j.urls : (j?.url ? [j.url] : null);
+    return Array.isArray(j?.urls) ? j.urls : (j?.imageUrl ? [j.imageUrl] : (j?.url ? [j.url] : null));
   };
+
   const replaceTemp = (setMessages, tempId, saved) => {
     const created = saved?.createdAt ?? new Date().toISOString();
     setMessages(prev => prev.map(m => m._id === tempId ? {
@@ -114,7 +124,13 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
 
   try {
     const images_url = await uploadImage(selectedFile);
-    const payload = { roomId: chat._id, sender_id: user_id, message: text || '', images_url, clientMessageId: tempId };
+    const payload = { 
+      roomId: roomId, 
+      sender_id: user_id,
+      message: text || '',
+      images_url,
+      clientMessageId: tempId
+    };
 
     if (window?.socket?.emit) {
       window.socket.emit('chat:send', payload, (ack) => {
@@ -122,7 +138,7 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
         replaceTemp(setMessages, tempId, ack.message);
       });
     } else {
-      const r = await fetch(`http://localhost:8000/chatting/api/post-chatMessage/${chat._id}`, {
+      const r = await fetch(`http://localhost:8000/chatting/api/post-chatMessage/${roomId}`, {
         method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
       });
       if (!r.ok) throw new Error('send failed');
@@ -148,7 +164,7 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
     const getChatMessages = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/chatting/api/get-chatMessage/${chat?._id}`
+          `http://localhost:8000/chatting/api/get-chatMessage/${roomId}`
         );
 
         if (!response.ok) {
@@ -208,44 +224,48 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
 
     // 방 입장: 방이 바뀔 때마다
     if (chat?._id) {
-      socket.emit('room:join', { roomId: chat._id });
+      socket.emit('room:join', { roomId: roomId });
+
     }
 
+    socket.on('chat:read', { roomId: roomId, userId: user_id });
+
     // 실시간 새 메시지
-    const onNew = (msg) => {
-      // 다른 방 메시지는 무시(안전)
-      if (String(msg?.chat_id) !== String(chat?._id)) return;
+    // const onNew = (msg) => {
+    //   // 다른 방 메시지는 무시(안전)
+    //   if (String(msg?.chat_id) !== String(chat?._id)) return;
 
-      const d = new Date(msg?.createdAt ?? Date.now());
-      const next = {
-        _id: msg?._id,
-        sender_id: msg?.sender_id,
-        message: msg?.message ?? '',
-        images_url: Array.isArray(msg?.images_url) ? msg.images_url
-                 : (msg?.image_url ? [msg.image_url] : null),
-        read: !!msg?.read,
-        createdAt: msg?.createdAt ?? d.toISOString(),
-        dateStr: d.toLocaleDateString('ko-KR'),
-        timeStr: d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
-      };
+    //   const d = new Date(msg?.createdAt ?? Date.now());
+    //   const next = {
+    //     _id: msg?._id,
+    //     match_id: msg?.match_id,
+    //     sender_id: msg?.sender_id,
+    //     message: msg?.message ?? '',
+    //     images_url: Array.isArray(msg?.images_url) ? msg.images_url
+    //              : (msg?.image_url ? [msg.image_url] : null),
+    //     read: !!msg?.read,
+    //     createdAt: msg?.createdAt ?? d.toISOString(),
+    //     dateStr: d.toLocaleDateString('ko-KR'),
+    //     timeStr: d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+    //   };
 
-      // 중복 방지(낙관 메시지와 서버 메시지 중복될 수 있음)
-      setMessages(prev => prev.some(m => m._id === next._id) ? prev : [...prev, next]);
-    };
+    //   // 중복 방지(낙관 메시지와 서버 메시지 중복될 수 있음)
+    //   setMessages(prev => prev.some(m => m._id === next._id) ? prev : [...prev, next]);
+    // };
 
-    // (선택) 읽음 리시트
-    const onRead = (receipt) => {
-      // 필요 시 읽음 UI 갱신 로직
-      // console.log('read receipt', receipt);
-    };
+    // // (선택) 읽음 리시트
+    // const onRead = (receipt) => {
+    //   // 필요 시 읽음 UI 갱신 로직
+    //   // console.log('read receipt', receipt);
+    // };
 
-    socket.on('chat:new', onNew);
-    socket.on('chat:read:receipt', onRead);
+    // socket.on('chat:new', onNew);
+    // socket.on('chat:read:receipt', onRead);
 
-    return () => {
-      socket.off('chat:new', onNew);
-      socket.off('chat:read:receipt', onRead);
-    };
+    // return () => {
+    //   socket.off('chat:new', onNew);
+    //   socket.off('chat:read:receipt', onRead);
+    // };
   }, [socket, chat?._id]);
   
 
