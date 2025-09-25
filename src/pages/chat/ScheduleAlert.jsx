@@ -6,10 +6,11 @@ import theme from '../../styles/theme.js';
 import S from './style.js';
 
 
-const ScheduleAlert = ({ chat }) => {
+const ScheduleAlert = ({ chat, freshKey = 0 }) => {
   const user_id = useSelector((state) => state.user.currentUser?.user_id);
   const [activeTab, setActiveTab] = useState('schedule'); // 일정, 이미지 탭
   const [schedules, setSchedules] = useState([]);
+  const [images, setImages] = useState([]);
 
   // chat 객체 받은거 넣기
   const activeChat = chat || {
@@ -18,20 +19,25 @@ const ScheduleAlert = ({ chat }) => {
     target_profile_img: '/assets/img/chat/dogEmptyProfile.png',
   };
 
-  const images = [
-    { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
-    { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
-    { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
-    { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
-    { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
-    { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
-    { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
-    { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
-    { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
-    { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
-    { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
-    { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
-  ];
+  const roomId = String(
+    chat?.match_id ?? chat?._id ?? chat?.id ?? ''
+  );
+  console.log("roomId", roomId);
+
+  // const images = [
+  //   { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
+  //   { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
+  //   { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
+  //   { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
+  //   { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
+  //   { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
+  //   { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
+  //   { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
+  //   { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
+  //   { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
+  //   { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
+  //   { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
+  // ];
 
   // chat객체의 id로 schedule 객체의 title만 가져오기
   // -> 현재 날짜 이후의 날짜의 schedule title만 가져오기
@@ -41,11 +47,13 @@ const ScheduleAlert = ({ chat }) => {
   // -> message객체의 이미지 배열 -> 이미지 url뿌리기
   // 최신 이미지 보낸시간 -> 상단에 띄우기
 
+  // 일정 모아보기
   useEffect(() => {
+    if(!user_id || !roomId) return;
     const getComingSchedules = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/calendar/api/coming-schedules?user_id=${user_id}&chat_id=${chat._id}`
+          `http://localhost:8000/calendar/api/coming-schedules?user_id=${user_id}&match_id=${roomId}`
         );
 
         if (!res.ok) throw new Error(`서버 응답 에러: ${res.status}`);
@@ -58,7 +66,37 @@ const ScheduleAlert = ({ chat }) => {
     };
 
     getComingSchedules();
-  }, [user_id, chat?._id]);
+  }, [user_id, roomId]);
+
+
+  // 사진 모아보기
+  useEffect(() => {
+    const getChatPictures = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8000/chatting/api/get-chatMessage/${roomId}`
+        );
+
+        if (!res.ok) throw new Error(`서버 응답 에러: ${res.status}`);
+        const data = await res.json();
+        const messages = data.messages;
+
+        // 모든 images_url을 하나의 배열로 모으기
+        const allImages = messages.flatMap(m => {
+          if (!m?.images_url) return [];
+          return Array.isArray(m.images_url) ? m.images_url : [m.images_url];
+        });
+
+        setImages(allImages);
+        console.log("allImages", allImages);
+        
+      } catch (err) {
+        console.error("사진 불러오기 실패: ", err)
+      }
+    };
+
+    getChatPictures();
+  }, [user_id, roomId, freshKey]);
 
   return (
     <S.ScheduleAlert>
@@ -101,8 +139,12 @@ const ScheduleAlert = ({ chat }) => {
         </S.ScheduleList>
       ) : (
         <S.ScheduleImageGallery>
-          {images.map((img) => (
-            <S.ScheduleGalleryImg key={img.id} src={img.src} alt={img.alt} />
+          {images.map((url, i) => (
+            <S.ScheduleGalleryImg 
+              key={`${url}-${i}`} 
+              src={url} 
+              alt={`chat_img_${i}`} 
+            />
           ))}
         </S.ScheduleImageGallery>
       )}

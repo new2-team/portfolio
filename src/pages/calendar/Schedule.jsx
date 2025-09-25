@@ -12,11 +12,7 @@ import S from './style2';
 
 const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
   const user_id = useSelector((state) => state.user.currentUser?.user_id);
-  // console.log(user_id);
-  // console.log("selectedSchedule: ", selectedSchedule);
-  // const [user_Id, setUserId] = useState('6895c4d407695ea93734389a')
   const [date, setDate] = useState(selectedDate); // props에서 받은날짜
-  // const [schedule, setSchedule] = useState(selectedSchedule ?? null); // 일정객체를 통째로 등록
   const schedule = selectedSchedule ?? null;
   console.log("day에서 넘겨받은 schedule객체: ",schedule);
   const hasExisting = !!schedule?.title;
@@ -25,12 +21,12 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
   const [startTime, setStartTime] = useState(null); // 일정시작시간
   const [location, setLocation] = useState(''); // 일정 장소
   const [friends, setFriends] = useState([]);
-  const [selectedFriend, setSelectedFriend] = useState(schedule.chat_id);
-  console.log("chat_id", schedule.chat_id);
+  const [selectedFriend, setSelectedFriend] = useState(schedule.match_id);
+  console.log("match_id", schedule.match_id);
 
   const toggleFriend = (friend) => {
     if(hasExisting && isEditing){
-      if (draftSelectedFriend && draftSelectedFriend._id === friend._id) {
+      if (draftSelectedFriend && draftSelectedFriend.match_id === friend.match_id) {
         // 같은 친구 → 해제
         setDraftSelectedFriend(null);
       } else {
@@ -38,7 +34,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
         setDraftSelectedFriend(friend);
       }
     } else {
-      if (selectedFriend && selectedFriend._id === friend._id) {
+      if (selectedFriend && selectedFriend.match_id === friend.match_id) {
         // 같은 친구 → 해제
         setSelectedFriend(null);
       } else {
@@ -58,17 +54,6 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
   const [draftLocation, setDraftLocation] = useState('');
   const [draftSelectedFriend, setDraftSelectedFriend] = useState(null);
 
-
-  // 친구 목록 -> 친구 id값을 가지고와서 프로필을 띄워야 함
-  // const [friends, setFriends] = useState([
-  //   '/assets/img/chat/soul.png',
-  //   '/assets/img/chat/melody.png',
-  //   '/assets/img/chat/coco.png',
-  //   '/assets/img/chat/soul.png',
-  //   '/assets/img/chat/melody.png',
-  //   '/assets/img/chat/coco.png',
-  // ]);
-  
 
   useEffect(() => {
     const getChattingRoom = async () => {
@@ -95,14 +80,14 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
 
   useEffect(() => {
     if(!hasExisting) return;
-    const id = schedule?.chat_id;
+    const id = schedule?.match_id;
     if(!id){
       setSelectedFriend(null);
       return;
     }
-    const found = friends.find(f => f._id === id);
-    setSelectedFriend(found ?? {_id: id });
-  }, [hasExisting, schedule?.chat_id, friends]);
+    const found = friends.find(f => String(f.match_id) === String(id));
+    setSelectedFriend(found ?? { match_id: id });
+  }, [hasExisting, schedule?.match_id, friends]);
 
   const handleTitleChange = (e) => {
     if(hasExisting && isEditing) setDraftTitle(e.target.value);
@@ -112,23 +97,6 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
     if(hasExisting && isEditing) setDraftLocation(e.target.value);
     else setLocation(e.target.value);
   }
-  // const handleFriendChage = (e) => {
-  //   if(hasExisting && isEditing) setDraftSelectedFriend(e.target.value);
-  //   else selectedFriend(e.target.value);
-  // }
-
-  // const handleSelectFriend = (friend) => {
-  //   if (hasExisting) {
-  //     setSelectedFriends([friend]);
-  //   } else {
-  //     // toggle 방식
-  //     setSelectedFriends((prev) =>
-  //       prev.includes(friend)
-  //         ? prev.filter((f) => f !== friend)
-  //         : [...prev, friend]
-  //     );
-  //   }
-  // };
 
   let formattedSelectedDate = '날짜 없음';
   if (selectedDate) {
@@ -168,7 +136,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
       },
       body : JSON.stringify({
         user_id: user_id,
-        chat_id: selectedFriend._id,
+        match_id: selectedFriend?.match_id ?? null,
         title : title,
         date: onlyDate,
         time: onlyTime,
@@ -191,8 +159,8 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
     setDraftTitle(schedule?.title ?? '');
     setDraftLocation(schedule?.location ?? '');
     setDraftTime(hhmmToDate(schedule?.time));
-    const found = friends.find(f => f._id === schedule?.chat_id) || null;
-    setDraftSelectedFriend(found ?? (schedule?.chat_id ? { _id: schedule.chat_id } : null));
+    const found = friends.find(f => f.match_id === schedule?.match_id) || null;
+    setDraftSelectedFriend(found ?? (schedule?.match_id ? { match_id: schedule.match_id } : null));
     setIsEditing(true);
   };
 
@@ -215,7 +183,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
             date: schedule?.date ?? (selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : ''),
             time: draftTime ? format(draftTime, 'HH:mm') : null,
             location: draftLocation,
-            chat_id: draftSelectedFriend?._id ?? schedule?.chat_id ?? null,
+            match_id: draftSelectedFriend?.match_id ?? schedule?.match_id ?? null,
           },
         }),
       });
@@ -325,11 +293,11 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
       >
         {friends.map(friend => {
           const isSelected = (hasExisting && isEditing)
-            ? (draftSelectedFriend?._id === friend._id)
-            : (selectedFriend?._id === friend._id);
+            ? (draftSelectedFriend?.match_id === friend.match_id)
+            : (selectedFriend?.match_id === friend.match_id);
             return (
               <S.FriendAvatar
-                key={friend._id}
+                key={friend.match_id || friend._id}
                 src={friend.target_profile_img}
                 alt={friend.target_name}
                 className={isSelected ? 'selected' : ''}

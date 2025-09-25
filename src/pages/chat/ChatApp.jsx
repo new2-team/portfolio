@@ -7,7 +7,8 @@ import Text from '../../components/text/size.js';
 import ScheduleModal from './ScheduleModal.jsx';
 import S from './style.js';
 
-const ChatApp = ({ chat, onToggleScheduleAlert }) => {
+
+const ChatApp = ({ chat, onToggleScheduleAlert, freshKey, onBumpFreshKey }) => {
   
   const user_id = useSelector((state) => state.user.currentUser?.user_id);
   const [messages, setMessages] = useState([]);
@@ -19,14 +20,23 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
   const fileInputRef = useRef(null);
   const messageInputRef = useRef(null);
 
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    // 렌더가 끝난 뒤 맨 아래로
+    bottomRef.current?.scrollIntoView({ behavior: 'auto' });
+  }, [messages.length]); // 메시지 개수 바뀔 때만
+
   const activeChat = chat || {
     id: 0,
     target_name: '채팅방을 선택해주세요',
     target_profile_img: '/assets/img/chat/dogEmptyProfile.png',
   };
 
-  const roomId = chat?.match_id ?? null;
-  
+  const roomId = String(
+    chat?.match_id ?? chat?._id ?? chat?.id ?? ''
+  );
+  console.log("roomId", roomId);
 
   if (!window.__chatSocket) {
     window.__chatSocket = io('http://localhost:8000', { withCredentials: true });
@@ -115,45 +125,47 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
 
   // 메시지 전송 - 텍스트 + 이미지 업로드 + 소켓 전송
   const handleSendMessage = async () => {
-  if (!chat?._id) return;
-  const text = textOf(messageInputRef.current);
-  if (!text && !selectedFile) return;
+    if (!roomId) return;
+    const text = textOf(messageInputRef.current);
+    if (!text && !selectedFile) return;
 
-  const tempId = `tmp-${Date.now()}`;
-  setMessages(prev => [...prev, optimisticMsg(tempId, user_id, text || '', selectedImage)]);
+    const tempId = `tmp-${Date.now()}`;
+    setMessages(prev => [...prev, optimisticMsg(tempId, user_id, text || '', selectedImage)]);
 
-  try {
-    const images_url = await uploadImage(selectedFile);
-    const payload = { 
-      roomId: roomId, 
-      sender_id: user_id,
-      message: text || '',
-      images_url,
-      clientMessageId: tempId
-    };
+    try {
+      const images_url = await uploadImage(selectedFile);
+      const payload = { 
+        roomId: roomId, 
+        sender_id: user_id,
+        message: text || '',
+        images_url,
+        clientMessageId: tempId
+      };
 
-    if (window?.socket?.emit) {
-      window.socket.emit('chat:send', payload, (ack) => {
-        if (!ack?.ok) return setMessages(p => p.filter(m => m._id !== tempId)), alert('메시지 전송 실패');
-        replaceTemp(setMessages, tempId, ack.message);
-      });
-    } else {
-      const r = await fetch(`http://localhost:8000/chatting/api/post-chatMessage/${roomId}`, {
-        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
-      });
-      if (!r.ok) throw new Error('send failed');
-      replaceTemp(setMessages, tempId, await r.json());
+      if (socket?.emit) {
+        socket.emit('chat:send', payload, (ack) => {
+          if (!ack?.ok) return setMessages(p => p.filter(m => m._id !== tempId)), alert('메시지 전송 실패');
+          replaceTemp(setMessages, tempId, ack.message);
+          onBumpFreshKey?.();
+        });
+      } else {
+        const r = await fetch(`http://localhost:8000/chatting/api/post-chatMessage/${roomId}`, {
+          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+        });
+        if (!r.ok) throw new Error('send failed');
+        replaceTemp(setMessages, tempId, await r.json());
+        onBumpFreshKey?.();
+      }
+    } catch (e) {
+      console.error(e);
+      setMessages(p => p.filter(m => m._id !== tempId));
+      alert('메시지 전송 실패');
+    } finally {
+      if (messageInputRef.current) messageInputRef.current.innerHTML = '';
+      setSelectedImage(null);
+      setSelectedFile(null);
     }
-  } catch (e) {
-    console.error(e);
-    setMessages(p => p.filter(m => m._id !== tempId));
-    alert('메시지 전송 실패');
-  } finally {
-    if (messageInputRef.current) messageInputRef.current.innerHTML = '';
-    setSelectedImage(null);
-    setSelectedFile(null);
-  }
-};
+  };
 
 
   // 메시지 리스트 가지고 오기
@@ -162,6 +174,10 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
     console.log("getChatMessages 호출함");
 
     const getChatMessages = async () => {
+      if(!roomId){
+        if(!aborted) setMessages([]);
+        return;
+      }
       try {
         const response = await fetch(
           `http://localhost:8000/chatting/api/get-chatMessage/${roomId}`
@@ -172,7 +188,7 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
         }
 
         const data = await response.json();
-        // console("messages", data);
+        console.log("messages", data);
         // const messages = data.messages;
 
         // 포맷터(재사용)
@@ -210,7 +226,7 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
     }
     getChatMessages();
     return () => { aborted = true };
-  }, [user_id, chat?._id]);
+  }, [user_id, roomId]);
 
   // 소켓 register
   useEffect(() => {
@@ -218,56 +234,18 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
     socket.emit('register', { userId: user_id });
   }, [user_id, socket]);
 
-  // === [추가] 방 입장 & 실시간 수신 리스너 ===
+  // 방 입장
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !roomId) return;
+    socket.emit('room:join', { roomId });
+  }, [socket, roomId]);
 
-    // 방 입장: 방이 바뀔 때마다
-    if (chat?._id) {
-      socket.emit('room:join', { roomId: roomId });
+  // 읽음 이벤트
+  useEffect(() => {
+    if(!socket || !roomId || !user_id) return;
+    socket.emit('chat:read', { roomId: roomId, userId: user_id });
+  }, [socket, roomId, user_id]);
 
-    }
-
-    socket.on('chat:read', { roomId: roomId, userId: user_id });
-
-    // 실시간 새 메시지
-    // const onNew = (msg) => {
-    //   // 다른 방 메시지는 무시(안전)
-    //   if (String(msg?.chat_id) !== String(chat?._id)) return;
-
-    //   const d = new Date(msg?.createdAt ?? Date.now());
-    //   const next = {
-    //     _id: msg?._id,
-    //     match_id: msg?.match_id,
-    //     sender_id: msg?.sender_id,
-    //     message: msg?.message ?? '',
-    //     images_url: Array.isArray(msg?.images_url) ? msg.images_url
-    //              : (msg?.image_url ? [msg.image_url] : null),
-    //     read: !!msg?.read,
-    //     createdAt: msg?.createdAt ?? d.toISOString(),
-    //     dateStr: d.toLocaleDateString('ko-KR'),
-    //     timeStr: d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
-    //   };
-
-    //   // 중복 방지(낙관 메시지와 서버 메시지 중복될 수 있음)
-    //   setMessages(prev => prev.some(m => m._id === next._id) ? prev : [...prev, next]);
-    // };
-
-    // // (선택) 읽음 리시트
-    // const onRead = (receipt) => {
-    //   // 필요 시 읽음 UI 갱신 로직
-    //   // console.log('read receipt', receipt);
-    // };
-
-    // socket.on('chat:new', onNew);
-    // socket.on('chat:read:receipt', onRead);
-
-    // return () => {
-    //   socket.off('chat:new', onNew);
-    //   socket.off('chat:read:receipt', onRead);
-    // };
-  }, [socket, chat?._id]);
-  
 
   // ✅ delete / backspace 키 누르면 이미지 제거 useEffect 추가
   useEffect(() => {
@@ -302,6 +280,8 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
       console.error("에러 발생:", err);
     }
   };
+
+  
 
   return (
     <S.ChatApp>
@@ -342,10 +322,24 @@ const ChatApp = ({ chat, onToggleScheduleAlert }) => {
                 {/* {msg.images_url && <S.ChatAppMessageImage src={msg.images_url} alt="message_img" />} */}
                 {Array.isArray(msg.images_url) ? (
                   msg.images_url.map((url, i) => (
-                    <S.ChatAppMessageImage key={`${msg._id}-img-${i}`} src={url} alt="message_img" />
+                    <S.ChatAppMessageImage 
+                      key={`${msg._id}-img-${i}`} 
+                      src={url} 
+                      alt="message_img" 
+                      onLoad={() =>
+                        bottomRef.current?.scrollIntoView({ behavior: 'auto' })
+                      }
+                    />
                   ))
                 ) : (
-                  msg.images_url && <S.ChatAppMessageImage src={msg.images_url} alt="message_img" />
+                  msg.images_url && 
+                    <S.ChatAppMessageImage 
+                      src={msg.images_url} 
+                      alt="message_img" 
+                      onLoad={() =>
+                        bottomRef.current?.scrollIntoView({ behavior: 'auto' })
+                      }
+                    />
                 )}
               </S.ChatAppBubble>
 

@@ -31,14 +31,6 @@ const ScheduleModal = ({
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
 
-  // const friends = [
-  //   { id: 1, name: 'Soul', avatar: "/assets/img/chat/soul.png" },
-  //   { id: 2, name: 'Melody', avatar: "/assets/img/chat/melody.png" },
-  //   { id: 3, name: 'Coco', avatar: "/assets/img/chat/coco.png" },
-  //   { id: 4, name: 'Choco', avatar: "/assets/img/chat/choco.png" },
-  //   { id: 5, name: 'Jude', avatar: "/assets/img/chat/jude.png" },
-  // ];
-
   const toggleFriend = (friend) => {
     if (selectedFriend && selectedFriend._id === friend._id) {
       // 같은 친구 → 해제
@@ -98,7 +90,7 @@ const ScheduleModal = ({
       },
       body : JSON.stringify({
         user_id: user_id,
-        chat_id: selectedFriend._id,
+        match_id: selectedFriend.match_id,
         title : title,
         date: onlyDate,
         time: onlyTime,

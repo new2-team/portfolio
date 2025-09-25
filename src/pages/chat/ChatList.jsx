@@ -37,7 +37,7 @@ const formatLastMessageAt = (dateStr) => {
 };
 
 
-const ChatList = ({ onSelectChat, selectedChat }) => {
+const ChatList = ({ onSelectChat, selectedChat, freshKey = 0 }) => {
   // onSelectChat: ChatList에서 선택한 채팅방 Chatting에 알려주는 함수
   // selectChat: ChatList에서 선택한 채팅방의 정보를 담고 있는 객체
   const [chats, setChats] = useState([]);
@@ -64,7 +64,7 @@ const ChatList = ({ onSelectChat, selectedChat }) => {
     if(user_id){
       getChattingRoom();
     }
-  }, [user_id]);
+  }, [user_id, freshKey]);
 
   return ( 
     <S.ChatListContainer p={20} m={20}>

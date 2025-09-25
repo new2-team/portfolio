@@ -10,6 +10,7 @@ import S from './style.js';
 const Chatting = () => {
   const [selectedChat, setSelectedChat] = useState(null); // 선택한 채팅방
   const [showScheduleAlert, setShowScheduleAlert] = useState(true); // 스케줄alert on/off
+  const [freshKey, setFreshKey] = useState(0);
   const user_id = useSelector((state) => state.user.currentUser?.user_id);
 
   if (!window.socket) {
@@ -74,15 +75,23 @@ const Chatting = () => {
    <S.ChattingContainer>
       <ChatList
         chats={chats}
+        freshKey={freshKey}
         onSelectChat={handleSelectChat}
       />
       <S.ChatAppWrapper className={!showScheduleAlert ? 'full-width' : ''}>
         <ChatApp
           chat={selectedChat}
+          freshKey={freshKey}
+          onBumpFreshKey={() => setFreshKey(k => k + 1)}
           onClose={() => setSelectedChat(null)}
           onToggleScheduleAlert={toggleScheduleAlert}
         />
-        {showScheduleAlert && <ScheduleAlert chat={selectedChat}/>}
+        {showScheduleAlert && 
+          <ScheduleAlert 
+            chat={selectedChat}
+            freshKey={freshKey}
+          />
+        }
       </S.ChatAppWrapper>
 
     </S.ChattingContainer>
