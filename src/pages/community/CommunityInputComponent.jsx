@@ -3,16 +3,19 @@ import { useSelector } from 'react-redux';
 import PopupCardLarge from '../../components/popUp/PopupCardLarge';
 import CommunityTextAreaComponent from './CommunityTextAreaComponent';
 import S from './style';
+import { useNavigate } from 'react-router-dom';
 
 
 
 
 const CommunityInputComponent = ({post, setPost}) => {
+  const navigate = useNavigate();
   const [newPost, setNewPost] = useState({title:'', content:''})
   const [showConfirm, setShowConfirm] = useState(false)
 
   const currentUser = useSelector(state => state.user.currentUser);
   const profileSrc = currentUser?.dogProfile?.profileImage || '/assets/img/sample-profile.png';
+
 
   const handleConfirm = async () => {
 
@@ -26,6 +29,7 @@ const CommunityInputComponent = ({post, setPost}) => {
     }
     if (!token) {
       alert("로그인이 필요합니다");
+      navigate("/sign-in");
       return;
     }
 
