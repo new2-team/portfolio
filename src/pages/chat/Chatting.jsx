@@ -22,41 +22,6 @@ const Chatting = () => {
     window.socket.emit('register', { userId: user_id });
   }, [user_id]);
 
-  // 전체 chats 리스트
-  const [chats, setChats] = useState([
-    { id: 1, name: '소울이1', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul2', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul3', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-
-  ]); 
-
   // ChatList에서 선택된 채팅방
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
@@ -74,7 +39,7 @@ const Chatting = () => {
   return (
    <S.ChattingContainer>
       <ChatList
-        chats={chats}
+        // chats={chats}
         freshKey={freshKey}
         onSelectChat={handleSelectChat}
       />

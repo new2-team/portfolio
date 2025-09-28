@@ -167,11 +167,16 @@ const ChatApp = ({ chat, onToggleScheduleAlert, freshKey, onBumpFreshKey }) => {
     }
   };
 
+  useEffect(() => {
+   if (roomId) onBumpFreshKey?.();
+  }, [roomId]);
+
 
   // 메시지 리스트 가지고 오기
   useEffect(() => {
     let aborted = false; // 안전 장치(언마운트 중 setState 방지)
     console.log("getChatMessages 호출함");
+    onBumpFreshKey?.();
 
     const getChatMessages = async () => {
       if(!roomId){
@@ -244,6 +249,7 @@ const ChatApp = ({ chat, onToggleScheduleAlert, freshKey, onBumpFreshKey }) => {
   useEffect(() => {
     if(!socket || !roomId || !user_id) return;
     socket.emit('chat:read', { roomId: roomId, userId: user_id });
+    onBumpFreshKey?.();
   }, [socket, roomId, user_id]);
 
 
@@ -269,8 +275,8 @@ const ChatApp = ({ chat, onToggleScheduleAlert, freshKey, onBumpFreshKey }) => {
         },
         body: JSON.stringify({
           user_id: user_id,       // user_id
-          target_id: "minju2138", // 상대방 id
-          match_id: "0",          // match_id
+          target_id: "minju3", // 상대방 id
+          match_id: "1",          // match_id
         }),
       });
 

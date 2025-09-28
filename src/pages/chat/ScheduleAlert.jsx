@@ -1,9 +1,10 @@
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import theme from '../../styles/theme.js';
 import S from './style.js';
+
 
 
 const ScheduleAlert = ({ chat, freshKey = 0 }) => {
@@ -19,25 +20,10 @@ const ScheduleAlert = ({ chat, freshKey = 0 }) => {
     target_profile_img: '/assets/img/chat/dogEmptyProfile.png',
   };
 
-  const roomId = String(
-    chat?.match_id ?? chat?._id ?? chat?.id ?? ''
-  );
-  console.log("roomId", roomId);
-
-  // const images = [
-  //   { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
-  //   { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
-  //   { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
-  //   { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
-  //   { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
-  //   { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
-  //   { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
-  //   { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
-  //   { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
-  //   { id: 1, src: '/assets/img/chat/soul.png', alt: 'soul' },
-  //   { id: 2, src: '/assets/img/chat/choco.png', alt: 'choco' },
-  //   { id: 3, src: '/assets/img/chat/jude.png', alt: 'jude' },
-  // ];
+  const roomId = useMemo(() => {
+    const id = chat?.match_id ?? chat?._id ?? chat?.id;
+    return id == null ? null : String(id);
+  }, [chat])
 
   // chat객체의 id로 schedule 객체의 title만 가져오기
   // -> 현재 날짜 이후의 날짜의 schedule title만 가져오기
@@ -49,7 +35,10 @@ const ScheduleAlert = ({ chat, freshKey = 0 }) => {
 
   // 일정 모아보기
   useEffect(() => {
-    if(!user_id || !roomId) return;
+    if(!user_id || !roomId) {
+      setSchedules([]);
+      return;
+    }
     const getComingSchedules = async () => {
       try {
         const res = await fetch(
@@ -59,9 +48,11 @@ const ScheduleAlert = ({ chat, freshKey = 0 }) => {
         if (!res.ok) throw new Error(`서버 응답 에러: ${res.status}`);
         const data = await res.json();
         console.log("다가오는 일정 : ", data);
-        setSchedules(data.comingSchedules ?? []);
+        // setSchedules(data.comingSchedules ?? []);
+        setSchedules(Array.isArray(data?.comingSchedules) ? data.comingSchedules : []);
       } catch (err) {
-        console.error("일정 불러오기 실패: ", err)
+        console.error("일정 불러오기 실패: ", err);
+        setSchedules([]);
       }
     };
 

@@ -90,7 +90,7 @@ const ScheduleModal = ({
       },
       body : JSON.stringify({
         user_id: user_id,
-        match_id: selectedFriend.match_id,
+        match_id: selectedFriend?.match_id ?? undefined,
         title : title,
         date: onlyDate,
         time: onlyTime,
@@ -160,7 +160,7 @@ const ScheduleModal = ({
                   setTitle('');
                   setStartTime('');
                   setLocation('');
-                  setSelectedFriend([]);
+                  setSelectedFriend(null);
                   setError('');
                 }}
               />

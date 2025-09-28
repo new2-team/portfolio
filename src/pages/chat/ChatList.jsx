@@ -45,6 +45,7 @@ const ChatList = ({ onSelectChat, selectedChat, freshKey = 0 }) => {
 
   useEffect(() => {
     const getChattingRoom = async () => {
+      
       try {
         const response = await fetch(
           `http://localhost:8000/chatting/api/get-chattingRoom/${user_id}`
@@ -57,6 +58,7 @@ const ChatList = ({ onSelectChat, selectedChat, freshKey = 0 }) => {
         const data = await response.json();
         const chats = data.chats;
         setChats(chats);
+        console.log("채팅방 리스트 호출됨");
       } catch(err) {
         console.error("일정 불러오기 실패:", err);
       }

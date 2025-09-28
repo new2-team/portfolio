@@ -21,12 +21,12 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
   const [startTime, setStartTime] = useState(null); // 일정시작시간
   const [location, setLocation] = useState(''); // 일정 장소
   const [friends, setFriends] = useState([]);
-  const [selectedFriend, setSelectedFriend] = useState(schedule.match_id);
-  console.log("match_id", schedule.match_id);
+  const [selectedFriend, setSelectedFriend] = useState(null);
+  console.log("match_id", schedule?.match_id ?? null);
 
   const toggleFriend = (friend) => {
     if(hasExisting && isEditing){
-      if (draftSelectedFriend && draftSelectedFriend.match_id === friend.match_id) {
+      if (draftSelectedFriend?.match_id === friend?.match_id) {
         // 같은 친구 → 해제
         setDraftSelectedFriend(null);
       } else {
@@ -34,7 +34,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
         setDraftSelectedFriend(friend);
       }
     } else {
-      if (selectedFriend && selectedFriend.match_id === friend.match_id) {
+      if (selectedFriend?.match_id === friend?.match_id) {
         // 같은 친구 → 해제
         setSelectedFriend(null);
       } else {
@@ -136,7 +136,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
       },
       body : JSON.stringify({
         user_id: user_id,
-        match_id: selectedFriend?.match_id ?? null,
+        match_id: selectedFriend?.match_id ?? undefined,
         title : title,
         date: onlyDate,
         time: onlyTime,
@@ -160,7 +160,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
     setDraftLocation(schedule?.location ?? '');
     setDraftTime(hhmmToDate(schedule?.time));
     const found = friends.find(f => f.match_id === schedule?.match_id) || null;
-    setDraftSelectedFriend(found ?? (schedule?.match_id ? { match_id: schedule.match_id } : null));
+    setDraftSelectedFriend(found ?? (schedule?.match_id ? { match_id: schedule?.match_id } : null));
     setIsEditing(true);
   };
 
@@ -183,7 +183,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
             date: schedule?.date ?? (selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : ''),
             time: draftTime ? format(draftTime, 'HH:mm') : null,
             location: draftLocation,
-            match_id: draftSelectedFriend?.match_id ?? schedule?.match_id ?? null,
+            match_id: draftSelectedFriend?.match_id ?? schedule?.match_id ?? undefined,
           },
         }),
       });
@@ -219,7 +219,7 @@ const Schedule = ({ selectedSchedule, selectedDate, onDeleted }) => {
       const result = await res.json();
       console.log("deleted:", result);
       alert(result.message ?? "일정이 삭제되었습니다.");
-      onDeleted?.(schedule._id);
+      onDeleted?.(schedule?._id);
     } catch (e) {
       console.error(e);
       alert("삭제 실패");
