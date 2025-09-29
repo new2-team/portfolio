@@ -21,11 +21,11 @@ const S = {}
 
  S.SecondWrapper = styled.div`
   ${flexRow}
-  width: 1440px;
-  height: 1302px;
+  width: 1000px;
+  /* height: 1302px; */
   margin-top: 75px;
   margin-bottom: 174px;
-  gap: 91px;
+   align-items: flex-start;
  `
 
  S.Profile = styled.div`
@@ -51,33 +51,32 @@ const S = {}
   height: 1302px;
   gap: 28px;
  `
+ // 미니캘린더
  S.Calendar = styled.div`
-  width: 664px;
-  height: 474px;
+  width: 400px;
+  height: 400px;
   border-radius: 24px;
   box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
  `
-
+// 다가오는 일정
  S.Plan = styled.div`
-  width: 664px;
-  height: 386px;
+  width: 400px;
   border-radius: 24px;
   box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
 `
-
+// 완료된 일정
  S.Review = styled.div`
-  width: 664px;
-  height: 386px;
+  width: 400px;
   border-radius: 24px;
   box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
 `
-
+// 채팅방
  S.Chat = styled.div`
   width: 686px;
-  height: 1302px;
   border-radius: 24px;
   box-shadow: 9px 9px 24px rgba(0, 0, 0, 0.2);
   background-color: #DFE1E5;
+  /* pointer-events: none;  */
  `
 
 
