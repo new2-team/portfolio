@@ -266,26 +266,26 @@ const ChatApp = ({ chat, onToggleScheduleAlert, freshKey, onBumpFreshKey }) => {
   }, [selectedImage]);
 
   // 채팅방 생성 호출 임시 api 
-  const handleClick = async () => {
-    try {
-      const res = await fetch("http://localhost:8000/chatting/api/post-chattingRoom", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: user_id,       // user_id
-          target_id: "minju3", // 상대방 id
-          match_id: "1",          // match_id
-        }),
-      });
+  // const handleClick = async () => {
+  //   try {
+  //     const res = await fetch("http://localhost:8000/chatting/api/post-chattingRoom", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         user_id: user_id,       // user_id
+  //         target_id: "minju3", // 상대방 id
+  //         match_id: "1",          // match_id
+  //       }),
+  //     });
 
-      const data = await res.json();
-      console.log("채팅방 생성 응답:", data);
-    } catch (err) {
-      console.error("에러 발생:", err);
-    }
-  };
+  //     const data = await res.json();
+  //     console.log("채팅방 생성 응답:", data);
+  //   } catch (err) {
+  //     console.error("에러 발생:", err);
+  //   }
+  // };
 
   
 
@@ -298,7 +298,7 @@ const ChatApp = ({ chat, onToggleScheduleAlert, freshKey, onBumpFreshKey }) => {
             {activeChat.target_name}
           </Text.Body3>
           {/* 채팅방 만들기 임시 api 호출 버튼 */}
-          <button onClick={handleClick}>채팅방 만들기</button>
+          {/* <button onClick={handleClick}>채팅방 만들기</button> */}
         </S.ChatAppHeaderLeft>
 
         <S.ChatAppHeaderActions>
