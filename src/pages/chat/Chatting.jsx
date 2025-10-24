@@ -1,47 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { io } from 'socket.io-client';
 import ChatApp from './ChatApp';
 import ChatList from './ChatList';
 import ScheduleAlert from './ScheduleAlert.jsx';
 import S from './style.js';
 
+
 const Chatting = () => {
   const [selectedChat, setSelectedChat] = useState(null); // 선택한 채팅방
   const [showScheduleAlert, setShowScheduleAlert] = useState(true); // 스케줄alert on/off
+  const [freshKey, setFreshKey] = useState(0);
+  const user_id = useSelector((state) => state.user.currentUser?.user_id);
 
-  // 전체 chats 리스트
-  const [chats, setChats] = useState([
-    { id: 1, name: '소울이1', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul2', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul3', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
-     { id: 2, name: 'Soul', lastComment: '그래 좋아!', avatar: "/assets/img/chat/soul.png"
-      , unreadCount: 2 ,lastMessageAt: '16:56'
-     },
+  if (!window.socket) {
+    window.socket = io('http://localhost:8000', { withCredentials: true });
+  }
 
-  ]);
+  useEffect(() => {
+    if (!user_id || !window.socket) return;
+    window.socket.emit('register', { userId: user_id });
+  }, [user_id]);
 
   // ChatList에서 선택된 채팅방
   const handleSelectChat = (chat) => {
@@ -60,16 +39,24 @@ const Chatting = () => {
   return (
    <S.ChattingContainer>
       <ChatList
-        chats={chats}
+        // chats={chats}
+        freshKey={freshKey}
         onSelectChat={handleSelectChat}
       />
       <S.ChatAppWrapper className={!showScheduleAlert ? 'full-width' : ''}>
         <ChatApp
           chat={selectedChat}
+          freshKey={freshKey}
+          onBumpFreshKey={() => setFreshKey(k => k + 1)}
           onClose={() => setSelectedChat(null)}
           onToggleScheduleAlert={toggleScheduleAlert}
         />
-        {showScheduleAlert && <ScheduleAlert chat={selectedChat}/>}
+        {showScheduleAlert && 
+          <ScheduleAlert 
+            chat={selectedChat}
+            freshKey={freshKey}
+          />
+        }
       </S.ChatAppWrapper>
 
     </S.ChattingContainer>
